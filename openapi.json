@@ -12,7 +12,7 @@
         "version": "0.1"
     },
     "paths": {
-        "/api/auth/google": {
+        "/api/v1/auth/google": {
             "get": {
                 "description": "Redirects the browser to Google's consent screen. Hit this in a browser, not via curl.",
                 "tags": [
@@ -36,7 +36,7 @@
                 }
             }
         },
-        "/api/auth/google/callback": {
+        "/api/v1/auth/google/callback": {
             "get": {
                 "description": "Handles Google's redirect after sign-in. Exchanges code for a coach access+refresh token pair. Phase 1 returns JSON for testing; the frontend integration will replace this with a redirect.",
                 "tags": [
@@ -107,7 +107,7 @@
                 }
             }
         },
-        "/api/auth/login": {
+        "/api/v1/auth/login": {
             "post": {
                 "description": "Email/password login. Returns access + refresh tokens.",
                 "tags": [
@@ -169,7 +169,7 @@
                 }
             }
         },
-        "/api/auth/logout": {
+        "/api/v1/auth/logout": {
             "post": {
                 "description": "Revokes the supplied refresh token. Idempotent.",
                 "tags": [
@@ -204,7 +204,7 @@
                 }
             }
         },
-        "/api/auth/refresh": {
+        "/api/v1/auth/refresh": {
             "post": {
                 "description": "Exchanges a valid refresh token for a new access+refresh pair. Old refresh token is revoked. Reuse of a revoked token revokes all of the user's sessions.",
                 "tags": [
@@ -256,7 +256,7 @@
                 }
             }
         },
-        "/api/auth/signup": {
+        "/api/v1/auth/signup": {
             "post": {
                 "description": "Email/password coach registration. Returns access + refresh tokens.",
                 "tags": [
@@ -318,7 +318,7 @@
                 }
             }
         },
-        "/api/check-ins": {
+        "/api/v1/check-ins": {
             "get": {
                 "security": [
                     {
@@ -406,7 +406,7 @@
                 }
             }
         },
-        "/api/check-ins/{id}": {
+        "/api/v1/check-ins/{id}": {
             "get": {
                 "security": [
                     {
@@ -462,7 +462,7 @@
                 }
             }
         },
-        "/api/check-ins/{id}/draft": {
+        "/api/v1/check-ins/{id}/draft": {
             "patch": {
                 "security": [
                     {
@@ -540,7 +540,7 @@
                 }
             }
         },
-        "/api/check-ins/{id}/read": {
+        "/api/v1/check-ins/{id}/read": {
             "post": {
                 "security": [
                     {
@@ -596,7 +596,7 @@
                 }
             }
         },
-        "/api/check-ins/{id}/respond": {
+        "/api/v1/check-ins/{id}/respond": {
             "post": {
                 "security": [
                     {
@@ -674,7 +674,7 @@
                 }
             }
         },
-        "/api/clients": {
+        "/api/v1/clients": {
             "get": {
                 "security": [
                     {
@@ -828,7 +828,7 @@
                 }
             }
         },
-        "/api/clients/{id}": {
+        "/api/v1/clients/{id}": {
             "get": {
                 "security": [
                     {
@@ -1017,7 +1017,7 @@
                 }
             }
         },
-        "/api/clients/{id}/invite-portal": {
+        "/api/v1/clients/{id}/invite-portal": {
             "post": {
                 "security": [
                     {
@@ -1084,7 +1084,7 @@
                 }
             }
         },
-        "/api/me": {
+        "/api/v1/me": {
             "get": {
                 "security": [
                     {
@@ -1183,7 +1183,7 @@
                 }
             }
         },
-        "/api/me/avatar": {
+        "/api/v1/me/avatar": {
             "post": {
                 "security": [
                     {
@@ -1258,7 +1258,7 @@
                 }
             }
         },
-        "/api/me/dashboard": {
+        "/api/v1/me/dashboard": {
             "get": {
                 "security": [
                     {
@@ -1294,7 +1294,7 @@
                 }
             }
         },
-        "/api/me/onboarding": {
+        "/api/v1/me/onboarding": {
             "patch": {
                 "security": [
                     {
@@ -1351,7 +1351,7 @@
                 }
             }
         },
-        "/api/me/settings": {
+        "/api/v1/me/settings": {
             "get": {
                 "security": [
                     {
@@ -1391,7 +1391,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Updates scalar fields. To replace custom_questions, use PUT /api/me/settings/custom-questions.",
+                "description": "Updates scalar fields. To replace custom_questions, use PUT /api/v1/me/settings/custom-questions.",
                 "tags": [
                     "me-settings"
                 ],
@@ -1441,7 +1441,7 @@
                 }
             }
         },
-        "/api/me/settings/custom-questions": {
+        "/api/v1/me/settings/custom-questions": {
             "put": {
                 "security": [
                     {
@@ -1498,7 +1498,7 @@
                 }
             }
         },
-        "/api/notifications": {
+        "/api/v1/notifications": {
             "get": {
                 "security": [
                     {
@@ -1559,7 +1559,7 @@
                 }
             }
         },
-        "/api/notifications/mark-all-read": {
+        "/api/v1/notifications/mark-all-read": {
             "post": {
                 "security": [
                     {
@@ -1587,7 +1587,7 @@
                 }
             }
         },
-        "/api/notifications/unread-count": {
+        "/api/v1/notifications/unread-count": {
             "get": {
                 "security": [
                     {
@@ -1622,7 +1622,7 @@
                 }
             }
         },
-        "/api/notifications/{id}": {
+        "/api/v1/notifications/{id}": {
             "delete": {
                 "security": [
                     {
@@ -1671,7 +1671,7 @@
                 }
             }
         },
-        "/api/notifications/{id}/read": {
+        "/api/v1/notifications/{id}/read": {
             "post": {
                 "security": [
                     {
@@ -1720,7 +1720,7 @@
                 }
             }
         },
-        "/api/payments": {
+        "/api/v1/payments": {
             "get": {
                 "security": [
                     {
@@ -1889,7 +1889,7 @@
                 }
             }
         },
-        "/api/payments/{id}": {
+        "/api/v1/payments/{id}": {
             "get": {
                 "security": [
                     {
@@ -2021,7 +2021,7 @@
                 }
             }
         },
-        "/api/payments/{id}/mark-paid": {
+        "/api/v1/payments/{id}/mark-paid": {
             "post": {
                 "security": [
                     {
@@ -2078,7 +2078,7 @@
                 }
             }
         },
-        "/api/portal/accept-invite": {
+        "/api/v1/portal/accept-invite": {
             "post": {
                 "description": "Sets the client's portal password using a one-time invite token. Token is consumed on success.",
                 "tags": [
@@ -2123,7 +2123,7 @@
                 }
             }
         },
-        "/api/portal/auth/login": {
+        "/api/v1/portal/auth/login": {
             "post": {
                 "description": "Email/password login for clients. Returns access + refresh tokens.",
                 "tags": [
@@ -2175,7 +2175,7 @@
                 }
             }
         },
-        "/api/portal/auth/logout": {
+        "/api/v1/portal/auth/logout": {
             "post": {
                 "tags": [
                     "portal-auth"
@@ -2209,7 +2209,7 @@
                 }
             }
         },
-        "/api/portal/auth/refresh": {
+        "/api/v1/portal/auth/refresh": {
             "post": {
                 "tags": [
                     "portal-auth"
@@ -2260,7 +2260,7 @@
                 }
             }
         },
-        "/api/portal/check-ins": {
+        "/api/v1/portal/check-ins": {
             "get": {
                 "security": [
                     {
@@ -2378,7 +2378,7 @@
                 }
             }
         },
-        "/api/portal/check-ins/{id}": {
+        "/api/v1/portal/check-ins/{id}": {
             "get": {
                 "security": [
                     {
@@ -2434,7 +2434,7 @@
                 }
             }
         },
-        "/api/portal/me": {
+        "/api/v1/portal/me": {
             "get": {
                 "security": [
                     {
@@ -2534,7 +2534,7 @@
                 }
             }
         },
-        "/api/portal/notifications": {
+        "/api/v1/portal/notifications": {
             "get": {
                 "security": [
                     {
@@ -2595,7 +2595,7 @@
                 }
             }
         },
-        "/api/portal/notifications/mark-all-read": {
+        "/api/v1/portal/notifications/mark-all-read": {
             "post": {
                 "security": [
                     {
@@ -2623,7 +2623,7 @@
                 }
             }
         },
-        "/api/portal/notifications/unread-count": {
+        "/api/v1/portal/notifications/unread-count": {
             "get": {
                 "security": [
                     {
@@ -2658,7 +2658,7 @@
                 }
             }
         },
-        "/api/portal/notifications/{id}": {
+        "/api/v1/portal/notifications/{id}": {
             "delete": {
                 "security": [
                     {
@@ -2707,7 +2707,7 @@
                 }
             }
         },
-        "/api/portal/notifications/{id}/read": {
+        "/api/v1/portal/notifications/{id}/read": {
             "post": {
                 "security": [
                     {
@@ -2756,7 +2756,7 @@
                 }
             }
         },
-        "/api/portal/payments": {
+        "/api/v1/portal/payments": {
             "get": {
                 "security": [
                     {
@@ -2809,7 +2809,7 @@
                 }
             }
         },
-        "/api/portal/payments/{id}": {
+        "/api/v1/portal/payments/{id}": {
             "get": {
                 "security": [
                     {
@@ -2865,7 +2865,7 @@
                 }
             }
         },
-        "/api/portal/sessions": {
+        "/api/v1/portal/sessions": {
             "get": {
                 "security": [
                     {
@@ -2944,7 +2944,7 @@
                 }
             }
         },
-        "/api/portal/sessions/{id}": {
+        "/api/v1/portal/sessions/{id}": {
             "get": {
                 "security": [
                     {
@@ -3000,7 +3000,7 @@
                 }
             }
         },
-        "/api/portal/uploads/photo": {
+        "/api/v1/portal/uploads/photo": {
             "post": {
                 "security": [
                     {
@@ -3078,16 +3078,16 @@
                 }
             }
         },
-        "/api/portal/ws": {
+        "/api/v1/portal/ws": {
             "get": {
-                "description": "Requires a fresh ticket from POST /api/portal/ws/ticket.",
+                "description": "Requires a fresh ticket from POST /api/v1/portal/ws/ticket.",
                 "tags": [
                     "websocket"
                 ],
                 "summary": "Open a client-portal WebSocket (push channel)",
                 "parameters": [
                     {
-                        "description": "single-use ticket from POST /api/portal/ws/ticket",
+                        "description": "single-use ticket from POST /api/v1/portal/ws/ticket",
                         "name": "ticket",
                         "in": "query",
                         "required": true,
@@ -3110,14 +3110,14 @@
                 }
             }
         },
-        "/api/portal/ws/ticket": {
+        "/api/v1/portal/ws/ticket": {
             "post": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns a single-use, 30-second ticket. Open the WS at /api/portal/ws?ticket={ticket} before expires_at.",
+                "description": "Returns a single-use, 30-second ticket. Open the WS at /api/v1/portal/ws?ticket={ticket} before expires_at.",
                 "tags": [
                     "websocket"
                 ],
@@ -3146,7 +3146,7 @@
                 }
             }
         },
-        "/api/sessions": {
+        "/api/v1/sessions": {
             "get": {
                 "security": [
                     {
@@ -3306,7 +3306,7 @@
                 }
             }
         },
-        "/api/sessions/{id}": {
+        "/api/v1/sessions/{id}": {
             "get": {
                 "security": [
                     {
@@ -3485,7 +3485,7 @@
                 }
             }
         },
-        "/api/webhooks/stripe": {
+        "/api/v1/webhooks/stripe": {
             "post": {
                 "description": "Receives and processes Stripe payment events. Signature verified via Stripe-Signature header.",
                 "tags": [
@@ -3520,16 +3520,16 @@
                 }
             }
         },
-        "/api/ws": {
+        "/api/v1/ws": {
             "get": {
-                "description": "Requires a fresh ticket from POST /api/ws/ticket. Server pushes JSON-encoded notification payloads — same shape as GET /api/notifications items.",
+                "description": "Requires a fresh ticket from POST /api/v1/ws/ticket. Server pushes JSON-encoded notification payloads — same shape as GET /api/v1/notifications items.",
                 "tags": [
                     "websocket"
                 ],
                 "summary": "Open a coach WebSocket (push channel for notifications)",
                 "parameters": [
                     {
-                        "description": "single-use ticket from POST /api/ws/ticket",
+                        "description": "single-use ticket from POST /api/v1/ws/ticket",
                         "name": "ticket",
                         "in": "query",
                         "required": true,
@@ -3552,14 +3552,14 @@
                 }
             }
         },
-        "/api/ws/ticket": {
+        "/api/v1/ws/ticket": {
             "post": {
                 "security": [
                     {
                         "BearerAuth": []
                     }
                 ],
-                "description": "Returns a single-use, 30-second ticket. Open the WS at /api/ws?ticket={ticket} before expires_at.",
+                "description": "Returns a single-use, 30-second ticket. Open the WS at /api/v1/ws?ticket={ticket} before expires_at.",
                 "tags": [
                     "websocket"
                 ],

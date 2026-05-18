@@ -46,6 +46,9 @@ import Step1Profile from './steps/Step1Profile.vue'
 import Step2Client from './steps/Step2Client.vue'
 import Step3CheckIns from './steps/Step3CheckIns.vue'
 import Step4Tools from './steps/Step4Tools.vue'
+import { useAuthStore } from '~/features/auth/stores/useAuthStore'
+
+const authStore = useAuthStore()
 
 const currentStep = ref(1)
 const direction = ref<'forward' | 'back'>('forward')
@@ -58,11 +61,11 @@ const form = reactive({
   // Step 1 — Profile
   photo: null as string | null,
   photoName: '',
-  firstName: '',
-  lastName: '',
+  firstName: authStore.coach?.first_name ?? '',
+  lastName: authStore.coach?.last_name ?? '',
   slug: '',
   bio: '',
-  specialty: null as string | null,
+  specialty: authStore.coach?.specialty ?? null as string | null,
   // Step 2 — Client
   clientFirstName: '',
   clientLastName: '',
@@ -115,13 +118,7 @@ const finish = () => {
   }, 1400)
 }
 
-const goToDashboard = () => {
-  // In production: navigate to /dashboard
-  // For demo: reset to step 1
-  success.value = false
-  direction.value = 'back'
-  currentStep.value = 1
-}
+const goToDashboard = () => navigateTo('/')
 </script>
 
 <style>

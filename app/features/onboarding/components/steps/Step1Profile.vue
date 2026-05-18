@@ -168,10 +168,10 @@ const specErr = ref(false)
 const progress = ref(0)
 
 const specialtyOptions = [
-  { id: 'pt', emoji: '🏋️', name: 'Personal Training', desc: '1-on-1 in-person sessions' },
-  { id: 'oc', emoji: '🌐', name: 'Online Coaching', desc: 'Remote program delivery' },
-  { id: 'nc', emoji: '🥗', name: 'Nutrition Coaching', desc: 'Diet, macros & habits' },
-  { id: 'sg', emoji: '🏢', name: 'Studio / Group', desc: 'Classes & group formats' },
+  { id: 'personal-training', emoji: '🏋️', name: 'Personal Training', desc: '1-on-1 in-person sessions' },
+  { id: 'online-coaching',   emoji: '🌐', name: 'Online Coaching', desc: 'Remote program delivery' },
+  { id: 'nutrition',         emoji: '🥗', name: 'Nutrition Coaching', desc: 'Diet, macros & habits' },
+  { id: 'studio',            emoji: '🏢', name: 'Studio / Group', desc: 'Classes & group formats' },
 ]
 
 const selectSpec = (id: string) => {
