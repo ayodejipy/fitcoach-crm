@@ -8,11 +8,13 @@ export default defineNuxtPlugin(() => {
   const authToken = useCookie<string | null>('auth_token')
   const refreshTokenCookie = useCookie<string | null>('refresh_token')
 
+  const apiBase = `${config.public.apiBase}${API_PREFIX}`
+
   // Used only for the refresh call — no auth interceptors, avoids circular 401 handling
-  const rawFetch = $fetch.create({ baseURL: config.public.apiBase })
+  const rawFetch = $fetch.create({ baseURL: apiBase })
 
   const authFetch = $fetch.create({
-    baseURL: config.public.apiBase,
+    baseURL: apiBase,
     onRequest({ options }) {
       if (authToken.value) {
         const headers = new Headers(options.headers as HeadersInit | undefined)
@@ -31,7 +33,7 @@ export default defineNuxtPlugin(() => {
     const rt = refreshTokenCookie.value
     if (!rt) return Promise.reject(new Error('no refresh token'))
 
-    refreshPromise = rawFetch<HandlersAuthResponse>('/api/auth/refresh', {
+    refreshPromise = rawFetch<HandlersAuthResponse>('/auth/refresh', {
       method: 'POST',
       body: { refresh_token: rt },
     })

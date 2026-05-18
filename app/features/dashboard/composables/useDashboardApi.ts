@@ -4,7 +4,7 @@ export function useDashboardApi() {
   const { $api } = useNuxtApp()
 
   const getStats = () =>
-    $api<ModelsDashboardStats>('/api/me/dashboard')
+    $api<ModelsDashboardStats>('/me/dashboard')
 
   return { getStats }
 }

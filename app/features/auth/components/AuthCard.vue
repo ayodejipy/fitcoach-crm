@@ -30,20 +30,13 @@
     <!-- Forms -->
     <div class="relative">
       <Transition name="form-in" mode="out-in">
-        <component 
-          :is="currentTab === 'login' ? LoginForm : SignupForm" 
-          @switch="switchTab" 
-          @toast="showToast" 
+        <component
+          :is="currentTab === 'login' ? LoginForm : SignupForm"
+          @switch="switchTab"
         />
       </Transition>
     </div>
 
-    <!-- Toast -->
-    <div
-      class="fixed bottom-7 left-1/2 -translate-x-1/2 bg-(--green-deep) dark:bg-black text-white text-[13px] font-semibold px-5 py-2.5 rounded-3xl transition-all duration-200 shadow-[0_4px_24px_rgba(0,0,0,0.3)] dark:border dark:border-white/10 whitespace-nowrap z-[2000] pointer-events-none"
-      :class="toastVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'">
-      {{ toastMsg }}
-    </div>
   </div>
 </template>
 
@@ -82,20 +75,6 @@ onMounted(() => {
   positionSlider()
   window.addEventListener('resize', positionSlider)
 })
-
-// Toast handling
-const toastVisible = ref(false)
-const toastMsg = ref('')
-let toastTimer: ReturnType<typeof setTimeout> | null = null
-
-const showToast = (msg: string) => {
-  toastMsg.value = msg
-  toastVisible.value = true
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => {
-    toastVisible.value = false
-  }, 3000)
-}
 </script>
 
 <style scoped>

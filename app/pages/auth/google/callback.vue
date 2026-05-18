@@ -38,7 +38,7 @@ onMounted(async () => {
     authStore.refreshToken = refreshToken
 
     // Fetch the coach profile — $api will now include the Authorization header
-    const coach = await $api<ModelsCoach>('/api/me')
+    const coach = await $api<ModelsCoach>('/me')
     authStore.coach = coach
 
     await navigateTo(coach.onboarding_done ? '/' : '/onboarding')

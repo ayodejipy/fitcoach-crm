@@ -5,7 +5,8 @@ import { FetchError } from 'ofetch'
 import type { ModelsAppError, HandlersSignupRequest } from '~/services/types.gen'
 import { useAuthApi } from '~/features/auth/composables/useAuthApi'
 
-const emit = defineEmits(['switch', 'toast'])
+defineEmits(['switch'])
+const toast = useToast()
 
 const schema = z.object({
   first_name: z.string().min(1, 'Required'),
@@ -61,7 +62,7 @@ async function handleSubmit(event: FormSubmitEvent<Schema>) {
       const msg = err instanceof FetchError
         ? ((err.data as ModelsAppError | undefined)?.error ?? 'Something went wrong. Please try again.')
         : 'Something went wrong. Please try again.'
-      emit('toast', msg)
+      toast.add({ title: 'Sign up failed', description: msg, color: 'error' })
     }
   } finally {
     isSubmitting.value = false

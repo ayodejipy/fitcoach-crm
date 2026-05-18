@@ -5,7 +5,8 @@ import { FetchError } from 'ofetch'
 import type { ModelsAppError } from '~/services/types.gen'
 import { useAuthApi } from '~/features/auth/composables/useAuthApi'
 
-const emit = defineEmits(['switch', 'toast'])
+defineEmits(['switch'])
+const toast = useToast()
 
 const schema = z.object({
   email: z.email('Please enter a valid email address'),
@@ -38,7 +39,7 @@ async function handleSubmit(event: FormSubmitEvent<Schema>) {
     const msg = err instanceof FetchError
       ? ((err.data as ModelsAppError | undefined)?.error ?? 'Something went wrong. Please try again.')
       : 'Something went wrong. Please try again.'
-    emit('toast', msg)
+    toast.add({ title: 'Sign in failed', description: msg, color: 'error' })
   } finally {
     isSubmitting.value = false
   }
@@ -90,7 +91,7 @@ async function handleSubmit(event: FormSubmitEvent<Schema>) {
             <button
               type="button"
               class="text-[12px] font-medium text-(--text-accent) bg-transparent border-none cursor-pointer p-0 hover:underline"
-              @click="$emit('toast', 'Password reset email sent!')"
+              @click="toast.add({ title: 'Coming soon', description: 'Password reset is not available yet.', color: 'neutral' })"
             >Forgot password?</button>
           </span>
         </template>

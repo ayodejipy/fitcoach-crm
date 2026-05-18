@@ -11,21 +11,21 @@ export function useScheduleApi() {
   // --- reads ---
 
   const list = (params?: { from?: string; to?: string; session_type?: string }) =>
-    $api<HandlersListSessionsResponse>('/api/sessions', { params })
+    $api<HandlersListSessionsResponse>('/sessions', { params })
 
   const get = (id: string) =>
-    $api<ModelsCoachSession>(`/api/sessions/${id}`)
+    $api<ModelsCoachSession>(`/sessions/${id}`)
 
   // --- mutations ---
 
   const create = (body: HandlersCreateSessionRequest) =>
-    $api<ModelsCoachSession>('/api/sessions', { method: 'POST', body })
+    $api<ModelsCoachSession>('/sessions', { method: 'POST', body })
 
   const update = (id: string, body: HandlersUpdateSessionRequest) =>
-    $api<ModelsCoachSession>(`/api/sessions/${id}`, { method: 'PATCH', body })
+    $api<ModelsCoachSession>(`/sessions/${id}`, { method: 'PATCH', body })
 
   const cancel = (id: string) =>
-    $api(`/api/sessions/${id}`, { method: 'DELETE' })
+    $api(`/sessions/${id}`, { method: 'DELETE' })
 
   return { list, get, create, update, cancel }
 }

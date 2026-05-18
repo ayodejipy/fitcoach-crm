@@ -94,6 +94,8 @@ import SettingsCard from './SettingsCard.vue'
 import AvatarUploader from './AvatarUploader.vue'
 import DangerZone from './DangerZone.vue'
 
+const toast = useToast()
+
 const form = reactive({
   firstName: 'Marcus',
   lastName: 'Johnson',
@@ -109,8 +111,15 @@ const portalUrl = 'https://app.fitcoachcrm.com/p/marcus-johnson'
 
 const markDirty = () => { isDirty.value = true }
 const discard = () => { isDirty.value = false }
-const save = () => { isDirty.value = false }
-const copy = () => { navigator.clipboard?.writeText(portalUrl).catch(() => {}) }
+const save = () => {
+  isDirty.value = false
+  toast.add({ title: 'Profile saved', color: 'success' })
+}
+const copy = () => {
+  navigator.clipboard?.writeText(portalUrl)
+    .then(() => toast.add({ title: 'Link copied to clipboard', color: 'success' }))
+    .catch(() => toast.add({ title: 'Could not copy link', color: 'error' }))
+}
 const onAvatarChange = () => { /* TODO: photo upload */ }
 </script>
 
