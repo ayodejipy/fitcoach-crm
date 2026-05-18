@@ -24,7 +24,7 @@
       <!-- Connector (not after last step) -->
       <div
         v-if="i < steps.length - 1"
-        class="step-connector w-12 h-0.5 mx-1.5 mb-3.5 rounded-sm overflow-hidden shrink-0 bg-white/12 relative max-[600px]:w-7"
+        class="step-connector w-12 h-0.5 mx-1.5 rounded-sm overflow-hidden shrink-0 bg-white/12 relative max-[600px]:w-7"
       >
         <div
           class="absolute left-0 top-0 h-full rounded-sm bg-(--green-mid) transition-[width] duration-500"

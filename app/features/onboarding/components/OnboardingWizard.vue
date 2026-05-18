@@ -47,10 +47,12 @@ import Step2Client from './steps/Step2Client.vue'
 import Step3CheckIns from './steps/Step3CheckIns.vue'
 import Step4Tools from './steps/Step4Tools.vue'
 import { useAuthStore } from '~/features/auth/stores/useAuthStore'
+import { useOnboardingApi } from '~/features/onboarding/composables/useOnboardingApi'
 
 const authStore = useAuthStore()
+const onboardingApi = useOnboardingApi()
 
-const currentStep = ref(1)
+const currentStep = ref(authStore.coach?.onboarding_step ?? 1)
 const direction = ref<'forward' | 'back'>('forward')
 const success = ref(false)
 const finishing = ref(false)
@@ -98,10 +100,15 @@ const stepComponent = computed(() => {
   }
 })
 
-const goNext = () => {
+const goNext = async () => {
   if (currentStep.value >= 4) return
   direction.value = 'forward'
   currentStep.value++
+  // Persist progress; errors are non-blocking
+  try {
+    const updated = await onboardingApi.advance({ step: currentStep.value })
+    if (authStore.coach) authStore.coach.onboarding_step = updated.onboarding_step
+  } catch { /* progress save failed — user can still continue */ }
 }
 
 const goPrev = () => {
@@ -110,12 +117,20 @@ const goPrev = () => {
   currentStep.value--
 }
 
-const finish = () => {
+const finish = async () => {
   finishing.value = true
-  setTimeout(() => {
-    finishing.value = false
+  try {
+    const updated = await onboardingApi.advance({ step: 4 })
+    if (authStore.coach) {
+      authStore.coach.onboarding_done = updated.onboarding_done
+      authStore.coach.onboarding_step = updated.onboarding_step
+    }
     success.value = true
-  }, 1400)
+  } catch {
+    useToast().add({ title: 'Could not save onboarding', description: 'Please try again.', color: 'error' })
+  } finally {
+    finishing.value = false
+  }
 }
 
 const goToDashboard = () => navigateTo('/')
