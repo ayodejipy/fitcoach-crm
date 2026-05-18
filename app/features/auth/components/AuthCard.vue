@@ -55,9 +55,9 @@ import SignupForm from './SignupForm.vue'
 const currentTab = ref('login')
 
 // Slider positioning
-const toggleContainer = ref(null)
-const loginBtn = ref(null)
-const signupBtn = ref(null)
+const toggleContainer = ref<HTMLDivElement | null>(null)
+const loginBtn = ref<HTMLButtonElement | null>(null)
+const signupBtn = ref<HTMLButtonElement | null>(null)
 const sliderLeft = ref('4px') // initial
 const sliderWidth = ref('70px') // initial
 
@@ -72,7 +72,7 @@ const positionSlider = async () => {
   sliderWidth.value = rect.width + 'px'
 }
 
-const switchTab = (tab) => {
+const switchTab = (tab: string) => {
   if (currentTab.value === tab) return
   currentTab.value = tab
   positionSlider()
@@ -86,9 +86,9 @@ onMounted(() => {
 // Toast handling
 const toastVisible = ref(false)
 const toastMsg = ref('')
-let toastTimer = null
+let toastTimer: ReturnType<typeof setTimeout> | null = null
 
-const showToast = (msg) => {
+const showToast = (msg: string) => {
   toastMsg.value = msg
   toastVisible.value = true
   if (toastTimer) clearTimeout(toastTimer)

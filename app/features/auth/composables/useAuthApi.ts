@@ -10,28 +10,25 @@ export function useAuthApi() {
   const authStore = useAuthStore()
 
   async function login(body: HandlersLoginRequest) {
-    const response = await $api<HandlersAuthResponse>('/api/auth/login', { method: 'POST', body })
+    const response = await $api<HandlersAuthResponse>('/api/v1/auth/login', { method: 'POST', body })
     authStore.setAuth(response)
     return response
   }
 
   async function register(body: HandlersSignupRequest) {
-    const response = await $api<HandlersAuthResponse>('/api/auth/signup', { method: 'POST', body })
+    const response = await $api<HandlersAuthResponse>('/api/v1/auth/signup', { method: 'POST', body })
     authStore.setAuth(response)
     return response
   }
 
   async function logout() {
-    await $api('/api/auth/logout', { method: 'POST' }).catch(() => {})
+    await $api('/api/v1/auth/logout', {
+      method: 'POST',
+      body: { refresh_token: authStore.refreshToken ?? '' },
+    }).catch(() => { })
     authStore.clearAuth()
     await navigateTo('/auth')
   }
 
-  async function refreshToken() {
-    const response = await $api<HandlersAuthResponse>('/api/auth/refresh', { method: 'POST' })
-    authStore.setAuth(response)
-    return response
-  }
-
-  return { login, register, logout, refreshToken }
+  return { login, register, logout }
 }
