@@ -527,23 +527,23 @@ export type ModelsSession = {
     zoom_link?: string;
 };
 
-export type GetApiAuthGoogleData = {
+export type GetApiV1AuthGoogleData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/auth/google';
+    url: '/api/v1/auth/google';
 };
 
-export type GetApiAuthGoogleErrors = {
+export type GetApiV1AuthGoogleErrors = {
     /**
      * Internal Server Error
      */
     500: ModelsAppError;
 };
 
-export type GetApiAuthGoogleError = GetApiAuthGoogleErrors[keyof GetApiAuthGoogleErrors];
+export type GetApiV1AuthGoogleError = GetApiV1AuthGoogleErrors[keyof GetApiV1AuthGoogleErrors];
 
-export type GetApiAuthGoogleCallbackData = {
+export type GetApiV1AuthGoogleCallbackData = {
     body?: never;
     path?: never;
     query: {
@@ -556,10 +556,10 @@ export type GetApiAuthGoogleCallbackData = {
          */
         code: string;
     };
-    url: '/api/auth/google/callback';
+    url: '/api/v1/auth/google/callback';
 };
 
-export type GetApiAuthGoogleCallbackErrors = {
+export type GetApiV1AuthGoogleCallbackErrors = {
     /**
      * missing code or state, or state mismatch
      */
@@ -574,28 +574,28 @@ export type GetApiAuthGoogleCallbackErrors = {
     500: ModelsAppError;
 };
 
-export type GetApiAuthGoogleCallbackError = GetApiAuthGoogleCallbackErrors[keyof GetApiAuthGoogleCallbackErrors];
+export type GetApiV1AuthGoogleCallbackError = GetApiV1AuthGoogleCallbackErrors[keyof GetApiV1AuthGoogleCallbackErrors];
 
-export type GetApiAuthGoogleCallbackResponses = {
+export type GetApiV1AuthGoogleCallbackResponses = {
     /**
      * OK
      */
     200: HandlersAuthResponse;
 };
 
-export type GetApiAuthGoogleCallbackResponse = GetApiAuthGoogleCallbackResponses[keyof GetApiAuthGoogleCallbackResponses];
+export type GetApiV1AuthGoogleCallbackResponse = GetApiV1AuthGoogleCallbackResponses[keyof GetApiV1AuthGoogleCallbackResponses];
 
-export type PostApiAuthLoginData = {
+export type PostApiV1AuthLoginData = {
     /**
      * login payload
      */
     body: HandlersLoginRequest;
     path?: never;
     query?: never;
-    url: '/api/auth/login';
+    url: '/api/v1/auth/login';
 };
 
-export type PostApiAuthLoginErrors = {
+export type PostApiV1AuthLoginErrors = {
     /**
      * validation failed
      */
@@ -610,56 +610,56 @@ export type PostApiAuthLoginErrors = {
     500: ModelsAppError;
 };
 
-export type PostApiAuthLoginError = PostApiAuthLoginErrors[keyof PostApiAuthLoginErrors];
+export type PostApiV1AuthLoginError = PostApiV1AuthLoginErrors[keyof PostApiV1AuthLoginErrors];
 
-export type PostApiAuthLoginResponses = {
+export type PostApiV1AuthLoginResponses = {
     /**
      * OK
      */
     200: HandlersAuthResponse;
 };
 
-export type PostApiAuthLoginResponse = PostApiAuthLoginResponses[keyof PostApiAuthLoginResponses];
+export type PostApiV1AuthLoginResponse = PostApiV1AuthLoginResponses[keyof PostApiV1AuthLoginResponses];
 
-export type PostApiAuthLogoutData = {
+export type PostApiV1AuthLogoutData = {
     /**
      * logout payload
      */
     body: HandlersLogoutRequest;
     path?: never;
     query?: never;
-    url: '/api/auth/logout';
+    url: '/api/v1/auth/logout';
 };
 
-export type PostApiAuthLogoutErrors = {
+export type PostApiV1AuthLogoutErrors = {
     /**
      * Bad Request
      */
     400: ModelsAppError;
 };
 
-export type PostApiAuthLogoutError = PostApiAuthLogoutErrors[keyof PostApiAuthLogoutErrors];
+export type PostApiV1AuthLogoutError = PostApiV1AuthLogoutErrors[keyof PostApiV1AuthLogoutErrors];
 
-export type PostApiAuthLogoutResponses = {
+export type PostApiV1AuthLogoutResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiAuthLogoutResponse = PostApiAuthLogoutResponses[keyof PostApiAuthLogoutResponses];
+export type PostApiV1AuthLogoutResponse = PostApiV1AuthLogoutResponses[keyof PostApiV1AuthLogoutResponses];
 
-export type PostApiAuthRefreshData = {
+export type PostApiV1AuthRefreshData = {
     /**
      * refresh payload
      */
     body: HandlersRefreshRequest;
     path?: never;
     query?: never;
-    url: '/api/auth/refresh';
+    url: '/api/v1/auth/refresh';
 };
 
-export type PostApiAuthRefreshErrors = {
+export type PostApiV1AuthRefreshErrors = {
     /**
      * Bad Request
      */
@@ -670,28 +670,28 @@ export type PostApiAuthRefreshErrors = {
     401: ModelsAppError;
 };
 
-export type PostApiAuthRefreshError = PostApiAuthRefreshErrors[keyof PostApiAuthRefreshErrors];
+export type PostApiV1AuthRefreshError = PostApiV1AuthRefreshErrors[keyof PostApiV1AuthRefreshErrors];
 
-export type PostApiAuthRefreshResponses = {
+export type PostApiV1AuthRefreshResponses = {
     /**
      * OK
      */
     200: HandlersAuthResponse;
 };
 
-export type PostApiAuthRefreshResponse = PostApiAuthRefreshResponses[keyof PostApiAuthRefreshResponses];
+export type PostApiV1AuthRefreshResponse = PostApiV1AuthRefreshResponses[keyof PostApiV1AuthRefreshResponses];
 
-export type PostApiAuthSignupData = {
+export type PostApiV1AuthSignupData = {
     /**
      * signup payload
      */
     body: HandlersSignupRequest;
     path?: never;
     query?: never;
-    url: '/api/auth/signup';
+    url: '/api/v1/auth/signup';
 };
 
-export type PostApiAuthSignupErrors = {
+export type PostApiV1AuthSignupErrors = {
     /**
      * validation failed
      */
@@ -706,18 +706,18 @@ export type PostApiAuthSignupErrors = {
     500: ModelsAppError;
 };
 
-export type PostApiAuthSignupError = PostApiAuthSignupErrors[keyof PostApiAuthSignupErrors];
+export type PostApiV1AuthSignupError = PostApiV1AuthSignupErrors[keyof PostApiV1AuthSignupErrors];
 
-export type PostApiAuthSignupResponses = {
+export type PostApiV1AuthSignupResponses = {
     /**
      * Created
      */
     201: HandlersAuthResponse;
 };
 
-export type PostApiAuthSignupResponse = PostApiAuthSignupResponses[keyof PostApiAuthSignupResponses];
+export type PostApiV1AuthSignupResponse = PostApiV1AuthSignupResponses[keyof PostApiV1AuthSignupResponses];
 
-export type GetApiCheckInsData = {
+export type GetApiV1CheckInsData = {
     body?: never;
     path?: never;
     query?: {
@@ -742,10 +742,10 @@ export type GetApiCheckInsData = {
          */
         per_page?: number;
     };
-    url: '/api/check-ins';
+    url: '/api/v1/check-ins';
 };
 
-export type GetApiCheckInsErrors = {
+export type GetApiV1CheckInsErrors = {
     /**
      * Bad Request
      */
@@ -756,18 +756,18 @@ export type GetApiCheckInsErrors = {
     401: ModelsAppError;
 };
 
-export type GetApiCheckInsError = GetApiCheckInsErrors[keyof GetApiCheckInsErrors];
+export type GetApiV1CheckInsError = GetApiV1CheckInsErrors[keyof GetApiV1CheckInsErrors];
 
-export type GetApiCheckInsResponses = {
+export type GetApiV1CheckInsResponses = {
     /**
      * OK
      */
     200: HandlersListCheckInsResponse;
 };
 
-export type GetApiCheckInsResponse = GetApiCheckInsResponses[keyof GetApiCheckInsResponses];
+export type GetApiV1CheckInsResponse = GetApiV1CheckInsResponses[keyof GetApiV1CheckInsResponses];
 
-export type GetApiCheckInsByIdData = {
+export type GetApiV1CheckInsByIdData = {
     body?: never;
     path: {
         /**
@@ -776,10 +776,10 @@ export type GetApiCheckInsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/check-ins/{id}';
+    url: '/api/v1/check-ins/{id}';
 };
 
-export type GetApiCheckInsByIdErrors = {
+export type GetApiV1CheckInsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -790,18 +790,18 @@ export type GetApiCheckInsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiCheckInsByIdError = GetApiCheckInsByIdErrors[keyof GetApiCheckInsByIdErrors];
+export type GetApiV1CheckInsByIdError = GetApiV1CheckInsByIdErrors[keyof GetApiV1CheckInsByIdErrors];
 
-export type GetApiCheckInsByIdResponses = {
+export type GetApiV1CheckInsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCoachCheckIn;
 };
 
-export type GetApiCheckInsByIdResponse = GetApiCheckInsByIdResponses[keyof GetApiCheckInsByIdResponses];
+export type GetApiV1CheckInsByIdResponse = GetApiV1CheckInsByIdResponses[keyof GetApiV1CheckInsByIdResponses];
 
-export type PatchApiCheckInsByIdDraftData = {
+export type PatchApiV1CheckInsByIdDraftData = {
     /**
      * draft payload
      */
@@ -813,10 +813,10 @@ export type PatchApiCheckInsByIdDraftData = {
         id: string;
     };
     query?: never;
-    url: '/api/check-ins/{id}/draft';
+    url: '/api/v1/check-ins/{id}/draft';
 };
 
-export type PatchApiCheckInsByIdDraftErrors = {
+export type PatchApiV1CheckInsByIdDraftErrors = {
     /**
      * Bad Request
      */
@@ -831,18 +831,18 @@ export type PatchApiCheckInsByIdDraftErrors = {
     404: ModelsAppError;
 };
 
-export type PatchApiCheckInsByIdDraftError = PatchApiCheckInsByIdDraftErrors[keyof PatchApiCheckInsByIdDraftErrors];
+export type PatchApiV1CheckInsByIdDraftError = PatchApiV1CheckInsByIdDraftErrors[keyof PatchApiV1CheckInsByIdDraftErrors];
 
-export type PatchApiCheckInsByIdDraftResponses = {
+export type PatchApiV1CheckInsByIdDraftResponses = {
     /**
      * OK
      */
     200: ModelsCoachCheckIn;
 };
 
-export type PatchApiCheckInsByIdDraftResponse = PatchApiCheckInsByIdDraftResponses[keyof PatchApiCheckInsByIdDraftResponses];
+export type PatchApiV1CheckInsByIdDraftResponse = PatchApiV1CheckInsByIdDraftResponses[keyof PatchApiV1CheckInsByIdDraftResponses];
 
-export type PostApiCheckInsByIdReadData = {
+export type PostApiV1CheckInsByIdReadData = {
     body?: never;
     path: {
         /**
@@ -851,10 +851,10 @@ export type PostApiCheckInsByIdReadData = {
         id: string;
     };
     query?: never;
-    url: '/api/check-ins/{id}/read';
+    url: '/api/v1/check-ins/{id}/read';
 };
 
-export type PostApiCheckInsByIdReadErrors = {
+export type PostApiV1CheckInsByIdReadErrors = {
     /**
      * Unauthorized
      */
@@ -865,18 +865,18 @@ export type PostApiCheckInsByIdReadErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiCheckInsByIdReadError = PostApiCheckInsByIdReadErrors[keyof PostApiCheckInsByIdReadErrors];
+export type PostApiV1CheckInsByIdReadError = PostApiV1CheckInsByIdReadErrors[keyof PostApiV1CheckInsByIdReadErrors];
 
-export type PostApiCheckInsByIdReadResponses = {
+export type PostApiV1CheckInsByIdReadResponses = {
     /**
      * OK
      */
     200: ModelsCoachCheckIn;
 };
 
-export type PostApiCheckInsByIdReadResponse = PostApiCheckInsByIdReadResponses[keyof PostApiCheckInsByIdReadResponses];
+export type PostApiV1CheckInsByIdReadResponse = PostApiV1CheckInsByIdReadResponses[keyof PostApiV1CheckInsByIdReadResponses];
 
-export type PostApiCheckInsByIdRespondData = {
+export type PostApiV1CheckInsByIdRespondData = {
     /**
      * response payload
      */
@@ -888,10 +888,10 @@ export type PostApiCheckInsByIdRespondData = {
         id: string;
     };
     query?: never;
-    url: '/api/check-ins/{id}/respond';
+    url: '/api/v1/check-ins/{id}/respond';
 };
 
-export type PostApiCheckInsByIdRespondErrors = {
+export type PostApiV1CheckInsByIdRespondErrors = {
     /**
      * Bad Request
      */
@@ -906,18 +906,18 @@ export type PostApiCheckInsByIdRespondErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiCheckInsByIdRespondError = PostApiCheckInsByIdRespondErrors[keyof PostApiCheckInsByIdRespondErrors];
+export type PostApiV1CheckInsByIdRespondError = PostApiV1CheckInsByIdRespondErrors[keyof PostApiV1CheckInsByIdRespondErrors];
 
-export type PostApiCheckInsByIdRespondResponses = {
+export type PostApiV1CheckInsByIdRespondResponses = {
     /**
      * OK
      */
     200: ModelsCoachCheckIn;
 };
 
-export type PostApiCheckInsByIdRespondResponse = PostApiCheckInsByIdRespondResponses[keyof PostApiCheckInsByIdRespondResponses];
+export type PostApiV1CheckInsByIdRespondResponse = PostApiV1CheckInsByIdRespondResponses[keyof PostApiV1CheckInsByIdRespondResponses];
 
-export type GetApiClientsData = {
+export type GetApiV1ClientsData = {
     body?: never;
     path?: never;
     query?: {
@@ -938,10 +938,10 @@ export type GetApiClientsData = {
          */
         per_page?: number;
     };
-    url: '/api/clients';
+    url: '/api/v1/clients';
 };
 
-export type GetApiClientsErrors = {
+export type GetApiV1ClientsErrors = {
     /**
      * invalid query params
      */
@@ -956,28 +956,28 @@ export type GetApiClientsErrors = {
     500: ModelsAppError;
 };
 
-export type GetApiClientsError = GetApiClientsErrors[keyof GetApiClientsErrors];
+export type GetApiV1ClientsError = GetApiV1ClientsErrors[keyof GetApiV1ClientsErrors];
 
-export type GetApiClientsResponses = {
+export type GetApiV1ClientsResponses = {
     /**
      * OK
      */
     200: HandlersListClientsResponse;
 };
 
-export type GetApiClientsResponse = GetApiClientsResponses[keyof GetApiClientsResponses];
+export type GetApiV1ClientsResponse = GetApiV1ClientsResponses[keyof GetApiV1ClientsResponses];
 
-export type PostApiClientsData = {
+export type PostApiV1ClientsData = {
     /**
      * client to create
      */
     body: HandlersCreateClientRequest;
     path?: never;
     query?: never;
-    url: '/api/clients';
+    url: '/api/v1/clients';
 };
 
-export type PostApiClientsErrors = {
+export type PostApiV1ClientsErrors = {
     /**
      * Bad Request
      */
@@ -992,18 +992,18 @@ export type PostApiClientsErrors = {
     409: ModelsAppError;
 };
 
-export type PostApiClientsError = PostApiClientsErrors[keyof PostApiClientsErrors];
+export type PostApiV1ClientsError = PostApiV1ClientsErrors[keyof PostApiV1ClientsErrors];
 
-export type PostApiClientsResponses = {
+export type PostApiV1ClientsResponses = {
     /**
      * Created
      */
     201: ModelsClient;
 };
 
-export type PostApiClientsResponse = PostApiClientsResponses[keyof PostApiClientsResponses];
+export type PostApiV1ClientsResponse = PostApiV1ClientsResponses[keyof PostApiV1ClientsResponses];
 
-export type DeleteApiClientsByIdData = {
+export type DeleteApiV1ClientsByIdData = {
     body?: never;
     path: {
         /**
@@ -1012,10 +1012,10 @@ export type DeleteApiClientsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/clients/{id}';
+    url: '/api/v1/clients/{id}';
 };
 
-export type DeleteApiClientsByIdErrors = {
+export type DeleteApiV1ClientsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -1026,18 +1026,18 @@ export type DeleteApiClientsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type DeleteApiClientsByIdError = DeleteApiClientsByIdErrors[keyof DeleteApiClientsByIdErrors];
+export type DeleteApiV1ClientsByIdError = DeleteApiV1ClientsByIdErrors[keyof DeleteApiV1ClientsByIdErrors];
 
-export type DeleteApiClientsByIdResponses = {
+export type DeleteApiV1ClientsByIdResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type DeleteApiClientsByIdResponse = DeleteApiClientsByIdResponses[keyof DeleteApiClientsByIdResponses];
+export type DeleteApiV1ClientsByIdResponse = DeleteApiV1ClientsByIdResponses[keyof DeleteApiV1ClientsByIdResponses];
 
-export type GetApiClientsByIdData = {
+export type GetApiV1ClientsByIdData = {
     body?: never;
     path: {
         /**
@@ -1046,10 +1046,10 @@ export type GetApiClientsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/clients/{id}';
+    url: '/api/v1/clients/{id}';
 };
 
-export type GetApiClientsByIdErrors = {
+export type GetApiV1ClientsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -1060,18 +1060,18 @@ export type GetApiClientsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiClientsByIdError = GetApiClientsByIdErrors[keyof GetApiClientsByIdErrors];
+export type GetApiV1ClientsByIdError = GetApiV1ClientsByIdErrors[keyof GetApiV1ClientsByIdErrors];
 
-export type GetApiClientsByIdResponses = {
+export type GetApiV1ClientsByIdResponses = {
     /**
      * OK
      */
     200: ModelsClient;
 };
 
-export type GetApiClientsByIdResponse = GetApiClientsByIdResponses[keyof GetApiClientsByIdResponses];
+export type GetApiV1ClientsByIdResponse = GetApiV1ClientsByIdResponses[keyof GetApiV1ClientsByIdResponses];
 
-export type PatchApiClientsByIdData = {
+export type PatchApiV1ClientsByIdData = {
     /**
      * fields to change
      */
@@ -1083,10 +1083,10 @@ export type PatchApiClientsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/clients/{id}';
+    url: '/api/v1/clients/{id}';
 };
 
-export type PatchApiClientsByIdErrors = {
+export type PatchApiV1ClientsByIdErrors = {
     /**
      * Bad Request
      */
@@ -1105,18 +1105,18 @@ export type PatchApiClientsByIdErrors = {
     409: ModelsAppError;
 };
 
-export type PatchApiClientsByIdError = PatchApiClientsByIdErrors[keyof PatchApiClientsByIdErrors];
+export type PatchApiV1ClientsByIdError = PatchApiV1ClientsByIdErrors[keyof PatchApiV1ClientsByIdErrors];
 
-export type PatchApiClientsByIdResponses = {
+export type PatchApiV1ClientsByIdResponses = {
     /**
      * OK
      */
     200: ModelsClient;
 };
 
-export type PatchApiClientsByIdResponse = PatchApiClientsByIdResponses[keyof PatchApiClientsByIdResponses];
+export type PatchApiV1ClientsByIdResponse = PatchApiV1ClientsByIdResponses[keyof PatchApiV1ClientsByIdResponses];
 
-export type PostApiClientsByIdInvitePortalData = {
+export type PostApiV1ClientsByIdInvitePortalData = {
     body?: never;
     path: {
         /**
@@ -1125,10 +1125,10 @@ export type PostApiClientsByIdInvitePortalData = {
         id: string;
     };
     query?: never;
-    url: '/api/clients/{id}/invite-portal';
+    url: '/api/v1/clients/{id}/invite-portal';
 };
 
-export type PostApiClientsByIdInvitePortalErrors = {
+export type PostApiV1ClientsByIdInvitePortalErrors = {
     /**
      * Unauthorized
      */
@@ -1143,53 +1143,53 @@ export type PostApiClientsByIdInvitePortalErrors = {
     500: ModelsAppError;
 };
 
-export type PostApiClientsByIdInvitePortalError = PostApiClientsByIdInvitePortalErrors[keyof PostApiClientsByIdInvitePortalErrors];
+export type PostApiV1ClientsByIdInvitePortalError = PostApiV1ClientsByIdInvitePortalErrors[keyof PostApiV1ClientsByIdInvitePortalErrors];
 
-export type PostApiClientsByIdInvitePortalResponses = {
+export type PostApiV1ClientsByIdInvitePortalResponses = {
     /**
      * OK
      */
     200: HandlersInviteClientPortalResponse;
 };
 
-export type PostApiClientsByIdInvitePortalResponse = PostApiClientsByIdInvitePortalResponses[keyof PostApiClientsByIdInvitePortalResponses];
+export type PostApiV1ClientsByIdInvitePortalResponse = PostApiV1ClientsByIdInvitePortalResponses[keyof PostApiV1ClientsByIdInvitePortalResponses];
 
-export type GetApiMeData = {
+export type GetApiV1MeData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/me';
+    url: '/api/v1/me';
 };
 
-export type GetApiMeErrors = {
+export type GetApiV1MeErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiMeError = GetApiMeErrors[keyof GetApiMeErrors];
+export type GetApiV1MeError = GetApiV1MeErrors[keyof GetApiV1MeErrors];
 
-export type GetApiMeResponses = {
+export type GetApiV1MeResponses = {
     /**
      * OK
      */
     200: ModelsCoach;
 };
 
-export type GetApiMeResponse = GetApiMeResponses[keyof GetApiMeResponses];
+export type GetApiV1MeResponse = GetApiV1MeResponses[keyof GetApiV1MeResponses];
 
-export type PatchApiMeData = {
+export type PatchApiV1MeData = {
     /**
      * fields to change
      */
     body: HandlersUpdateMeRequest;
     path?: never;
     query?: never;
-    url: '/api/me';
+    url: '/api/v1/me';
 };
 
-export type PatchApiMeErrors = {
+export type PatchApiV1MeErrors = {
     /**
      * Bad Request
      */
@@ -1204,18 +1204,18 @@ export type PatchApiMeErrors = {
     409: ModelsAppError;
 };
 
-export type PatchApiMeError = PatchApiMeErrors[keyof PatchApiMeErrors];
+export type PatchApiV1MeError = PatchApiV1MeErrors[keyof PatchApiV1MeErrors];
 
-export type PatchApiMeResponses = {
+export type PatchApiV1MeResponses = {
     /**
      * OK
      */
     200: ModelsCoach;
 };
 
-export type PatchApiMeResponse = PatchApiMeResponses[keyof PatchApiMeResponses];
+export type PatchApiV1MeResponse = PatchApiV1MeResponses[keyof PatchApiV1MeResponses];
 
-export type PostApiMeAvatarData = {
+export type PostApiV1MeAvatarData = {
     body: {
         /**
          * Image file (JPEG/PNG/WEBP, max 4 MB)
@@ -1224,10 +1224,10 @@ export type PostApiMeAvatarData = {
     };
     path?: never;
     query?: never;
-    url: '/api/me/avatar';
+    url: '/api/v1/me/avatar';
 };
 
-export type PostApiMeAvatarErrors = {
+export type PostApiV1MeAvatarErrors = {
     /**
      * Bad Request
      */
@@ -1242,53 +1242,53 @@ export type PostApiMeAvatarErrors = {
     503: ModelsAppError;
 };
 
-export type PostApiMeAvatarError = PostApiMeAvatarErrors[keyof PostApiMeAvatarErrors];
+export type PostApiV1MeAvatarError = PostApiV1MeAvatarErrors[keyof PostApiV1MeAvatarErrors];
 
-export type PostApiMeAvatarResponses = {
+export type PostApiV1MeAvatarResponses = {
     /**
      * OK
      */
     200: ModelsCoach;
 };
 
-export type PostApiMeAvatarResponse = PostApiMeAvatarResponses[keyof PostApiMeAvatarResponses];
+export type PostApiV1MeAvatarResponse = PostApiV1MeAvatarResponses[keyof PostApiV1MeAvatarResponses];
 
-export type GetApiMeDashboardData = {
+export type GetApiV1MeDashboardData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/me/dashboard';
+    url: '/api/v1/me/dashboard';
 };
 
-export type GetApiMeDashboardErrors = {
+export type GetApiV1MeDashboardErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiMeDashboardError = GetApiMeDashboardErrors[keyof GetApiMeDashboardErrors];
+export type GetApiV1MeDashboardError = GetApiV1MeDashboardErrors[keyof GetApiV1MeDashboardErrors];
 
-export type GetApiMeDashboardResponses = {
+export type GetApiV1MeDashboardResponses = {
     /**
      * OK
      */
     200: ModelsDashboardStats;
 };
 
-export type GetApiMeDashboardResponse = GetApiMeDashboardResponses[keyof GetApiMeDashboardResponses];
+export type GetApiV1MeDashboardResponse = GetApiV1MeDashboardResponses[keyof GetApiV1MeDashboardResponses];
 
-export type PatchApiMeOnboardingData = {
+export type PatchApiV1MeOnboardingData = {
     /**
      * step payload
      */
     body: HandlersAdvanceOnboardingRequest;
     path?: never;
     query?: never;
-    url: '/api/me/onboarding';
+    url: '/api/v1/me/onboarding';
 };
 
-export type PatchApiMeOnboardingErrors = {
+export type PatchApiV1MeOnboardingErrors = {
     /**
      * Bad Request
      */
@@ -1299,53 +1299,53 @@ export type PatchApiMeOnboardingErrors = {
     401: ModelsAppError;
 };
 
-export type PatchApiMeOnboardingError = PatchApiMeOnboardingErrors[keyof PatchApiMeOnboardingErrors];
+export type PatchApiV1MeOnboardingError = PatchApiV1MeOnboardingErrors[keyof PatchApiV1MeOnboardingErrors];
 
-export type PatchApiMeOnboardingResponses = {
+export type PatchApiV1MeOnboardingResponses = {
     /**
      * OK
      */
     200: ModelsCoach;
 };
 
-export type PatchApiMeOnboardingResponse = PatchApiMeOnboardingResponses[keyof PatchApiMeOnboardingResponses];
+export type PatchApiV1MeOnboardingResponse = PatchApiV1MeOnboardingResponses[keyof PatchApiV1MeOnboardingResponses];
 
-export type GetApiMeSettingsData = {
+export type GetApiV1MeSettingsData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/me/settings';
+    url: '/api/v1/me/settings';
 };
 
-export type GetApiMeSettingsErrors = {
+export type GetApiV1MeSettingsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiMeSettingsError = GetApiMeSettingsErrors[keyof GetApiMeSettingsErrors];
+export type GetApiV1MeSettingsError = GetApiV1MeSettingsErrors[keyof GetApiV1MeSettingsErrors];
 
-export type GetApiMeSettingsResponses = {
+export type GetApiV1MeSettingsResponses = {
     /**
      * OK
      */
     200: ModelsCoachSettings;
 };
 
-export type GetApiMeSettingsResponse = GetApiMeSettingsResponses[keyof GetApiMeSettingsResponses];
+export type GetApiV1MeSettingsResponse = GetApiV1MeSettingsResponses[keyof GetApiV1MeSettingsResponses];
 
-export type PatchApiMeSettingsData = {
+export type PatchApiV1MeSettingsData = {
     /**
      * fields to change
      */
     body: HandlersUpdateMySettingsRequest;
     path?: never;
     query?: never;
-    url: '/api/me/settings';
+    url: '/api/v1/me/settings';
 };
 
-export type PatchApiMeSettingsErrors = {
+export type PatchApiV1MeSettingsErrors = {
     /**
      * Bad Request
      */
@@ -1356,28 +1356,28 @@ export type PatchApiMeSettingsErrors = {
     401: ModelsAppError;
 };
 
-export type PatchApiMeSettingsError = PatchApiMeSettingsErrors[keyof PatchApiMeSettingsErrors];
+export type PatchApiV1MeSettingsError = PatchApiV1MeSettingsErrors[keyof PatchApiV1MeSettingsErrors];
 
-export type PatchApiMeSettingsResponses = {
+export type PatchApiV1MeSettingsResponses = {
     /**
      * OK
      */
     200: ModelsCoachSettings;
 };
 
-export type PatchApiMeSettingsResponse = PatchApiMeSettingsResponses[keyof PatchApiMeSettingsResponses];
+export type PatchApiV1MeSettingsResponse = PatchApiV1MeSettingsResponses[keyof PatchApiV1MeSettingsResponses];
 
-export type PutApiMeSettingsCustomQuestionsData = {
+export type PutApiV1MeSettingsCustomQuestionsData = {
     /**
      * questions array
      */
     body: HandlersReplaceCustomQuestionsRequest;
     path?: never;
     query?: never;
-    url: '/api/me/settings/custom-questions';
+    url: '/api/v1/me/settings/custom-questions';
 };
 
-export type PutApiMeSettingsCustomQuestionsErrors = {
+export type PutApiV1MeSettingsCustomQuestionsErrors = {
     /**
      * Bad Request
      */
@@ -1388,18 +1388,18 @@ export type PutApiMeSettingsCustomQuestionsErrors = {
     401: ModelsAppError;
 };
 
-export type PutApiMeSettingsCustomQuestionsError = PutApiMeSettingsCustomQuestionsErrors[keyof PutApiMeSettingsCustomQuestionsErrors];
+export type PutApiV1MeSettingsCustomQuestionsError = PutApiV1MeSettingsCustomQuestionsErrors[keyof PutApiV1MeSettingsCustomQuestionsErrors];
 
-export type PutApiMeSettingsCustomQuestionsResponses = {
+export type PutApiV1MeSettingsCustomQuestionsResponses = {
     /**
      * OK
      */
     200: ModelsCoachSettings;
 };
 
-export type PutApiMeSettingsCustomQuestionsResponse = PutApiMeSettingsCustomQuestionsResponses[keyof PutApiMeSettingsCustomQuestionsResponses];
+export type PutApiV1MeSettingsCustomQuestionsResponse = PutApiV1MeSettingsCustomQuestionsResponses[keyof PutApiV1MeSettingsCustomQuestionsResponses];
 
-export type GetApiNotificationsData = {
+export type GetApiV1NotificationsData = {
     body?: never;
     path?: never;
     query?: {
@@ -1416,78 +1416,78 @@ export type GetApiNotificationsData = {
          */
         per_page?: number;
     };
-    url: '/api/notifications';
+    url: '/api/v1/notifications';
 };
 
-export type GetApiNotificationsErrors = {
+export type GetApiV1NotificationsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiNotificationsError = GetApiNotificationsErrors[keyof GetApiNotificationsErrors];
+export type GetApiV1NotificationsError = GetApiV1NotificationsErrors[keyof GetApiV1NotificationsErrors];
 
-export type GetApiNotificationsResponses = {
+export type GetApiV1NotificationsResponses = {
     /**
      * OK
      */
     200: HandlersListNotificationsResponse;
 };
 
-export type GetApiNotificationsResponse = GetApiNotificationsResponses[keyof GetApiNotificationsResponses];
+export type GetApiV1NotificationsResponse = GetApiV1NotificationsResponses[keyof GetApiV1NotificationsResponses];
 
-export type PostApiNotificationsMarkAllReadData = {
+export type PostApiV1NotificationsMarkAllReadData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/notifications/mark-all-read';
+    url: '/api/v1/notifications/mark-all-read';
 };
 
-export type PostApiNotificationsMarkAllReadErrors = {
+export type PostApiV1NotificationsMarkAllReadErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type PostApiNotificationsMarkAllReadError = PostApiNotificationsMarkAllReadErrors[keyof PostApiNotificationsMarkAllReadErrors];
+export type PostApiV1NotificationsMarkAllReadError = PostApiV1NotificationsMarkAllReadErrors[keyof PostApiV1NotificationsMarkAllReadErrors];
 
-export type PostApiNotificationsMarkAllReadResponses = {
+export type PostApiV1NotificationsMarkAllReadResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiNotificationsMarkAllReadResponse = PostApiNotificationsMarkAllReadResponses[keyof PostApiNotificationsMarkAllReadResponses];
+export type PostApiV1NotificationsMarkAllReadResponse = PostApiV1NotificationsMarkAllReadResponses[keyof PostApiV1NotificationsMarkAllReadResponses];
 
-export type GetApiNotificationsUnreadCountData = {
+export type GetApiV1NotificationsUnreadCountData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/notifications/unread-count';
+    url: '/api/v1/notifications/unread-count';
 };
 
-export type GetApiNotificationsUnreadCountErrors = {
+export type GetApiV1NotificationsUnreadCountErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiNotificationsUnreadCountError = GetApiNotificationsUnreadCountErrors[keyof GetApiNotificationsUnreadCountErrors];
+export type GetApiV1NotificationsUnreadCountError = GetApiV1NotificationsUnreadCountErrors[keyof GetApiV1NotificationsUnreadCountErrors];
 
-export type GetApiNotificationsUnreadCountResponses = {
+export type GetApiV1NotificationsUnreadCountResponses = {
     /**
      * OK
      */
     200: HandlersUnreadCountResponse;
 };
 
-export type GetApiNotificationsUnreadCountResponse = GetApiNotificationsUnreadCountResponses[keyof GetApiNotificationsUnreadCountResponses];
+export type GetApiV1NotificationsUnreadCountResponse = GetApiV1NotificationsUnreadCountResponses[keyof GetApiV1NotificationsUnreadCountResponses];
 
-export type DeleteApiNotificationsByIdData = {
+export type DeleteApiV1NotificationsByIdData = {
     body?: never;
     path: {
         /**
@@ -1496,10 +1496,10 @@ export type DeleteApiNotificationsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/notifications/{id}';
+    url: '/api/v1/notifications/{id}';
 };
 
-export type DeleteApiNotificationsByIdErrors = {
+export type DeleteApiV1NotificationsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -1510,18 +1510,18 @@ export type DeleteApiNotificationsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type DeleteApiNotificationsByIdError = DeleteApiNotificationsByIdErrors[keyof DeleteApiNotificationsByIdErrors];
+export type DeleteApiV1NotificationsByIdError = DeleteApiV1NotificationsByIdErrors[keyof DeleteApiV1NotificationsByIdErrors];
 
-export type DeleteApiNotificationsByIdResponses = {
+export type DeleteApiV1NotificationsByIdResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type DeleteApiNotificationsByIdResponse = DeleteApiNotificationsByIdResponses[keyof DeleteApiNotificationsByIdResponses];
+export type DeleteApiV1NotificationsByIdResponse = DeleteApiV1NotificationsByIdResponses[keyof DeleteApiV1NotificationsByIdResponses];
 
-export type PostApiNotificationsByIdReadData = {
+export type PostApiV1NotificationsByIdReadData = {
     body?: never;
     path: {
         /**
@@ -1530,10 +1530,10 @@ export type PostApiNotificationsByIdReadData = {
         id: string;
     };
     query?: never;
-    url: '/api/notifications/{id}/read';
+    url: '/api/v1/notifications/{id}/read';
 };
 
-export type PostApiNotificationsByIdReadErrors = {
+export type PostApiV1NotificationsByIdReadErrors = {
     /**
      * Unauthorized
      */
@@ -1544,18 +1544,18 @@ export type PostApiNotificationsByIdReadErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiNotificationsByIdReadError = PostApiNotificationsByIdReadErrors[keyof PostApiNotificationsByIdReadErrors];
+export type PostApiV1NotificationsByIdReadError = PostApiV1NotificationsByIdReadErrors[keyof PostApiV1NotificationsByIdReadErrors];
 
-export type PostApiNotificationsByIdReadResponses = {
+export type PostApiV1NotificationsByIdReadResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiNotificationsByIdReadResponse = PostApiNotificationsByIdReadResponses[keyof PostApiNotificationsByIdReadResponses];
+export type PostApiV1NotificationsByIdReadResponse = PostApiV1NotificationsByIdReadResponses[keyof PostApiV1NotificationsByIdReadResponses];
 
-export type GetApiPaymentsData = {
+export type GetApiV1PaymentsData = {
     body?: never;
     path?: never;
     query?: {
@@ -1588,10 +1588,10 @@ export type GetApiPaymentsData = {
          */
         per_page?: number;
     };
-    url: '/api/payments';
+    url: '/api/v1/payments';
 };
 
-export type GetApiPaymentsErrors = {
+export type GetApiV1PaymentsErrors = {
     /**
      * Bad Request
      */
@@ -1602,28 +1602,28 @@ export type GetApiPaymentsErrors = {
     401: ModelsAppError;
 };
 
-export type GetApiPaymentsError = GetApiPaymentsErrors[keyof GetApiPaymentsErrors];
+export type GetApiV1PaymentsError = GetApiV1PaymentsErrors[keyof GetApiV1PaymentsErrors];
 
-export type GetApiPaymentsResponses = {
+export type GetApiV1PaymentsResponses = {
     /**
      * OK
      */
     200: HandlersListPaymentsResponse;
 };
 
-export type GetApiPaymentsResponse = GetApiPaymentsResponses[keyof GetApiPaymentsResponses];
+export type GetApiV1PaymentsResponse = GetApiV1PaymentsResponses[keyof GetApiV1PaymentsResponses];
 
-export type PostApiPaymentsData = {
+export type PostApiV1PaymentsData = {
     /**
      * invoice to create
      */
     body: HandlersCreateInvoiceRequest;
     path?: never;
     query?: never;
-    url: '/api/payments';
+    url: '/api/v1/payments';
 };
 
-export type PostApiPaymentsErrors = {
+export type PostApiV1PaymentsErrors = {
     /**
      * Bad Request
      */
@@ -1638,18 +1638,18 @@ export type PostApiPaymentsErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiPaymentsError = PostApiPaymentsErrors[keyof PostApiPaymentsErrors];
+export type PostApiV1PaymentsError = PostApiV1PaymentsErrors[keyof PostApiV1PaymentsErrors];
 
-export type PostApiPaymentsResponses = {
+export type PostApiV1PaymentsResponses = {
     /**
      * Created
      */
     201: ModelsCoachPayment;
 };
 
-export type PostApiPaymentsResponse = PostApiPaymentsResponses[keyof PostApiPaymentsResponses];
+export type PostApiV1PaymentsResponse = PostApiV1PaymentsResponses[keyof PostApiV1PaymentsResponses];
 
-export type GetApiPaymentsByIdData = {
+export type GetApiV1PaymentsByIdData = {
     body?: never;
     path: {
         /**
@@ -1658,10 +1658,10 @@ export type GetApiPaymentsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/payments/{id}';
+    url: '/api/v1/payments/{id}';
 };
 
-export type GetApiPaymentsByIdErrors = {
+export type GetApiV1PaymentsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -1672,18 +1672,18 @@ export type GetApiPaymentsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiPaymentsByIdError = GetApiPaymentsByIdErrors[keyof GetApiPaymentsByIdErrors];
+export type GetApiV1PaymentsByIdError = GetApiV1PaymentsByIdErrors[keyof GetApiV1PaymentsByIdErrors];
 
-export type GetApiPaymentsByIdResponses = {
+export type GetApiV1PaymentsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCoachPayment;
 };
 
-export type GetApiPaymentsByIdResponse = GetApiPaymentsByIdResponses[keyof GetApiPaymentsByIdResponses];
+export type GetApiV1PaymentsByIdResponse = GetApiV1PaymentsByIdResponses[keyof GetApiV1PaymentsByIdResponses];
 
-export type PatchApiPaymentsByIdData = {
+export type PatchApiV1PaymentsByIdData = {
     /**
      * fields to change
      */
@@ -1695,10 +1695,10 @@ export type PatchApiPaymentsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/payments/{id}';
+    url: '/api/v1/payments/{id}';
 };
 
-export type PatchApiPaymentsByIdErrors = {
+export type PatchApiV1PaymentsByIdErrors = {
     /**
      * Bad Request
      */
@@ -1713,18 +1713,18 @@ export type PatchApiPaymentsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type PatchApiPaymentsByIdError = PatchApiPaymentsByIdErrors[keyof PatchApiPaymentsByIdErrors];
+export type PatchApiV1PaymentsByIdError = PatchApiV1PaymentsByIdErrors[keyof PatchApiV1PaymentsByIdErrors];
 
-export type PatchApiPaymentsByIdResponses = {
+export type PatchApiV1PaymentsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCoachPayment;
 };
 
-export type PatchApiPaymentsByIdResponse = PatchApiPaymentsByIdResponses[keyof PatchApiPaymentsByIdResponses];
+export type PatchApiV1PaymentsByIdResponse = PatchApiV1PaymentsByIdResponses[keyof PatchApiV1PaymentsByIdResponses];
 
-export type PostApiPaymentsByIdMarkPaidData = {
+export type PostApiV1PaymentsByIdMarkPaidData = {
     body?: never;
     path: {
         /**
@@ -1733,10 +1733,10 @@ export type PostApiPaymentsByIdMarkPaidData = {
         id: string;
     };
     query?: never;
-    url: '/api/payments/{id}/mark-paid';
+    url: '/api/v1/payments/{id}/mark-paid';
 };
 
-export type PostApiPaymentsByIdMarkPaidErrors = {
+export type PostApiV1PaymentsByIdMarkPaidErrors = {
     /**
      * Unauthorized
      */
@@ -1747,28 +1747,28 @@ export type PostApiPaymentsByIdMarkPaidErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiPaymentsByIdMarkPaidError = PostApiPaymentsByIdMarkPaidErrors[keyof PostApiPaymentsByIdMarkPaidErrors];
+export type PostApiV1PaymentsByIdMarkPaidError = PostApiV1PaymentsByIdMarkPaidErrors[keyof PostApiV1PaymentsByIdMarkPaidErrors];
 
-export type PostApiPaymentsByIdMarkPaidResponses = {
+export type PostApiV1PaymentsByIdMarkPaidResponses = {
     /**
      * OK
      */
     200: ModelsCoachPayment;
 };
 
-export type PostApiPaymentsByIdMarkPaidResponse = PostApiPaymentsByIdMarkPaidResponses[keyof PostApiPaymentsByIdMarkPaidResponses];
+export type PostApiV1PaymentsByIdMarkPaidResponse = PostApiV1PaymentsByIdMarkPaidResponses[keyof PostApiV1PaymentsByIdMarkPaidResponses];
 
-export type PostApiPortalAcceptInviteData = {
+export type PostApiV1PortalAcceptInviteData = {
     /**
      * accept invite payload
      */
     body: HandlersAcceptPortalInviteRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/accept-invite';
+    url: '/api/v1/portal/accept-invite';
 };
 
-export type PostApiPortalAcceptInviteErrors = {
+export type PostApiV1PortalAcceptInviteErrors = {
     /**
      * invalid token, expired, or weak password
      */
@@ -1779,28 +1779,28 @@ export type PostApiPortalAcceptInviteErrors = {
     500: ModelsAppError;
 };
 
-export type PostApiPortalAcceptInviteError = PostApiPortalAcceptInviteErrors[keyof PostApiPortalAcceptInviteErrors];
+export type PostApiV1PortalAcceptInviteError = PostApiV1PortalAcceptInviteErrors[keyof PostApiV1PortalAcceptInviteErrors];
 
-export type PostApiPortalAcceptInviteResponses = {
+export type PostApiV1PortalAcceptInviteResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiPortalAcceptInviteResponse = PostApiPortalAcceptInviteResponses[keyof PostApiPortalAcceptInviteResponses];
+export type PostApiV1PortalAcceptInviteResponse = PostApiV1PortalAcceptInviteResponses[keyof PostApiV1PortalAcceptInviteResponses];
 
-export type PostApiPortalAuthLoginData = {
+export type PostApiV1PortalAuthLoginData = {
     /**
      * login payload
      */
     body: HandlersPortalLoginRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/auth/login';
+    url: '/api/v1/portal/auth/login';
 };
 
-export type PostApiPortalAuthLoginErrors = {
+export type PostApiV1PortalAuthLoginErrors = {
     /**
      * Bad Request
      */
@@ -1811,56 +1811,56 @@ export type PostApiPortalAuthLoginErrors = {
     401: ModelsAppError;
 };
 
-export type PostApiPortalAuthLoginError = PostApiPortalAuthLoginErrors[keyof PostApiPortalAuthLoginErrors];
+export type PostApiV1PortalAuthLoginError = PostApiV1PortalAuthLoginErrors[keyof PostApiV1PortalAuthLoginErrors];
 
-export type PostApiPortalAuthLoginResponses = {
+export type PostApiV1PortalAuthLoginResponses = {
     /**
      * OK
      */
     200: HandlersPortalAuthResponse;
 };
 
-export type PostApiPortalAuthLoginResponse = PostApiPortalAuthLoginResponses[keyof PostApiPortalAuthLoginResponses];
+export type PostApiV1PortalAuthLoginResponse = PostApiV1PortalAuthLoginResponses[keyof PostApiV1PortalAuthLoginResponses];
 
-export type PostApiPortalAuthLogoutData = {
+export type PostApiV1PortalAuthLogoutData = {
     /**
      * logout payload
      */
     body: HandlersPortalLogoutRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/auth/logout';
+    url: '/api/v1/portal/auth/logout';
 };
 
-export type PostApiPortalAuthLogoutErrors = {
+export type PostApiV1PortalAuthLogoutErrors = {
     /**
      * Bad Request
      */
     400: ModelsAppError;
 };
 
-export type PostApiPortalAuthLogoutError = PostApiPortalAuthLogoutErrors[keyof PostApiPortalAuthLogoutErrors];
+export type PostApiV1PortalAuthLogoutError = PostApiV1PortalAuthLogoutErrors[keyof PostApiV1PortalAuthLogoutErrors];
 
-export type PostApiPortalAuthLogoutResponses = {
+export type PostApiV1PortalAuthLogoutResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiPortalAuthLogoutResponse = PostApiPortalAuthLogoutResponses[keyof PostApiPortalAuthLogoutResponses];
+export type PostApiV1PortalAuthLogoutResponse = PostApiV1PortalAuthLogoutResponses[keyof PostApiV1PortalAuthLogoutResponses];
 
-export type PostApiPortalAuthRefreshData = {
+export type PostApiV1PortalAuthRefreshData = {
     /**
      * refresh payload
      */
     body: HandlersPortalRefreshRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/auth/refresh';
+    url: '/api/v1/portal/auth/refresh';
 };
 
-export type PostApiPortalAuthRefreshErrors = {
+export type PostApiV1PortalAuthRefreshErrors = {
     /**
      * Bad Request
      */
@@ -1871,18 +1871,18 @@ export type PostApiPortalAuthRefreshErrors = {
     401: ModelsAppError;
 };
 
-export type PostApiPortalAuthRefreshError = PostApiPortalAuthRefreshErrors[keyof PostApiPortalAuthRefreshErrors];
+export type PostApiV1PortalAuthRefreshError = PostApiV1PortalAuthRefreshErrors[keyof PostApiV1PortalAuthRefreshErrors];
 
-export type PostApiPortalAuthRefreshResponses = {
+export type PostApiV1PortalAuthRefreshResponses = {
     /**
      * OK
      */
     200: HandlersPortalAuthResponse;
 };
 
-export type PostApiPortalAuthRefreshResponse = PostApiPortalAuthRefreshResponses[keyof PostApiPortalAuthRefreshResponses];
+export type PostApiV1PortalAuthRefreshResponse = PostApiV1PortalAuthRefreshResponses[keyof PostApiV1PortalAuthRefreshResponses];
 
-export type GetApiPortalCheckInsData = {
+export type GetApiV1PortalCheckInsData = {
     body?: never;
     path?: never;
     query?: {
@@ -1895,38 +1895,38 @@ export type GetApiPortalCheckInsData = {
          */
         per_page?: number;
     };
-    url: '/api/portal/check-ins';
+    url: '/api/v1/portal/check-ins';
 };
 
-export type GetApiPortalCheckInsErrors = {
+export type GetApiV1PortalCheckInsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiPortalCheckInsError = GetApiPortalCheckInsErrors[keyof GetApiPortalCheckInsErrors];
+export type GetApiV1PortalCheckInsError = GetApiV1PortalCheckInsErrors[keyof GetApiV1PortalCheckInsErrors];
 
-export type GetApiPortalCheckInsResponses = {
+export type GetApiV1PortalCheckInsResponses = {
     /**
      * OK
      */
     200: HandlersListPortalCheckInsResponse;
 };
 
-export type GetApiPortalCheckInsResponse = GetApiPortalCheckInsResponses[keyof GetApiPortalCheckInsResponses];
+export type GetApiV1PortalCheckInsResponse = GetApiV1PortalCheckInsResponses[keyof GetApiV1PortalCheckInsResponses];
 
-export type PostApiPortalCheckInsData = {
+export type PostApiV1PortalCheckInsData = {
     /**
      * check-in payload
      */
     body: HandlersCreateCheckInRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/check-ins';
+    url: '/api/v1/portal/check-ins';
 };
 
-export type PostApiPortalCheckInsErrors = {
+export type PostApiV1PortalCheckInsErrors = {
     /**
      * Bad Request
      */
@@ -1941,18 +1941,18 @@ export type PostApiPortalCheckInsErrors = {
     409: ModelsAppError;
 };
 
-export type PostApiPortalCheckInsError = PostApiPortalCheckInsErrors[keyof PostApiPortalCheckInsErrors];
+export type PostApiV1PortalCheckInsError = PostApiV1PortalCheckInsErrors[keyof PostApiV1PortalCheckInsErrors];
 
-export type PostApiPortalCheckInsResponses = {
+export type PostApiV1PortalCheckInsResponses = {
     /**
      * Created
      */
     201: ModelsCheckIn;
 };
 
-export type PostApiPortalCheckInsResponse = PostApiPortalCheckInsResponses[keyof PostApiPortalCheckInsResponses];
+export type PostApiV1PortalCheckInsResponse = PostApiV1PortalCheckInsResponses[keyof PostApiV1PortalCheckInsResponses];
 
-export type GetApiPortalCheckInsByIdData = {
+export type GetApiV1PortalCheckInsByIdData = {
     body?: never;
     path: {
         /**
@@ -1961,10 +1961,10 @@ export type GetApiPortalCheckInsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/portal/check-ins/{id}';
+    url: '/api/v1/portal/check-ins/{id}';
 };
 
-export type GetApiPortalCheckInsByIdErrors = {
+export type GetApiV1PortalCheckInsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -1975,25 +1975,25 @@ export type GetApiPortalCheckInsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiPortalCheckInsByIdError = GetApiPortalCheckInsByIdErrors[keyof GetApiPortalCheckInsByIdErrors];
+export type GetApiV1PortalCheckInsByIdError = GetApiV1PortalCheckInsByIdErrors[keyof GetApiV1PortalCheckInsByIdErrors];
 
-export type GetApiPortalCheckInsByIdResponses = {
+export type GetApiV1PortalCheckInsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCheckIn;
 };
 
-export type GetApiPortalCheckInsByIdResponse = GetApiPortalCheckInsByIdResponses[keyof GetApiPortalCheckInsByIdResponses];
+export type GetApiV1PortalCheckInsByIdResponse = GetApiV1PortalCheckInsByIdResponses[keyof GetApiV1PortalCheckInsByIdResponses];
 
-export type GetApiPortalMeData = {
+export type GetApiV1PortalMeData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/portal/me';
+    url: '/api/v1/portal/me';
 };
 
-export type GetApiPortalMeErrors = {
+export type GetApiV1PortalMeErrors = {
     /**
      * Unauthorized
      */
@@ -2004,28 +2004,28 @@ export type GetApiPortalMeErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiPortalMeError = GetApiPortalMeErrors[keyof GetApiPortalMeErrors];
+export type GetApiV1PortalMeError = GetApiV1PortalMeErrors[keyof GetApiV1PortalMeErrors];
 
-export type GetApiPortalMeResponses = {
+export type GetApiV1PortalMeResponses = {
     /**
      * OK
      */
     200: HandlersPortalMeResponse;
 };
 
-export type GetApiPortalMeResponse = GetApiPortalMeResponses[keyof GetApiPortalMeResponses];
+export type GetApiV1PortalMeResponse = GetApiV1PortalMeResponses[keyof GetApiV1PortalMeResponses];
 
-export type PatchApiPortalMeData = {
+export type PatchApiV1PortalMeData = {
     /**
      * fields to update
      */
     body: HandlersUpdatePortalMeRequest;
     path?: never;
     query?: never;
-    url: '/api/portal/me';
+    url: '/api/v1/portal/me';
 };
 
-export type PatchApiPortalMeErrors = {
+export type PatchApiV1PortalMeErrors = {
     /**
      * Bad Request
      */
@@ -2036,18 +2036,18 @@ export type PatchApiPortalMeErrors = {
     401: ModelsAppError;
 };
 
-export type PatchApiPortalMeError = PatchApiPortalMeErrors[keyof PatchApiPortalMeErrors];
+export type PatchApiV1PortalMeError = PatchApiV1PortalMeErrors[keyof PatchApiV1PortalMeErrors];
 
-export type PatchApiPortalMeResponses = {
+export type PatchApiV1PortalMeResponses = {
     /**
      * OK
      */
     200: HandlersPortalMeResponse;
 };
 
-export type PatchApiPortalMeResponse = PatchApiPortalMeResponses[keyof PatchApiPortalMeResponses];
+export type PatchApiV1PortalMeResponse = PatchApiV1PortalMeResponses[keyof PatchApiV1PortalMeResponses];
 
-export type GetApiPortalNotificationsData = {
+export type GetApiV1PortalNotificationsData = {
     body?: never;
     path?: never;
     query?: {
@@ -2064,78 +2064,78 @@ export type GetApiPortalNotificationsData = {
          */
         per_page?: number;
     };
-    url: '/api/portal/notifications';
+    url: '/api/v1/portal/notifications';
 };
 
-export type GetApiPortalNotificationsErrors = {
+export type GetApiV1PortalNotificationsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiPortalNotificationsError = GetApiPortalNotificationsErrors[keyof GetApiPortalNotificationsErrors];
+export type GetApiV1PortalNotificationsError = GetApiV1PortalNotificationsErrors[keyof GetApiV1PortalNotificationsErrors];
 
-export type GetApiPortalNotificationsResponses = {
+export type GetApiV1PortalNotificationsResponses = {
     /**
      * OK
      */
     200: HandlersListNotificationsResponse;
 };
 
-export type GetApiPortalNotificationsResponse = GetApiPortalNotificationsResponses[keyof GetApiPortalNotificationsResponses];
+export type GetApiV1PortalNotificationsResponse = GetApiV1PortalNotificationsResponses[keyof GetApiV1PortalNotificationsResponses];
 
-export type PostApiPortalNotificationsMarkAllReadData = {
+export type PostApiV1PortalNotificationsMarkAllReadData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/portal/notifications/mark-all-read';
+    url: '/api/v1/portal/notifications/mark-all-read';
 };
 
-export type PostApiPortalNotificationsMarkAllReadErrors = {
+export type PostApiV1PortalNotificationsMarkAllReadErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type PostApiPortalNotificationsMarkAllReadError = PostApiPortalNotificationsMarkAllReadErrors[keyof PostApiPortalNotificationsMarkAllReadErrors];
+export type PostApiV1PortalNotificationsMarkAllReadError = PostApiV1PortalNotificationsMarkAllReadErrors[keyof PostApiV1PortalNotificationsMarkAllReadErrors];
 
-export type PostApiPortalNotificationsMarkAllReadResponses = {
+export type PostApiV1PortalNotificationsMarkAllReadResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiPortalNotificationsMarkAllReadResponse = PostApiPortalNotificationsMarkAllReadResponses[keyof PostApiPortalNotificationsMarkAllReadResponses];
+export type PostApiV1PortalNotificationsMarkAllReadResponse = PostApiV1PortalNotificationsMarkAllReadResponses[keyof PostApiV1PortalNotificationsMarkAllReadResponses];
 
-export type GetApiPortalNotificationsUnreadCountData = {
+export type GetApiV1PortalNotificationsUnreadCountData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/portal/notifications/unread-count';
+    url: '/api/v1/portal/notifications/unread-count';
 };
 
-export type GetApiPortalNotificationsUnreadCountErrors = {
+export type GetApiV1PortalNotificationsUnreadCountErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiPortalNotificationsUnreadCountError = GetApiPortalNotificationsUnreadCountErrors[keyof GetApiPortalNotificationsUnreadCountErrors];
+export type GetApiV1PortalNotificationsUnreadCountError = GetApiV1PortalNotificationsUnreadCountErrors[keyof GetApiV1PortalNotificationsUnreadCountErrors];
 
-export type GetApiPortalNotificationsUnreadCountResponses = {
+export type GetApiV1PortalNotificationsUnreadCountResponses = {
     /**
      * OK
      */
     200: HandlersUnreadCountResponse;
 };
 
-export type GetApiPortalNotificationsUnreadCountResponse = GetApiPortalNotificationsUnreadCountResponses[keyof GetApiPortalNotificationsUnreadCountResponses];
+export type GetApiV1PortalNotificationsUnreadCountResponse = GetApiV1PortalNotificationsUnreadCountResponses[keyof GetApiV1PortalNotificationsUnreadCountResponses];
 
-export type DeleteApiPortalNotificationsByIdData = {
+export type DeleteApiV1PortalNotificationsByIdData = {
     body?: never;
     path: {
         /**
@@ -2144,10 +2144,10 @@ export type DeleteApiPortalNotificationsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/portal/notifications/{id}';
+    url: '/api/v1/portal/notifications/{id}';
 };
 
-export type DeleteApiPortalNotificationsByIdErrors = {
+export type DeleteApiV1PortalNotificationsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -2158,18 +2158,18 @@ export type DeleteApiPortalNotificationsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type DeleteApiPortalNotificationsByIdError = DeleteApiPortalNotificationsByIdErrors[keyof DeleteApiPortalNotificationsByIdErrors];
+export type DeleteApiV1PortalNotificationsByIdError = DeleteApiV1PortalNotificationsByIdErrors[keyof DeleteApiV1PortalNotificationsByIdErrors];
 
-export type DeleteApiPortalNotificationsByIdResponses = {
+export type DeleteApiV1PortalNotificationsByIdResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type DeleteApiPortalNotificationsByIdResponse = DeleteApiPortalNotificationsByIdResponses[keyof DeleteApiPortalNotificationsByIdResponses];
+export type DeleteApiV1PortalNotificationsByIdResponse = DeleteApiV1PortalNotificationsByIdResponses[keyof DeleteApiV1PortalNotificationsByIdResponses];
 
-export type PostApiPortalNotificationsByIdReadData = {
+export type PostApiV1PortalNotificationsByIdReadData = {
     body?: never;
     path: {
         /**
@@ -2178,10 +2178,10 @@ export type PostApiPortalNotificationsByIdReadData = {
         id: string;
     };
     query?: never;
-    url: '/api/portal/notifications/{id}/read';
+    url: '/api/v1/portal/notifications/{id}/read';
 };
 
-export type PostApiPortalNotificationsByIdReadErrors = {
+export type PostApiV1PortalNotificationsByIdReadErrors = {
     /**
      * Unauthorized
      */
@@ -2192,18 +2192,18 @@ export type PostApiPortalNotificationsByIdReadErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiPortalNotificationsByIdReadError = PostApiPortalNotificationsByIdReadErrors[keyof PostApiPortalNotificationsByIdReadErrors];
+export type PostApiV1PortalNotificationsByIdReadError = PostApiV1PortalNotificationsByIdReadErrors[keyof PostApiV1PortalNotificationsByIdReadErrors];
 
-export type PostApiPortalNotificationsByIdReadResponses = {
+export type PostApiV1PortalNotificationsByIdReadResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type PostApiPortalNotificationsByIdReadResponse = PostApiPortalNotificationsByIdReadResponses[keyof PostApiPortalNotificationsByIdReadResponses];
+export type PostApiV1PortalNotificationsByIdReadResponse = PostApiV1PortalNotificationsByIdReadResponses[keyof PostApiV1PortalNotificationsByIdReadResponses];
 
-export type GetApiPortalPaymentsData = {
+export type GetApiV1PortalPaymentsData = {
     body?: never;
     path?: never;
     query?: {
@@ -2216,28 +2216,28 @@ export type GetApiPortalPaymentsData = {
          */
         per_page?: number;
     };
-    url: '/api/portal/payments';
+    url: '/api/v1/portal/payments';
 };
 
-export type GetApiPortalPaymentsErrors = {
+export type GetApiV1PortalPaymentsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiPortalPaymentsError = GetApiPortalPaymentsErrors[keyof GetApiPortalPaymentsErrors];
+export type GetApiV1PortalPaymentsError = GetApiV1PortalPaymentsErrors[keyof GetApiV1PortalPaymentsErrors];
 
-export type GetApiPortalPaymentsResponses = {
+export type GetApiV1PortalPaymentsResponses = {
     /**
      * OK
      */
     200: HandlersListPortalPaymentsResponse;
 };
 
-export type GetApiPortalPaymentsResponse = GetApiPortalPaymentsResponses[keyof GetApiPortalPaymentsResponses];
+export type GetApiV1PortalPaymentsResponse = GetApiV1PortalPaymentsResponses[keyof GetApiV1PortalPaymentsResponses];
 
-export type GetApiPortalPaymentsByIdData = {
+export type GetApiV1PortalPaymentsByIdData = {
     body?: never;
     path: {
         /**
@@ -2246,10 +2246,10 @@ export type GetApiPortalPaymentsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/portal/payments/{id}';
+    url: '/api/v1/portal/payments/{id}';
 };
 
-export type GetApiPortalPaymentsByIdErrors = {
+export type GetApiV1PortalPaymentsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -2260,18 +2260,18 @@ export type GetApiPortalPaymentsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiPortalPaymentsByIdError = GetApiPortalPaymentsByIdErrors[keyof GetApiPortalPaymentsByIdErrors];
+export type GetApiV1PortalPaymentsByIdError = GetApiV1PortalPaymentsByIdErrors[keyof GetApiV1PortalPaymentsByIdErrors];
 
-export type GetApiPortalPaymentsByIdResponses = {
+export type GetApiV1PortalPaymentsByIdResponses = {
     /**
      * OK
      */
     200: ModelsPayment;
 };
 
-export type GetApiPortalPaymentsByIdResponse = GetApiPortalPaymentsByIdResponses[keyof GetApiPortalPaymentsByIdResponses];
+export type GetApiV1PortalPaymentsByIdResponse = GetApiV1PortalPaymentsByIdResponses[keyof GetApiV1PortalPaymentsByIdResponses];
 
-export type GetApiPortalSessionsData = {
+export type GetApiV1PortalSessionsData = {
     body?: never;
     path?: never;
     query?: {
@@ -2292,10 +2292,10 @@ export type GetApiPortalSessionsData = {
          */
         per_page?: number;
     };
-    url: '/api/portal/sessions';
+    url: '/api/v1/portal/sessions';
 };
 
-export type GetApiPortalSessionsErrors = {
+export type GetApiV1PortalSessionsErrors = {
     /**
      * Bad Request
      */
@@ -2306,18 +2306,18 @@ export type GetApiPortalSessionsErrors = {
     401: ModelsAppError;
 };
 
-export type GetApiPortalSessionsError = GetApiPortalSessionsErrors[keyof GetApiPortalSessionsErrors];
+export type GetApiV1PortalSessionsError = GetApiV1PortalSessionsErrors[keyof GetApiV1PortalSessionsErrors];
 
-export type GetApiPortalSessionsResponses = {
+export type GetApiV1PortalSessionsResponses = {
     /**
      * OK
      */
     200: HandlersListPortalSessionsResponse;
 };
 
-export type GetApiPortalSessionsResponse = GetApiPortalSessionsResponses[keyof GetApiPortalSessionsResponses];
+export type GetApiV1PortalSessionsResponse = GetApiV1PortalSessionsResponses[keyof GetApiV1PortalSessionsResponses];
 
-export type GetApiPortalSessionsByIdData = {
+export type GetApiV1PortalSessionsByIdData = {
     body?: never;
     path: {
         /**
@@ -2326,10 +2326,10 @@ export type GetApiPortalSessionsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/portal/sessions/{id}';
+    url: '/api/v1/portal/sessions/{id}';
 };
 
-export type GetApiPortalSessionsByIdErrors = {
+export type GetApiV1PortalSessionsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -2340,18 +2340,18 @@ export type GetApiPortalSessionsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiPortalSessionsByIdError = GetApiPortalSessionsByIdErrors[keyof GetApiPortalSessionsByIdErrors];
+export type GetApiV1PortalSessionsByIdError = GetApiV1PortalSessionsByIdErrors[keyof GetApiV1PortalSessionsByIdErrors];
 
-export type GetApiPortalSessionsByIdResponses = {
+export type GetApiV1PortalSessionsByIdResponses = {
     /**
      * OK
      */
     200: ModelsSession;
 };
 
-export type GetApiPortalSessionsByIdResponse = GetApiPortalSessionsByIdResponses[keyof GetApiPortalSessionsByIdResponses];
+export type GetApiV1PortalSessionsByIdResponse = GetApiV1PortalSessionsByIdResponses[keyof GetApiV1PortalSessionsByIdResponses];
 
-export type PostApiPortalUploadsPhotoData = {
+export type PostApiV1PortalUploadsPhotoData = {
     body: {
         /**
          * Image file (JPEG/PNG/WEBP, max 4 MB)
@@ -2360,10 +2360,10 @@ export type PostApiPortalUploadsPhotoData = {
     };
     path?: never;
     query?: never;
-    url: '/api/portal/uploads/photo';
+    url: '/api/v1/portal/uploads/photo';
 };
 
-export type PostApiPortalUploadsPhotoErrors = {
+export type PostApiV1PortalUploadsPhotoErrors = {
     /**
      * Bad Request
      */
@@ -2378,9 +2378,9 @@ export type PostApiPortalUploadsPhotoErrors = {
     503: ModelsAppError;
 };
 
-export type PostApiPortalUploadsPhotoError = PostApiPortalUploadsPhotoErrors[keyof PostApiPortalUploadsPhotoErrors];
+export type PostApiV1PortalUploadsPhotoError = PostApiV1PortalUploadsPhotoErrors[keyof PostApiV1PortalUploadsPhotoErrors];
 
-export type PostApiPortalUploadsPhotoResponses = {
+export type PostApiV1PortalUploadsPhotoResponses = {
     /**
      * OK
      */
@@ -2389,55 +2389,55 @@ export type PostApiPortalUploadsPhotoResponses = {
     };
 };
 
-export type PostApiPortalUploadsPhotoResponse = PostApiPortalUploadsPhotoResponses[keyof PostApiPortalUploadsPhotoResponses];
+export type PostApiV1PortalUploadsPhotoResponse = PostApiV1PortalUploadsPhotoResponses[keyof PostApiV1PortalUploadsPhotoResponses];
 
-export type GetApiPortalWsData = {
+export type GetApiV1PortalWsData = {
     body?: never;
     path?: never;
     query: {
         /**
-         * single-use ticket from POST /api/portal/ws/ticket
+         * single-use ticket from POST /api/v1/portal/ws/ticket
          */
         ticket: string;
     };
-    url: '/api/portal/ws';
+    url: '/api/v1/portal/ws';
 };
 
-export type GetApiPortalWsErrors = {
+export type GetApiV1PortalWsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiPortalWsError = GetApiPortalWsErrors[keyof GetApiPortalWsErrors];
+export type GetApiV1PortalWsError = GetApiV1PortalWsErrors[keyof GetApiV1PortalWsErrors];
 
-export type PostApiPortalWsTicketData = {
+export type PostApiV1PortalWsTicketData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/portal/ws/ticket';
+    url: '/api/v1/portal/ws/ticket';
 };
 
-export type PostApiPortalWsTicketErrors = {
+export type PostApiV1PortalWsTicketErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type PostApiPortalWsTicketError = PostApiPortalWsTicketErrors[keyof PostApiPortalWsTicketErrors];
+export type PostApiV1PortalWsTicketError = PostApiV1PortalWsTicketErrors[keyof PostApiV1PortalWsTicketErrors];
 
-export type PostApiPortalWsTicketResponses = {
+export type PostApiV1PortalWsTicketResponses = {
     /**
      * OK
      */
     200: HandlersWsTicketResponse;
 };
 
-export type PostApiPortalWsTicketResponse = PostApiPortalWsTicketResponses[keyof PostApiPortalWsTicketResponses];
+export type PostApiV1PortalWsTicketResponse = PostApiV1PortalWsTicketResponses[keyof PostApiV1PortalWsTicketResponses];
 
-export type GetApiSessionsData = {
+export type GetApiV1SessionsData = {
     body?: never;
     path?: never;
     query?: {
@@ -2466,10 +2466,10 @@ export type GetApiSessionsData = {
          */
         per_page?: number;
     };
-    url: '/api/sessions';
+    url: '/api/v1/sessions';
 };
 
-export type GetApiSessionsErrors = {
+export type GetApiV1SessionsErrors = {
     /**
      * Bad Request
      */
@@ -2480,28 +2480,28 @@ export type GetApiSessionsErrors = {
     401: ModelsAppError;
 };
 
-export type GetApiSessionsError = GetApiSessionsErrors[keyof GetApiSessionsErrors];
+export type GetApiV1SessionsError = GetApiV1SessionsErrors[keyof GetApiV1SessionsErrors];
 
-export type GetApiSessionsResponses = {
+export type GetApiV1SessionsResponses = {
     /**
      * OK
      */
     200: HandlersListSessionsResponse;
 };
 
-export type GetApiSessionsResponse = GetApiSessionsResponses[keyof GetApiSessionsResponses];
+export type GetApiV1SessionsResponse = GetApiV1SessionsResponses[keyof GetApiV1SessionsResponses];
 
-export type PostApiSessionsData = {
+export type PostApiV1SessionsData = {
     /**
      * session to create
      */
     body: HandlersCreateSessionRequest;
     path?: never;
     query?: never;
-    url: '/api/sessions';
+    url: '/api/v1/sessions';
 };
 
-export type PostApiSessionsErrors = {
+export type PostApiV1SessionsErrors = {
     /**
      * Bad Request
      */
@@ -2516,18 +2516,18 @@ export type PostApiSessionsErrors = {
     404: ModelsAppError;
 };
 
-export type PostApiSessionsError = PostApiSessionsErrors[keyof PostApiSessionsErrors];
+export type PostApiV1SessionsError = PostApiV1SessionsErrors[keyof PostApiV1SessionsErrors];
 
-export type PostApiSessionsResponses = {
+export type PostApiV1SessionsResponses = {
     /**
      * Created
      */
     201: ModelsCoachSession;
 };
 
-export type PostApiSessionsResponse = PostApiSessionsResponses[keyof PostApiSessionsResponses];
+export type PostApiV1SessionsResponse = PostApiV1SessionsResponses[keyof PostApiV1SessionsResponses];
 
-export type DeleteApiSessionsByIdData = {
+export type DeleteApiV1SessionsByIdData = {
     body?: never;
     path: {
         /**
@@ -2536,10 +2536,10 @@ export type DeleteApiSessionsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/sessions/{id}';
+    url: '/api/v1/sessions/{id}';
 };
 
-export type DeleteApiSessionsByIdErrors = {
+export type DeleteApiV1SessionsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -2550,18 +2550,18 @@ export type DeleteApiSessionsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type DeleteApiSessionsByIdError = DeleteApiSessionsByIdErrors[keyof DeleteApiSessionsByIdErrors];
+export type DeleteApiV1SessionsByIdError = DeleteApiV1SessionsByIdErrors[keyof DeleteApiV1SessionsByIdErrors];
 
-export type DeleteApiSessionsByIdResponses = {
+export type DeleteApiV1SessionsByIdResponses = {
     /**
      * No Content
      */
     204: void;
 };
 
-export type DeleteApiSessionsByIdResponse = DeleteApiSessionsByIdResponses[keyof DeleteApiSessionsByIdResponses];
+export type DeleteApiV1SessionsByIdResponse = DeleteApiV1SessionsByIdResponses[keyof DeleteApiV1SessionsByIdResponses];
 
-export type GetApiSessionsByIdData = {
+export type GetApiV1SessionsByIdData = {
     body?: never;
     path: {
         /**
@@ -2570,10 +2570,10 @@ export type GetApiSessionsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/sessions/{id}';
+    url: '/api/v1/sessions/{id}';
 };
 
-export type GetApiSessionsByIdErrors = {
+export type GetApiV1SessionsByIdErrors = {
     /**
      * Unauthorized
      */
@@ -2584,18 +2584,18 @@ export type GetApiSessionsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type GetApiSessionsByIdError = GetApiSessionsByIdErrors[keyof GetApiSessionsByIdErrors];
+export type GetApiV1SessionsByIdError = GetApiV1SessionsByIdErrors[keyof GetApiV1SessionsByIdErrors];
 
-export type GetApiSessionsByIdResponses = {
+export type GetApiV1SessionsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCoachSession;
 };
 
-export type GetApiSessionsByIdResponse = GetApiSessionsByIdResponses[keyof GetApiSessionsByIdResponses];
+export type GetApiV1SessionsByIdResponse = GetApiV1SessionsByIdResponses[keyof GetApiV1SessionsByIdResponses];
 
-export type PatchApiSessionsByIdData = {
+export type PatchApiV1SessionsByIdData = {
     /**
      * fields to change
      */
@@ -2607,10 +2607,10 @@ export type PatchApiSessionsByIdData = {
         id: string;
     };
     query?: never;
-    url: '/api/sessions/{id}';
+    url: '/api/v1/sessions/{id}';
 };
 
-export type PatchApiSessionsByIdErrors = {
+export type PatchApiV1SessionsByIdErrors = {
     /**
      * Bad Request
      */
@@ -2625,18 +2625,18 @@ export type PatchApiSessionsByIdErrors = {
     404: ModelsAppError;
 };
 
-export type PatchApiSessionsByIdError = PatchApiSessionsByIdErrors[keyof PatchApiSessionsByIdErrors];
+export type PatchApiV1SessionsByIdError = PatchApiV1SessionsByIdErrors[keyof PatchApiV1SessionsByIdErrors];
 
-export type PatchApiSessionsByIdResponses = {
+export type PatchApiV1SessionsByIdResponses = {
     /**
      * OK
      */
     200: ModelsCoachSession;
 };
 
-export type PatchApiSessionsByIdResponse = PatchApiSessionsByIdResponses[keyof PatchApiSessionsByIdResponses];
+export type PatchApiV1SessionsByIdResponse = PatchApiV1SessionsByIdResponses[keyof PatchApiV1SessionsByIdResponses];
 
-export type PostApiWebhooksStripeData = {
+export type PostApiV1WebhooksStripeData = {
     body?: never;
     headers: {
         /**
@@ -2646,70 +2646,70 @@ export type PostApiWebhooksStripeData = {
     };
     path?: never;
     query?: never;
-    url: '/api/webhooks/stripe';
+    url: '/api/v1/webhooks/stripe';
 };
 
-export type PostApiWebhooksStripeErrors = {
+export type PostApiV1WebhooksStripeErrors = {
     /**
      * Bad Request
      */
     400: ModelsAppError;
 };
 
-export type PostApiWebhooksStripeError = PostApiWebhooksStripeErrors[keyof PostApiWebhooksStripeErrors];
+export type PostApiV1WebhooksStripeError = PostApiV1WebhooksStripeErrors[keyof PostApiV1WebhooksStripeErrors];
 
-export type PostApiWebhooksStripeResponses = {
+export type PostApiV1WebhooksStripeResponses = {
     /**
      * OK
      */
     200: unknown;
 };
 
-export type GetApiWsData = {
+export type GetApiV1WsData = {
     body?: never;
     path?: never;
     query: {
         /**
-         * single-use ticket from POST /api/ws/ticket
+         * single-use ticket from POST /api/v1/ws/ticket
          */
         ticket: string;
     };
-    url: '/api/ws';
+    url: '/api/v1/ws';
 };
 
-export type GetApiWsErrors = {
+export type GetApiV1WsErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type GetApiWsError = GetApiWsErrors[keyof GetApiWsErrors];
+export type GetApiV1WsError = GetApiV1WsErrors[keyof GetApiV1WsErrors];
 
-export type PostApiWsTicketData = {
+export type PostApiV1WsTicketData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/ws/ticket';
+    url: '/api/v1/ws/ticket';
 };
 
-export type PostApiWsTicketErrors = {
+export type PostApiV1WsTicketErrors = {
     /**
      * Unauthorized
      */
     401: ModelsAppError;
 };
 
-export type PostApiWsTicketError = PostApiWsTicketErrors[keyof PostApiWsTicketErrors];
+export type PostApiV1WsTicketError = PostApiV1WsTicketErrors[keyof PostApiV1WsTicketErrors];
 
-export type PostApiWsTicketResponses = {
+export type PostApiV1WsTicketResponses = {
     /**
      * OK
      */
     200: HandlersWsTicketResponse;
 };
 
-export type PostApiWsTicketResponse = PostApiWsTicketResponses[keyof PostApiWsTicketResponses];
+export type PostApiV1WsTicketResponse = PostApiV1WsTicketResponses[keyof PostApiV1WsTicketResponses];
 
 export type GetHealthzData = {
     body?: never;

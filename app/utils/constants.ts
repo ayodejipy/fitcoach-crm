@@ -1,0 +1,1 @@
+export const SPECIALTIES = ['personal-training', 'online-coaching', 'nutrition', 'studio']
