@@ -38,7 +38,7 @@
         },
         "/api/v1/auth/google/callback": {
             "get": {
-                "description": "Handles Google's redirect after sign-in. Exchanges code for a coach access+refresh token pair. Phase 1 returns JSON for testing; the frontend integration will replace this with a redirect.",
+                "description": "Handles Google's redirect after sign-in. On success, 302-redirects to {frontend}/auth/google/callback?access_token=...&refresh_token=...",
                 "tags": [
                     "auth"
                 ],
@@ -64,20 +64,13 @@
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/handlers.AuthResponse"
-                                }
-                            }
-                        }
+                    "302": {
+                        "description": "Redirect to frontend with access_token and refresh_token query params"
                     },
                     "400": {
                         "description": "missing code or state, or state mismatch",
                         "content": {
-                            "application/json": {
+                            "*/*": {
                                 "schema": {
                                     "$ref": "#/components/schemas/models.AppError"
                                 }
@@ -87,7 +80,7 @@
                     "401": {
                         "description": "google rejected the code",
                         "content": {
-                            "application/json": {
+                            "*/*": {
                                 "schema": {
                                     "$ref": "#/components/schemas/models.AppError"
                                 }
@@ -97,7 +90,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "content": {
-                            "application/json": {
+                            "*/*": {
                                 "schema": {
                                     "$ref": "#/components/schemas/models.AppError"
                                 }
@@ -1471,6 +1464,63 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/models.CoachSettings"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/me/slug-check": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Returns whether the slug is free. The calling coach's own slug always reports available.",
+                "tags": [
+                    "me"
+                ],
+                "summary": "Check slug availability",
+                "parameters": [
+                    {
+                        "description": "Slug to check (3–64 chars)",
+                        "name": "slug",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/handlers.SlugCheckResponse"
                                 }
                             }
                         }
@@ -4308,6 +4358,17 @@
                             "nutrition",
                             "studio"
                         ]
+                    }
+                }
+            },
+            "handlers.SlugCheckResponse": {
+                "type": "object",
+                "properties": {
+                    "available": {
+                        "type": "boolean"
+                    },
+                    "slug": {
+                        "type": "string"
                     }
                 }
             },

@@ -235,6 +235,11 @@ export type HandlersSignupRequest = {
     specialty: 'personal-training' | 'online-coaching' | 'nutrition' | 'studio';
 };
 
+export type HandlersSlugCheckResponse = {
+    available?: boolean;
+    slug?: string;
+};
+
 export type HandlersUnreadCountResponse = {
     count?: number;
 };
@@ -575,15 +580,6 @@ export type GetApiV1AuthGoogleCallbackErrors = {
 };
 
 export type GetApiV1AuthGoogleCallbackError = GetApiV1AuthGoogleCallbackErrors[keyof GetApiV1AuthGoogleCallbackErrors];
-
-export type GetApiV1AuthGoogleCallbackResponses = {
-    /**
-     * OK
-     */
-    200: HandlersAuthResponse;
-};
-
-export type GetApiV1AuthGoogleCallbackResponse = GetApiV1AuthGoogleCallbackResponses[keyof GetApiV1AuthGoogleCallbackResponses];
 
 export type PostApiV1AuthLoginData = {
     /**
@@ -1398,6 +1394,40 @@ export type PutApiV1MeSettingsCustomQuestionsResponses = {
 };
 
 export type PutApiV1MeSettingsCustomQuestionsResponse = PutApiV1MeSettingsCustomQuestionsResponses[keyof PutApiV1MeSettingsCustomQuestionsResponses];
+
+export type GetApiV1MeSlugCheckData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * Slug to check (3–64 chars)
+         */
+        slug: string;
+    };
+    url: '/api/v1/me/slug-check';
+};
+
+export type GetApiV1MeSlugCheckErrors = {
+    /**
+     * Bad Request
+     */
+    400: ModelsAppError;
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+};
+
+export type GetApiV1MeSlugCheckError = GetApiV1MeSlugCheckErrors[keyof GetApiV1MeSlugCheckErrors];
+
+export type GetApiV1MeSlugCheckResponses = {
+    /**
+     * OK
+     */
+    200: HandlersSlugCheckResponse;
+};
+
+export type GetApiV1MeSlugCheckResponse = GetApiV1MeSlugCheckResponses[keyof GetApiV1MeSlugCheckResponses];
 
 export type GetApiV1NotificationsData = {
     body?: never;
