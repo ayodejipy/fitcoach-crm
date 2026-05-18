@@ -1,0 +1,170 @@
+<template>
+  <div>
+    <div class="mb-6">
+      <h2 class="text-2xl font-extrabold text-(--text-primary) tracking-[-0.4px] mb-1.5">Welcome back 👋</h2>
+      <p class="text-sm text-(--text-muted) leading-normal">Sign in to your FitCoach dashboard</p>
+    </div>
+
+    <!-- Google -->
+    <button class="flex items-center justify-center gap-2.5 w-full h-11 bg-(--bg-input) border-[1.5px] border-(--border) rounded-[10px] font-inherit text-sm font-semibold text-(--text-primary) cursor-pointer transition-all duration-150 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-none hover:border-(--border-strong) hover:shadow-[0_2px_8px_rgba(0,0,0,0.07)] hover:-translate-y-[1px]" @click="$emit('toast', 'Google sign-in coming in Phase 2')">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      Continue with Google
+    </button>
+
+    <div class="flex items-center gap-3 my-5">
+      <div class="flex-1 h-px bg-(--border)"></div>
+      <span class="text-xs text-(--text-muted) font-medium">or sign in with email</span>
+      <div class="flex-1 h-px bg-(--border)"></div>
+    </div>
+
+    <form class="flex flex-col gap-4" @submit.prevent="handleLogin" novalidate>
+      <div class="flex flex-col gap-1.5">
+        <label for="l-email" class="text-[13px] font-semibold text-(--text-secondary)">Email address</label>
+        <UInput
+          id="l-email"
+          v-model="email"
+          type="email"
+          size="xl"
+          :color="hasEmailErr ? 'red' : (isEmailValid ? 'green' : 'gray')"
+          placeholder="you@example.com"
+          autocomplete="email"
+          icon="i-heroicons-envelope"
+          @blur="validateEmail"
+          @input="validateEmailLive"
+          :ui="{ rounded: 'rounded-[10px]' }"
+        />
+        <span class="text-[11.5px] text-(--red) mt-px" :class="{ hidden: !hasEmailErr }">Please enter your email address</span>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="l-pass" class="text-[13px] font-semibold text-(--text-secondary) flex items-center justify-between">
+          Password
+          <button type="button" class="text-[12px] font-medium text-(--text-accent) bg-transparent border-none cursor-pointer p-0 hover:underline" @click="$emit('toast', 'Password reset email sent!')">Forgot password?</button>
+        </label>
+        <UInput
+          id="l-pass"
+          v-model="password"
+          :type="showPass ? 'text' : 'password'"
+          size="xl"
+          :color="hasPassErr ? 'red' : (isPassValid ? 'green' : 'gray')"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+          :ui="{ icon: { trailing: { pointer: '' } }, rounded: 'rounded-[10px]' }"
+          @blur="validatePass"
+          @input="validatePassLive"
+        >
+          <template #trailing>
+            <UButton
+              :icon="showPass ? 'i-heroicons-eye-slash' : 'i-heroicons-eye'"
+              color="gray"
+              variant="link"
+              :padded="false"
+              @click="showPass = !showPass"
+            />
+          </template>
+        </UInput>
+        <span class="text-[11.5px] text-(--red) mt-px" :class="{ hidden: !hasPassErr }">Please enter your password</span>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <UCheckbox
+          v-model="rememberMe"
+          name="l-remember"
+          label="Remember me for 30 days"
+          color="primary"
+          :ui="{ wrapper: 'items-center', label: 'text-[13px] text-(--text-secondary)' }"
+        />
+      </div>
+
+      <UButton
+        type="submit"
+        size="xl"
+        block
+        color="primary"
+        class="h-[46px] rounded-[11px] font-[700] text-[15px] tracking-[-0.1px] shadow-(--shadow-button) hover:shadow-(--shadow-button-hover)"
+        :loading="isSubmitting"
+        trailing-icon="i-heroicons-arrow-right-20-solid"
+      >
+        {{ isSubmitting ? 'Signing in…' : 'Sign in to dashboard' }}
+      </UButton>
+    </form>
+
+    <div class="mt-5 text-center text-[13px] text-(--text-muted)">
+      Don't have an account? <a href="#" @click.prevent="$emit('switch', 'signup')" class="text-(--text-accent) font-semibold no-underline">Create one free →</a>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const emit = defineEmits(['switch', 'toast'])
+
+const email = ref('')
+const password = ref('')
+const rememberMe = ref(false)
+
+const showPass = ref(false)
+const isSubmitting = ref(false)
+
+// Validation state
+const hasEmailErr = ref(false)
+const isEmailValid = ref(false)
+const hasPassErr = ref(false)
+const isPassValid = ref(false)
+
+const checkEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim())
+
+const validateEmail = () => {
+  if (!checkEmail(email.value)) {
+    hasEmailErr.value = true
+    isEmailValid.value = false
+  } else {
+    hasEmailErr.value = false
+    isEmailValid.value = true
+  }
+}
+const validateEmailLive = () => {
+  if (hasEmailErr.value && checkEmail(email.value)) {
+    hasEmailErr.value = false
+    isEmailValid.value = true
+  }
+}
+
+const validatePass = () => {
+  if (!password.value) {
+    hasPassErr.value = true
+    isPassValid.value = false
+  } else {
+    hasPassErr.value = false
+    isPassValid.value = true
+  }
+}
+const validatePassLive = () => {
+  if (hasPassErr.value && password.value) {
+    hasPassErr.value = false
+    isPassValid.value = true
+  }
+}
+
+const handleLogin = () => {
+  let ok = true
+
+  if (!checkEmail(email.value)) {
+    hasEmailErr.value = true
+    ok = false
+  }
+  if (!password.value) {
+    hasPassErr.value = true
+    ok = false
+  }
+
+  if (!ok) return
+
+  isSubmitting.value = true
+  setTimeout(() => {
+    emit('toast', 'Welcome back! Redirecting to your dashboard →')
+    isSubmitting.value = false
+  }, 1200)
+}
+</script>
