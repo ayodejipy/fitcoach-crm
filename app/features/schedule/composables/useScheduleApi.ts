@@ -10,7 +10,7 @@ export function useScheduleApi() {
 
   // --- reads ---
 
-  const list = (params?: { from?: string; to?: string; session_type?: string }) =>
+  const list = (params?: { from?: string; to?: string; session_type?: string; client_id?: string; page?: number; per_page?: number }) =>
     $api<HandlersListSessionsResponse>('/sessions', { params })
 
   const get = (id: string) =>

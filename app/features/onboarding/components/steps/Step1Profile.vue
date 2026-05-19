@@ -1,3 +1,112 @@
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import StepHeader from '../StepHeader.vue'
+import StepFooter from '../StepFooter.vue'
+import { useOnboardingApi } from '../../composables/useOnboardingApi';
+
+const props = defineProps<{
+  form: {
+    photo: string | null
+    photoName: string
+    firstName: string
+    lastName: string
+    slug: string
+    bio: string
+    specialty: string | null
+  }
+}>()
+
+const emit = defineEmits<{
+  next: []
+}>()
+
+const api = useOnboardingApi();
+
+const firstNameValid = ref(false)
+const firstNameInvalid = ref(false)
+const slugStatus = ref<'idle' | 'checking' | 'available' | 'taken' | 'error'>('idle')
+const specErr = ref(false)
+const progress = ref(0)
+
+const specialtyOptions = [
+  { id: 'personal-training', emoji: '🏋️', name: 'Personal Training', desc: '1-on-1 in-person sessions' },
+  { id: 'online-coaching', emoji: '🌐', name: 'Online Coaching', desc: 'Remote program delivery' },
+  { id: 'nutrition', emoji: '🥗', name: 'Nutrition Coaching', desc: 'Diet, macros & habits' },
+  { id: 'studio', emoji: '🏢', name: 'Studio / Group', desc: 'Classes & group formats' },
+]
+
+const selectSpec = (id: string) => {
+  props.form.specialty = id
+  specErr.value = false
+}
+
+const liveValFirst = () => {
+  if (firstNameInvalid.value && props.form.firstName.trim()) {
+    firstNameInvalid.value = false
+    firstNameValid.value = true
+  }
+}
+const blurFirst = () => {
+  if (!props.form.firstName.trim()) {
+    firstNameInvalid.value = true
+    firstNameValid.value = false
+  } else {
+    firstNameValid.value = true
+    firstNameInvalid.value = false
+  }
+}
+
+const checkSlug = useDebounceFn(async () => {
+  const val = props.form.slug.trim()
+  if (!val) { slugStatus.value = 'idle'; return }
+  slugStatus.value = 'checking'
+  try {
+    const res = await api.checkSlugAvailability(val)
+    slugStatus.value = res.available ? 'available' : 'taken'
+  } catch {
+    slugStatus.value = 'error'
+  }
+}, 600)
+
+const onSlugInput = () => {
+  if (!props.form.slug.trim()) { slugStatus.value = 'idle'; return }
+  slugStatus.value = 'checking'
+  checkSlug()
+}
+
+const onSlugBlur = () => {
+  if (!props.form.slug.trim()) slugStatus.value = 'idle'
+}
+
+const onPhotoChange = (e: Event) => {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = ev => {
+    props.form.photo = ev.target?.result as string
+    props.form.photoName = file.name
+  }
+  reader.readAsDataURL(file)
+}
+
+const onContinue = () => {
+  if (!props.form.firstName.trim()) {
+    firstNameInvalid.value = true
+    return
+  }
+  if (!props.form.specialty) {
+    specErr.value = true
+    setTimeout(() => { specErr.value = false }, 1400)
+    return
+  }
+  emit('next')
+}
+
+onMounted(() => {
+  setTimeout(() => { progress.value = 25 }, 120)
+})
+</script>
+
 <template>
   <div>
     <StepHeader
@@ -6,10 +115,7 @@
       sub="This is how your clients will see you. Takes about 2 minutes."
     >
       <template #icon>
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-(--text-accent)">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
-        </svg>
+        <UIcon name="i-lucide-user" class="size-6 text-(--text-accent)" />
       </template>
     </StepHeader>
 
@@ -18,10 +124,7 @@
       <label class="flex items-center gap-5 p-[18px] rounded-xl border-[1.5px] border-dashed border-(--border) bg-(--bg-input) cursor-pointer mb-[22px] transition-[border-color,background] duration-200 hover:border-(--green-mid) hover:bg-(--green-pale) dark:hover:bg-(--bg-primary-soft)">
         <div class="w-16 h-16 rounded-full bg-(--green-pale) dark:bg-(--bg-primary-soft) flex items-center justify-center overflow-hidden shrink-0 border-2 border-(--border)">
           <img v-if="form.photo" :src="form.photo" alt="" class="w-full h-full object-cover">
-          <svg v-else width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-(--text-accent)">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+          <UIcon v-else name="i-lucide-user" class="size-7 text-(--text-accent)" />
         </div>
         <div class="flex-1">
           <div class="text-[13.5px] font-semibold text-(--text-primary)">{{ form.photoName || 'Add a profile photo' }}</div>
@@ -45,7 +148,7 @@
             @blur="blurFirst"
           >
           <div class="field-msg err" :class="{ show: firstNameInvalid }">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
             Required
           </div>
         </div>
@@ -65,17 +168,30 @@
             type="text"
             class="prefix-input"
             placeholder="jordan-cole"
-            @input="handleSlug"
-            @blur="blurSlug"
+            @input="onSlugInput"
+            @blur="onSlugBlur"
           >
+          <span v-if="slugStatus === 'checking'" class="slug-status-icon">
+            <UIcon name="i-lucide-loader-circle" class="size-3.5 animate-spin" />
+          </span>
+          <span v-else-if="slugStatus === 'available'" class="slug-status-icon ok">
+            <UIcon name="i-lucide-circle-check" class="size-3.5" />
+          </span>
+          <span v-else-if="slugStatus === 'taken' || slugStatus === 'error'" class="slug-status-icon err">
+            <UIcon name="i-lucide-circle-x" class="size-3.5" />
+          </span>
         </div>
-        <div class="field-msg ok" :class="{ show: slugOk }">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <div class="field-msg ok" :class="{ show: slugStatus === 'available' }">
+          <UIcon name="i-lucide-circle-check" class="size-3 shrink-0" />
           fitcoach.io/{{ form.slug }} is available
         </div>
-        <div class="field-msg err" :class="{ show: slugErr }">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Only letters, numbers, and hyphens
+        <div class="field-msg err" :class="{ show: slugStatus === 'taken' }">
+          <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
+          fitcoach.io/{{ form.slug }} is already taken
+        </div>
+        <div class="field-msg err" :class="{ show: slugStatus === 'error' }">
+          <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
+          Could not check availability — please try again
         </div>
       </div>
 
@@ -123,7 +239,7 @@
               v-if="form.specialty === opt.id"
               class="w-[18px] h-[18px] rounded-full bg-primary flex items-center justify-center ml-auto shrink-0"
             >
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              <UIcon name="i-lucide-check" class="size-2.5 text-white" />
             </div>
           </button>
         </div>
@@ -139,107 +255,4 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import StepHeader from '../StepHeader.vue'
-import StepFooter from '../StepFooter.vue'
 
-const props = defineProps<{
-  form: {
-    photo: string | null
-    photoName: string
-    firstName: string
-    lastName: string
-    slug: string
-    bio: string
-    specialty: string | null
-  }
-}>()
-
-const emit = defineEmits<{
-  next: []
-}>()
-
-const firstNameValid = ref(false)
-const firstNameInvalid = ref(false)
-const slugOk = ref(false)
-const slugErr = ref(false)
-const specErr = ref(false)
-const progress = ref(0)
-
-const specialtyOptions = [
-  { id: 'personal-training', emoji: '🏋️', name: 'Personal Training', desc: '1-on-1 in-person sessions' },
-  { id: 'online-coaching',   emoji: '🌐', name: 'Online Coaching', desc: 'Remote program delivery' },
-  { id: 'nutrition',         emoji: '🥗', name: 'Nutrition Coaching', desc: 'Diet, macros & habits' },
-  { id: 'studio',            emoji: '🏢', name: 'Studio / Group', desc: 'Classes & group formats' },
-]
-
-const selectSpec = (id: string) => {
-  props.form.specialty = id
-  specErr.value = false
-}
-
-const liveValFirst = () => {
-  if (firstNameInvalid.value && props.form.firstName.trim()) {
-    firstNameInvalid.value = false
-    firstNameValid.value = true
-  }
-}
-const blurFirst = () => {
-  if (!props.form.firstName.trim()) {
-    firstNameInvalid.value = true
-    firstNameValid.value = false
-  } else {
-    firstNameValid.value = true
-    firstNameInvalid.value = false
-  }
-}
-
-let slugTimer: ReturnType<typeof setTimeout> | null = null
-const handleSlug = () => {
-  slugOk.value = false
-  slugErr.value = false
-  if (slugTimer) clearTimeout(slugTimer)
-  const val = props.form.slug.trim()
-  if (!val) return
-  if (!/^[a-zA-Z0-9-]+$/.test(val)) {
-    slugErr.value = true
-    return
-  }
-  slugTimer = setTimeout(() => { slugOk.value = true }, 500)
-}
-const blurSlug = () => {
-  if (!props.form.slug.trim()) {
-    slugOk.value = false
-    slugErr.value = false
-  }
-}
-
-const onPhotoChange = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-  const reader = new FileReader()
-  reader.onload = ev => {
-    props.form.photo = ev.target?.result as string
-    props.form.photoName = file.name
-  }
-  reader.readAsDataURL(file)
-}
-
-const onContinue = () => {
-  if (!props.form.firstName.trim()) {
-    firstNameInvalid.value = true
-    return
-  }
-  if (!props.form.specialty) {
-    specErr.value = true
-    setTimeout(() => { specErr.value = false }, 1400)
-    return
-  }
-  emit('next')
-}
-
-onMounted(() => {
-  setTimeout(() => { progress.value = 25 }, 120)
-})
-</script>

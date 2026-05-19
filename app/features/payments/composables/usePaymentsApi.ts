@@ -10,7 +10,7 @@ export function usePaymentsApi() {
 
   // --- reads ---
 
-  const list = (params?: { page?: number; per_page?: number; status?: string; search?: string }) =>
+  const list = (params?: { page?: number; per_page?: number; status?: string; payment_type?: string; from?: string; to?: string; client_id?: string }) =>
     $api<HandlersListPaymentsResponse>('/payments', { params })
 
   const get = (id: string) =>

@@ -1,4 +1,4 @@
-import type { HandlersAdvanceOnboardingRequest, ModelsCoach } from '~/services/types.gen'
+import type { HandlersAdvanceOnboardingRequest, HandlersSlugCheckResponse, ModelsCoach } from '~/services/types.gen'
 
 export function useOnboardingApi() {
   const { $api } = useNuxtApp()
@@ -6,5 +6,7 @@ export function useOnboardingApi() {
   const advance = (body: HandlersAdvanceOnboardingRequest) =>
     $api<ModelsCoach>('/me/onboarding', { method: 'PATCH', body })
 
-  return { advance }
+  const checkSlugAvailability = async (slug: string) => $api<HandlersSlugCheckResponse>(`/me/slug-check?slug=${slug}`, { method: 'GET' })
+
+  return { advance, checkSlugAvailability }
 }

@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
 import StepIndicator from './StepIndicator.vue'
 import SuccessOverlay from './SuccessOverlay.vue'
 import Step1Profile from './steps/Step1Profile.vue'
@@ -51,8 +51,15 @@ import { useOnboardingApi } from '~/features/onboarding/composables/useOnboardin
 
 const authStore = useAuthStore()
 const onboardingApi = useOnboardingApi()
+const route = useRoute()
+const router = useRouter()
 
-const currentStep = ref(authStore.coach?.onboarding_step ?? 1)
+function clampStep(raw: unknown): number {
+  const n = parseInt(raw as string)
+  return n >= 1 && n <= 4 ? n : (authStore.coach?.onboarding_step ?? 1)
+}
+
+const currentStep = ref(clampStep(route.query.step))
 const direction = ref<'forward' | 'back'>('forward')
 const success = ref(false)
 const finishing = ref(false)
@@ -63,8 +70,8 @@ const form = reactive({
   // Step 1 — Profile
   photo: null as string | null,
   photoName: '',
-  firstName: authStore.coach?.first_name ?? '',
-  lastName: authStore.coach?.last_name ?? '',
+  firstName: (route.query.first_name as string) || authStore.coach?.first_name || '',
+  lastName: (route.query.last_name as string) || authStore.coach?.last_name || '',
   slug: '',
   bio: '',
   specialty: authStore.coach?.specialty ?? null as string | null,
@@ -134,6 +141,21 @@ const finish = async () => {
 }
 
 const goToDashboard = () => navigateTo('/')
+
+// Keep step in URL immediately when it changes
+watch(currentStep, (step) => {
+  router.replace({ query: { ...route.query, step: String(step) } })
+}, { immediate: true })
+
+// Debounce name changes so we don't spam history on every keystroke
+const syncNamesToUrl = useDebounceFn(() => {
+  const query: Record<string, string> = { step: String(currentStep.value) }
+  if (form.firstName) query.first_name = form.firstName
+  if (form.lastName) query.last_name = form.lastName
+  router.replace({ query })
+}, 400)
+
+watch([() => form.firstName, () => form.lastName], syncNamesToUrl)
 </script>
 
 <style>
