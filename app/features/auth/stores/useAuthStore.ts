@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
-import type { HandlersAuthResponse, ModelsCoach } from '~/services/types.gen'
+import type { HandlersAuthResponse, ModelsCoach, ModelsDashboardStats } from '~/services/types.gen'
 
 export const useAuthStore = defineStore('auth', () => {
   const coach = ref<ModelsCoach | null>(null)
+  const appStats = ref<ModelsDashboardStats | null>(null)
 
   const token = useCookie<string | null>('auth_token', {
     default: () => null,
@@ -30,5 +31,5 @@ export const useAuthStore = defineStore('auth', () => {
     coach.value = null
   }
 
-  return { coach, token, refreshToken, isAuthenticated, setAuth, clearAuth }
+  return { coach, appStats, token, refreshToken, isAuthenticated, setAuth, clearAuth }
 })

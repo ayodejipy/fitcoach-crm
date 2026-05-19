@@ -1,7 +1,7 @@
 <template>
-  <div class="left-panel w-[46%] bg-(--green-deep) relative overflow-hidden flex flex-col pt-9 px-12 pb-10 shrink-0 hidden md:flex">
+  <div class="left-panel w-[46%] bg-(--green-deep) relative overflow-hidden flex-col pt-9 px-12 pb-10 shrink-0 hidden md:flex">
     <!-- Logo -->
-    <div class="flex items-center gap-2.5 relative z-[2] shrink-0">
+    <div class="flex items-center gap-2.5 relative z-2 shrink-0">
       <div class="w-[34px] h-[34px] rounded-[9px] bg-primary flex items-center justify-center shadow-[0_2px_12px_rgba(46,204,113,0.25)] shrink-0">
         <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
           <path d="M12 2L3 7l9 5 9-5-9-5zM3 17l9 5 9-5M3 12l9 5 9-5" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -11,9 +11,9 @@
     </div>
 
     <!-- Copy -->
-    <div class="mt-[52px] relative z-[2] shrink-0">
-      <div class="text-[11px] font-bold tracking-[0.1em] uppercase text-(--green-mid) mb-3.5 flex items-center gap-2 before:content-[''] before:w-5 before:h-[2px] before:bg-(--green-mid) before:rounded-[1px]">Built for coaches</div>
-      <h1 class="text-[34px] font-[900] leading-[1.15] text-white tracking-[-0.8px] mb-4">
+    <div class="mt-[52px] relative z-2 shrink-0">
+      <div class="text-[11px] font-bold tracking-widest uppercase text-(--green-mid) mb-3.5 flex items-center gap-2 before:content-[''] before:w-5 before:h-[2px] before:bg-(--green-mid) before:rounded-[1px]">Built for coaches</div>
+      <h1 class="text-[34px] font-black leading-[1.15] text-white tracking-[-0.8px] mb-4">
         Run your business.<br>
         <em class="not-italic text-primary-light">Not your inbox.</em>
       </h1>
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Value props -->
-    <div class="mt-8 flex flex-col gap-[11px] relative z-[2] shrink-0">
+    <div class="mt-8 flex flex-col gap-[11px] relative z-2 shrink-0">
       <div class="flex items-center gap-[11px]">
         <div class="w-5 h-5 rounded-full bg-[rgba(46,204,113,0.15)] border border-[rgba(46,204,113,0.3)] flex items-center justify-center shrink-0">
           <svg width="10" height="10" fill="none" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="#2ECC71" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -43,7 +43,7 @@
     </div>
 
     <!-- Floating preview cards -->
-    <div class="absolute bottom-[100px] -right-[10px] w-[310px] h-[280px] z-[3]">
+    <div class="absolute bottom-[100px] right-[-10px] w-[310px] h-[280px] z-3">
       <!-- Notification chip -->
       <div class="pc-notif">
         <div class="w-2 h-2 rounded-full bg-primary-light shrink-0 pulse-dot"></div>
@@ -53,25 +53,25 @@
 
       <!-- Card A: Pending check-ins -->
       <div class="pc-checkins dark:bg-gray-900/95 dark:backdrop-blur-md dark:border dark:border-white/10">
-        <div class="text-[9.5px] font-bold uppercase tracking-[0.07em] text-(--text-muted) dark:text-gray-400 mb-2.5 flex items-center justify-between">
+        <div class="text-[9.5px] font-bold uppercase tracking-[0.07em] text-(--text-muted) dark:text-gray-700 mb-2.5 flex items-center justify-between">
           Pending Check-ins
-          <span class="bg-[#FEF3C7] text-[#92400E] dark:bg-[#92400E]/20 dark:text-[#FEF3C7] text-[9px] font-[800] px-1.5 py-0.5 rounded-[20px]">3 unread</span>
+          <span class="bg-[#FEF3C7] text-[#92400E] dark:bg-[#92400E]/40 dark:text-[#f8edbf] text-[9px] font-extrabold px-1.5 py-0.5 rounded-[20px]">3 unread</span>
         </div>
         <div class="flex items-center gap-2 py-1.25 border-b border-[#F3F6F4] dark:border-white/10">
-          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-[800] text-white shrink-0 bg-gradient-to-br from-primary to-primary-400">SR</div>
-          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-white flex-1">Sofia R.</span>
+          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-extrabold text-white shrink-0 bg-linear-to-br from-primary to-primary-400">SR</div>
+          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-gray-600 flex-1">Sofia R.</span>
           <span class="text-[9.5px] text-(--text-muted) dark:text-gray-400">2m</span>
           <div class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></div>
         </div>
         <div class="flex items-center gap-2 py-1.25 border-b border-[#F3F6F4] dark:border-white/10">
-          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-[800] text-white shrink-0 bg-gradient-to-br from-[#2563EB] to-[#60A5FA]">JL</div>
-          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-white flex-1">James L.</span>
+          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-extrabold text-white shrink-0 bg-linear-to-br from-[#2563EB] to-[#60A5FA]">JL</div>
+          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-gray-600 flex-1">James L.</span>
           <span class="text-[9.5px] text-(--text-muted) dark:text-gray-400">4h</span>
           <div class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></div>
         </div>
         <div class="flex items-center gap-2 py-1.25">
-          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-[800] text-white shrink-0 bg-gradient-to-br from-[#9333EA] to-[#C084FC]">MP</div>
-          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-white flex-1">Maya P.</span>
+          <div class="w-[22px] h-[22px] rounded-full flex items-center justify-center text-[8px] font-extrabold text-white shrink-0 bg-linear-to-br from-[#9333EA] to-[#C084FC]">MP</div>
+          <span class="text-[11px] font-semibold text-(--text-primary) dark:text-gray-600 flex-1">Maya P.</span>
           <span class="text-[9.5px] text-(--text-muted) dark:text-gray-400">1d</span>
           <div class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></div>
         </div>
@@ -79,8 +79,8 @@
 
       <!-- Card B: Revenue -->
       <div class="pc-revenue dark:bg-gray-900/95 dark:backdrop-blur-md dark:border dark:border-white/10">
-        <div class="text-[9.5px] font-bold uppercase tracking-[0.07em] text-(--text-muted) dark:text-gray-400 mb-2.5 flex items-center justify-between">Monthly Revenue <span class="bg-(--green-pale) text-primary dark:bg-primary/20 dark:text-(--green-pale) text-[9px] font-[800] px-1.5 py-0.5 rounded-[20px]">↑ 12%</span></div>
-        <div class="text-[24px] font-[900] text-primary dark:text-(--green-light) tracking-[-0.5px] leading-none mb-1">$3,840</div>
+        <div class="text-[9.5px] font-bold uppercase tracking-[0.07em] text-(--text-muted) dark:text-gray-400 mb-2.5 flex items-center justify-between">Monthly Revenue <span class="bg-(--green-pale) text-primary dark:bg-primary/20 dark:text-(--green-pale) text-[9px] font-extrabold px-1.5 py-0.5 rounded-[20px]">↑ 12%</span></div>
+        <div class="text-[24px] font-black text-primary dark:text-(--green-light) tracking-[-0.5px] leading-none mb-1">$3,840</div>
         <div class="text-[10.5px] font-semibold text-primary dark:text-(--green-light) flex items-center gap-[3px] mb-2.5">
           <svg width="10" height="10" fill="none" viewBox="0 0 12 12"><path d="M2 9L6 3l4 6" fill="currentColor"/></svg>
           +$420 vs last month
@@ -100,14 +100,14 @@
     </div><!-- /lp-preview -->
 
     <!-- Social proof -->
-    <div class="mt-auto relative z-[2] flex items-center gap-3 pt-6 border-t border-white/5 shrink-0">
+    <div class="mt-auto relative z-2 flex items-center gap-3 pt-6 border-t border-white/5 shrink-0">
       <div class="flex">
-        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white bg-gradient-to-br from-primary to-primary-400">JR</div>
-        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-gradient-to-br from-[#2563EB] to-[#60A5FA]">KM</div>
-        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-gradient-to-br from-[#9333EA] to-[#C084FC]">TS</div>
-        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-gradient-to-br from-[#D97706] to-[#FCD34D]">AL</div>
+        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white bg-linear-to-br from-primary to-primary-400">JR</div>
+        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-linear-to-br from-[#2563EB] to-[#60A5FA]">KM</div>
+        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-linear-to-br from-[#9333EA] to-[#C084FC]">TS</div>
+        <div class="w-7 h-7 rounded-full border-2 border-(--green-deep) flex items-center justify-center text-[10px] font-bold text-white -ml-2 bg-linear-to-br from-[#D97706] to-[#FCD34D]">AL</div>
       </div>
-      <div class="text-[12px] text-white/45 leading-[1.5]">
+      <div class="text-[12px] text-white/45 leading-normal">
         <div class="text-[#F59E0B] text-[12px] tracking-[0.5px]">★★★★★</div>
         <div><strong class="text-white/70 font-semibold">200+ coaches</strong> have made the switch</div>
       </div>

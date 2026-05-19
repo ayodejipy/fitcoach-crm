@@ -10,7 +10,7 @@ export function useCheckInsApi() {
 
   // --- reads ---
 
-  const list = (params?: { page?: number; per_page?: number; search?: string }) =>
+  const list = (params?: { page?: number; per_page?: number; status?: string; week_start?: string; client_id?: string; search?: string }) =>
     $api<HandlersListCheckInsResponse>('/check-ins', { params })
 
   const get = (id: string) =>

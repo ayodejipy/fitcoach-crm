@@ -47,10 +47,10 @@
 
     <!-- User card -->
     <div class="p-4 border-t border-white/7 flex items-center gap-2.5">
-      <Avatar initials="JR" variant="a" :size="36" />
+      <Avatar :initials="coachInitials" variant="a" :size="36" />
       <div>
-        <div class="text-[13px] font-semibold text-white">Jordan Rivera</div>
-        <div class="text-[11px] text-white/40">Pro Plan · 18 clients</div>
+        <div class="text-[13px] font-semibold text-white">{{ coachDisplayName }}</div>
+        <div class="text-[11px] text-white/40">{{ coachSubtitle }}</div>
       </div>
     </div>
   </aside>
@@ -60,9 +60,29 @@
 import { h } from 'vue'
 import { useRoute } from 'vue-router'
 import Avatar from './Avatar.vue'
+import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 
 const route = useRoute()
 const isActive = (to: string) => route.path === to || (to !== '/' && route.path.startsWith(to))
+
+const authStore = useAuthStore()
+
+const coachInitials = computed(() => {
+  const { first_name, last_name } = authStore.coach ?? {}
+  return `${first_name?.[0] ?? ''}${last_name?.[0] ?? ''}`.toUpperCase() || '?'
+})
+
+const coachDisplayName = computed(() => {
+  const { first_name, last_name } = authStore.coach ?? {}
+  return [first_name, last_name].filter(Boolean).join(' ') || 'Coach'
+})
+
+const coachSubtitle = computed(() => {
+  const plan = authStore.coach?.plan
+  const clients = authStore.appStats?.active_clients
+  const parts = [plan ? `${plan} Plan` : null, clients != null ? `${clients} clients` : null]
+  return parts.filter(Boolean).join(' · ') || 'FitCoach CRM'
+})
 
 // Icon components — rendered inline
 const DashIcon = () => h('svg', { viewBox: '0 0 18 18', fill: 'none' }, [
@@ -98,13 +118,15 @@ const AnalyticsIcon = () => h('svg', { viewBox: '0 0 18 18', fill: 'none' }, [
   h('path', { d: 'M9 5v5l3 2', stroke: 'white', 'stroke-width': 1.5, 'stroke-linecap': 'round' }),
 ])
 
-const mainNav = [
+const unreadCheckIns = computed(() => authStore.appStats?.unread_checkins ?? 0)
+
+const mainNav = computed(() => [
   { label: 'Dashboard', to: '/dashboard', icon: DashIcon },
-  { label: 'Clients',   to: '/clients',   icon: ClientsIcon,  badge: 2 },
+  { label: 'Clients',   to: '/clients',   icon: ClientsIcon },
   { label: 'Schedule',  to: '/schedule',  icon: ScheduleIcon },
-  { label: 'Check-ins', to: '/check-ins', icon: CheckinsIcon, badge: 4 },
+  { label: 'Check-ins', to: '/check-ins', icon: CheckinsIcon, badge: unreadCheckIns.value || undefined },
   { label: 'Payments',  to: '/payments',  icon: PaymentsIcon },
-]
+])
 
 const accountNav = [
   { label: 'Settings',  to: '/settings',  icon: SettingsIcon },

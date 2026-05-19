@@ -75,12 +75,12 @@ async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {
   <div>
     <div class="mb-6">
       <h2 class="text-2xl font-extrabold text-(--text-primary) mb-1.5">Start coaching smarter</h2>
-      <p class="text-sm text-(--text-muted) leading-[1.5]">Free to start — no credit card needed</p>
+      <p class="text-sm text-(--text-muted) leading-normal">Free to start — no credit card needed</p>
     </div>
 
     <!-- Google -->
     <button
-      class="flex items-center justify-center gap-2.5 w-full h-11 bg-(--bg-input) border-[1.5px] border-(--border) rounded-[10px] font-inherit text-sm font-semibold text-(--text-primary) cursor-pointer transition-all duration-150 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-none hover:border-(--border-strong) hover:shadow-[0_2px_8px_rgba(0,0,0,0.07)] hover:-translate-y-px"
+      class="flex items-center justify-center gap-2.5 w-full h-11 bg-(--bg-input) border-[1.5px] border-(--border) rounded-md font-inherit text-sm font-semibold text-(--text-primary) cursor-pointer transition-all duration-150 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-none hover:border-(--border-strong) hover:shadow-[0_2px_8px_rgba(0,0,0,0.07)] hover:-translate-y-px"
       @click="handleGoogleSignIn">
       <svg width="18" height="18" viewBox="0 0 24 24">
         <path
@@ -194,7 +194,7 @@ async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {
       <!-- Terms -->
       <UFormField name="terms">
         <UCheckbox v-model="state.terms" color="primary"
-          :ui="{ wrapper: 'items-start mt-1', label: 'text-[13px] text-(--text-secondary) leading-[1.5]' }">
+          :ui="{ wrapper: 'items-start mt-1', label: 'text-[13px] text-(--text-secondary) leading-normal' }">
           <template #label>
             I agree to the
             <a href="#" class="text-primary font-semibold no-underline hover:underline" @click.prevent>Terms of
@@ -207,7 +207,7 @@ async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {
       </UFormField>
 
       <UButton type="submit" size="xl" block color="primary"
-        class="h-[46px] rounded-[11px] font-[700] text-[15px] tracking-[-0.1px] shadow-(--shadow-button) hover:shadow-(--shadow-button-hover)"
+        class="h-[46px] rounded-[11px] font-bold text-[15px] tracking-[-0.1px] shadow-(--shadow-button) hover:shadow-(--shadow-button-hover)"
         :loading="isSubmitting" trailing-icon="i-heroicons-arrow-right-20-solid">
         {{ isSubmitting ? 'Creating your account…' : 'Create my free account' }}
       </UButton>

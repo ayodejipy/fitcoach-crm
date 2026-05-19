@@ -15,7 +15,7 @@
     <!-- Toggle -->
     <div class="bg-(--bg-surface-muted) rounded-[11px] p-1 flex relative mb-8 w-fit" ref="toggleContainer">
       <div
-        class="absolute top-1 bottom-1 bg-white dark:bg-gray-800 rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.1),_0_0_0_1px_rgba(0,0,0,0.04)] dark:shadow-none dark:border dark:border-white/10 transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        class="absolute top-1 bottom-1 bg-white dark:bg-gray-800 rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.1),0_0_0_1px_rgba(0,0,0,0.04)] dark:shadow-none dark:border dark:border-white/10 transition-all duration-250 ease-in-out"
         :style="{ left: sliderLeft, width: sliderWidth }"></div>
       <button
         class="relative z-1 bg-transparent border-none cursor-pointer font-inherit text-[13.5px] font-semibold px-[22px] py-2 rounded-lg transition-colors whitespace-nowrap"
