@@ -5,5 +5,9 @@ export default defineConfig({
   output: {
     path: './app/services/',
   },
-  plugins: ['@hey-api/typescript'],
+  plugins: [
+    '@hey-api/typescript',
+    '@hey-api/client-fetch',
+    '@hey-api/sdk',
+  ],
 })
