@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core'
 import { getApiV1Me } from '~/services/sdk.gen'
+import { useAuthStore } from '~/features/auth/stores/useAuthStore'
+import type { ModelsCoach } from '~/services'
 
 definePageMeta({ layout: 'auth' })
 
@@ -27,11 +29,11 @@ onMounted(async () => {
 
     // Fetch the coach profile — getApiV1Me will now include the Authorization header
     const coach = await getApiV1Me()
-    authStore.coach = coach
+    authStore.coach = coach.data as ModelsCoach
     // set login method to sso
     isSSOLogin.value = true
 
-    await navigateTo(coach.onboarding_done ? '/dashboard' : '/onboarding')
+    await navigateTo(coach.data?.onboarding_done ? '/dashboard' : '/onboarding')
   } catch {
     authStore.clearAuth()
     errorMsg.value = 'Sign-in failed. Please try again.'
