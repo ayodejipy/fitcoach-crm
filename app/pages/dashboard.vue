@@ -21,6 +21,10 @@ import { fmtTime, fmtDate, fmtRelative, centsToStr } from '~/features/dashboard/
 
 definePageMeta({ layout: 'app' })
 
+useSeoMeta({
+  title: 'Dashboard | FitCoach CRM',
+})
+
 const authStore = useAuthStore()
 const dashboardApi = useDashboardApi()
 const scheduleApi = useScheduleApi()
@@ -32,8 +36,8 @@ const todayStart = new Date(); todayStart.setHours(0, 0, 0, 0)
 const tomorrow = new Date(todayStart); tomorrow.setDate(tomorrow.getDate() + 1)
 const sixMoAgo = new Date(); sixMoAgo.setMonth(sixMoAgo.getMonth() - 6); sixMoAgo.setDate(1); sixMoAgo.setHours(0, 0, 0, 0)
 
-const { data, pending, error } = await useAsyncData('dashboard', () =>
-  Promise.all([
+const { data, pending, error } = await useAsyncData('dashboard', async () => {
+  const results = await Promise.allSettled([
     dashboardApi.getStats(),
     scheduleApi.list({ from: todayStart.toISOString(), to: tomorrow.toISOString(), per_page: 10 }),
     checkInsApi.list({ status: 'unread', per_page: 5 }),
@@ -41,7 +45,17 @@ const { data, pending, error } = await useAsyncData('dashboard', () =>
     paymentsApi.list({ per_page: 5 }),
     paymentsApi.list({ from: sixMoAgo.toISOString(), per_page: 100 }),
   ])
-)
+
+  // Log failures for rejected promises safely
+  results.forEach((res, idx) => {
+    if (res.status === 'rejected') {
+      console.warn(`[Dashboard fetch warning] Request #${idx} failed:`, res.reason)
+    }
+  })
+
+  // Return the mapped values, defaulting failed queries to null
+  return results.map(res => (res.status === 'fulfilled' ? res.value : null))
+})
 
 const stats      = computed(() => data.value?.[0])
 const sessions   = computed((): ModelsCoachSession[]  => data.value?.[1]?.sessions   ?? [])

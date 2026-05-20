@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useStorage } from '@vueuse/core'
-import type { ModelsCoach } from '~/services/types.gen'
-import { useAuthStore } from '~/features/auth/stores/useAuthStore'
+import { getApiV1Me } from '~/services/sdk.gen'
 
 definePageMeta({ layout: 'auth' })
 
@@ -9,7 +8,6 @@ const isSSOLogin = useStorage<boolean>(IS_SSO_LOGIN, false)
 
 const route = useRoute()
 const authStore = useAuthStore()
-const { $api } = useNuxtApp()
 
 const errorMsg = ref<string | null>(null)
 
@@ -27,8 +25,8 @@ onMounted(async () => {
     authStore.token = accessToken
     authStore.refreshToken = refreshToken
 
-    // Fetch the coach profile — $api will now include the Authorization header
-    const coach = await $api<ModelsCoach>('/me')
+    // Fetch the coach profile — getApiV1Me will now include the Authorization header
+    const coach = await getApiV1Me()
     authStore.coach = coach
     // set login method to sso
     isSSOLogin.value = true

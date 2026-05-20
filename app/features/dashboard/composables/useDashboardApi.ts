@@ -1,10 +1,7 @@
-import type { ModelsDashboardStats } from '~/services/types.gen'
+import { getApiV1MeDashboard } from '~/services/sdk.gen'
 
 export function useDashboardApi() {
-  const { $api } = useNuxtApp()
-
-  const getStats = () =>
-    $api<ModelsDashboardStats>('/me/dashboard')
+  const getStats = () => getApiV1MeDashboard()
 
   return { getStats }
 }

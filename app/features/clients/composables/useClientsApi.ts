@@ -1,34 +1,38 @@
+import {
+  getApiV1Clients,
+  getApiV1ClientsById,
+  postApiV1ClientsByIdInvitePortal,
+  postApiV1Clients,
+  patchApiV1ClientsById,
+  deleteApiV1ClientsById,
+} from '~/services/sdk.gen'
 import type {
-  HandlersListClientsResponse,
   HandlersCreateClientRequest,
   HandlersUpdateClientRequest,
-  ModelsClient,
 } from '~/services/types.gen'
 
 export function useClientsApi() {
-  const { $api } = useNuxtApp()
-
   // --- reads ---
 
   const list = (params?: { page?: number; per_page?: number; status?: string; search?: string }) =>
-    $api<HandlersListClientsResponse>('/clients', { params })
+    getApiV1Clients({ query: params })
 
   const get = (id: string) =>
-    $api<ModelsClient>(`/clients/${id}`)
+    getApiV1ClientsById({ path: { id } })
 
   const invite = (id: string) =>
-    $api(`/clients/${id}/invite-portal`, { method: 'POST' })
+    postApiV1ClientsByIdInvitePortal({ path: { id } })
 
   // --- mutations ---
 
   const create = (body: HandlersCreateClientRequest) =>
-    $api<ModelsClient>('/clients', { method: 'POST', body })
+    postApiV1Clients({ body })
 
   const update = (id: string, body: HandlersUpdateClientRequest) =>
-    $api<ModelsClient>(`/clients/${id}`, { method: 'PATCH', body })
+    patchApiV1ClientsById({ path: { id }, body })
 
   const remove = (id: string) =>
-    $api(`/clients/${id}`, { method: 'DELETE' })
+    deleteApiV1ClientsById({ path: { id } })
 
   return { list, get, invite, create, update, remove }
 }
