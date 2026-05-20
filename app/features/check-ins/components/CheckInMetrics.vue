@@ -1,3 +1,61 @@
+<script setup lang="ts">
+import SegmentBar from './SegmentBar.vue'
+
+export type DeltaTone = 'good' | 'warn' | 'alert' | 'muted'
+
+export interface CheckInMetricsData {
+  energy: { value: number; delta: string; deltaTone: DeltaTone }
+  sleep:  { value: number; delta: string; deltaTone: DeltaTone }
+  adherence: { done: number; total: number; delta: string; deltaTone: DeltaTone }
+  weight: {
+    value: number
+    unit: string
+    trend: 'up' | 'down' | 'flat'
+    delta: string
+    deltaTone: DeltaTone
+    history: number[]
+  }
+}
+
+const { metrics } = defineProps<{
+  metrics: CheckInMetricsData
+}>()
+
+const gradId = `weightGrad-${useId()}`
+
+const deltaToneClass = (t: DeltaTone) => ({
+  good:  'text-primary dark:text-(--green-light)',
+  warn:  'text-[#E67E22]',
+  alert: 'text-[#E74C3C]',
+  muted: 'text-[#6B8F72] dark:text-(--text-muted)',
+}[t])
+
+// Plot the sparkline over viewBox 0..180 × 0..28
+const points = computed(() => {
+  const vals = metrics.weight.history
+  if (!vals.length) return [] as Array<{ x: number; y: number }>
+  const min = Math.min(...vals)
+  const max = Math.max(...vals)
+  const range = max - min || 1
+  return vals.map((v, i) => ({
+    x: (i / Math.max(vals.length - 1, 1)) * 180,
+    y: 28 - ((v - min) / range) * 28,
+  }))
+})
+
+const linePoints = computed(() => points.value.map((p) => `${p.x},${p.y}`).join(' '))
+const areaPoints = computed(() => {
+  const p = points.value
+  if (!p.length) return ''
+  const forward = p.map((pt) => `${pt.x},${pt.y}`).join(' ')
+  const last = p[p.length - 1]!
+  const first = p[0]!
+  return `${forward} ${last.x},28 ${first.x},28`
+})
+const lastPoint = computed(() => points.value[points.value.length - 1] ?? { x: 0, y: 0 })
+</script>
+
+
 <template>
   <div>
     <div class="section-label">
@@ -109,63 +167,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import SegmentBar from './SegmentBar.vue'
-
-export type DeltaTone = 'good' | 'warn' | 'alert' | 'muted'
-
-export interface CheckInMetricsData {
-  energy: { value: number; delta: string; deltaTone: DeltaTone }
-  sleep:  { value: number; delta: string; deltaTone: DeltaTone }
-  adherence: { done: number; total: number; delta: string; deltaTone: DeltaTone }
-  weight: {
-    value: number
-    unit: string
-    trend: 'up' | 'down' | 'flat'
-    delta: string
-    deltaTone: DeltaTone
-    history: number[]
-  }
-}
-
-const props = defineProps<{
-  metrics: CheckInMetricsData
-}>()
-
-const gradId = computed(() => `weightGrad-${Math.random().toString(36).slice(2, 8)}`)
-
-const deltaToneClass = (t: DeltaTone) => ({
-  good:  'text-primary dark:text-(--green-light)',
-  warn:  'text-[#E67E22]',
-  alert: 'text-[#E74C3C]',
-  muted: 'text-[#6B8F72] dark:text-(--text-muted)',
-}[t])
-
-// Plot the sparkline over viewBox 0..180 × 0..28
-const points = computed(() => {
-  const vals = props.metrics.weight.history
-  if (!vals.length) return [] as Array<{ x: number; y: number }>
-  const min = Math.min(...vals)
-  const max = Math.max(...vals)
-  const range = max - min || 1
-  return vals.map((v, i) => ({
-    x: (i / Math.max(vals.length - 1, 1)) * 180,
-    y: 28 - ((v - min) / range) * 28,
-  }))
-})
-
-const linePoints = computed(() => points.value.map((p) => `${p.x},${p.y}`).join(' '))
-const areaPoints = computed(() => {
-  const p = points.value
-  if (!p.length) return ''
-  const forward = p.map((pt) => `${pt.x},${pt.y}`).join(' ')
-  const last = p[p.length - 1]!
-  const first = p[0]!
-  return `${forward} ${last.x},28 ${first.x},28`
-})
-const lastPoint = computed(() => points.value[points.value.length - 1] ?? { x: 0, y: 0 })
-</script>
 
 <style scoped>
 .section-label {

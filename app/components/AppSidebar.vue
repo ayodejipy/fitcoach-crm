@@ -1,88 +1,12 @@
-<template>
-  <aside class="fixed top-0 left-0 bottom-0 w-60 min-h-screen bg-(--green-deep) flex flex-col shrink-0">
-    <!-- Logo -->
-    <div class="pt-7 px-6 pb-6 border-b border-white/7">
-      <div class="flex items-center gap-2.5">
-        <div class="w-9 h-9 rounded-md flex items-center justify-center bg-linear-to-br from-(--green-light) to-primary">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h2M14 10h2M10 4v2M10 14v2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="10" cy="10" r="3" stroke="#fff" stroke-width="2"/>
-            <path d="M6.5 6.5l1.5 1.5M12 12l1.5 1.5M13.5 6.5L12 8M8 12l-1.5 1.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <div class="text-[17px] font-bold text-white tracking-[-0.3px] leading-tight">FitCoach</div>
-          <div class="text-[11px] font-medium text-[#6EE7A0] mt-px">CRM</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Nav -->
-    <nav class="py-4 px-3 flex-1">
-      <div class="text-[10px] font-semibold uppercase tracking-[1px] text-white/30 py-3 px-3">Main</div>
-      <NuxtLink
-        v-for="item in mainNav"
-        :key="item.to"
-        :to="item.to"
-        class="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer transition-colors duration-150 mb-0.5 no-underline hover:bg-white/7"
-        :class="{ 'bg-primary shadow-[0_2px_8px_rgba(26,122,74,0.35)]': isActive(item.to) }"
-      >
-        <component :is="item.icon" class="w-[18px] h-[18px] opacity-75 shrink-0" :class="{ 'opacity-100!': isActive(item.to) }" />
-        <span class="text-sm font-medium text-white/70" :class="{ 'text-white! font-semibold!': isActive(item.to) }">{{ item.label }}</span>
-        <span v-if="item.badge" class="ml-auto bg-[#E74C3C] text-white text-[11px] font-bold px-1.5 py-px rounded-md">{{ item.badge }}</span>
-      </NuxtLink>
-
-      <div class="text-[10px] font-semibold uppercase tracking-[1px] text-white/30 py-3 px-3 mt-3">Account</div>
-      <NuxtLink
-        v-for="item in accountNav"
-        :key="item.to"
-        :to="item.to"
-        class="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer transition-colors duration-150 mb-0.5 no-underline hover:bg-white/7"
-        :class="{ 'bg-primary shadow-[0_2px_8px_rgba(26,122,74,0.35)]': isActive(item.to) }"
-      >
-        <component :is="item.icon" class="w-[18px] h-[18px] opacity-75 shrink-0" :class="{ 'opacity-100!': isActive(item.to) }" />
-        <span class="text-sm font-medium text-white/70" :class="{ 'text-white! font-semibold!': isActive(item.to) }">{{ item.label }}</span>
-      </NuxtLink>
-    </nav>
-
-    <!-- User card -->
-    <div class="p-4 border-t border-white/7 flex items-center gap-2.5">
-      <Avatar :initials="coachInitials" variant="a" :size="36" />
-      <div>
-        <div class="text-[13px] font-semibold text-white">{{ coachDisplayName }}</div>
-        <div class="text-[11px] text-white/40">{{ coachSubtitle }}</div>
-      </div>
-    </div>
-  </aside>
-</template>
-
 <script setup lang="ts">
 import { h } from 'vue'
 import { useRoute } from 'vue-router'
-import Avatar from './Avatar.vue'
 import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 
 const route = useRoute()
 const isActive = (to: string) => route.path === to || (to !== '/' && route.path.startsWith(to))
 
 const authStore = useAuthStore()
-
-const coachInitials = computed(() => {
-  const { first_name, last_name } = authStore.coach ?? {}
-  return `${first_name?.[0] ?? ''}${last_name?.[0] ?? ''}`.toUpperCase() || '?'
-})
-
-const coachDisplayName = computed(() => {
-  const { first_name, last_name } = authStore.coach ?? {}
-  return [first_name, last_name].filter(Boolean).join(' ') || 'Coach'
-})
-
-const coachSubtitle = computed(() => {
-  const plan = authStore.coach?.plan
-  const clients = authStore.appStats?.active_clients
-  const parts = [plan ? `${plan} Plan` : null, clients != null ? `${clients} clients` : null]
-  return parts.filter(Boolean).join(' · ') || 'FitCoach CRM'
-})
 
 // Icon components — rendered inline
 const DashIcon = () => h('svg', { viewBox: '0 0 18 18', fill: 'none' }, [
@@ -133,3 +57,56 @@ const accountNav = [
   // { label: 'Analytics', to: '/analytics', icon: AnalyticsIcon },
 ]
 </script>
+
+<template>
+  <aside class="fixed top-0 left-0 bottom-0 w-60 min-h-screen bg-(--green-deep) flex flex-col shrink-0">
+    <!-- Logo -->
+    <div class="pt-7 px-6 pb-6 border-b border-white/7">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-md flex items-center justify-center bg-linear-to-br from-(--green-light) to-primary">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10h2M14 10h2M10 4v2M10 14v2" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="10" cy="10" r="3" stroke="#fff" stroke-width="2"/>
+            <path d="M6.5 6.5l1.5 1.5M12 12l1.5 1.5M13.5 6.5L12 8M8 12l-1.5 1.5" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="text-[17px] font-bold text-white tracking-[-0.3px] leading-tight">FitCoach</div>
+          <div class="text-[11px] font-medium text-[#6EE7A0] mt-px">CRM</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="py-4 px-3 flex-1">
+      <div class="text-[10px] font-semibold uppercase tracking-[1px] text-white/30 py-3 px-3">Main</div>
+      <NuxtLink
+        v-for="item in mainNav"
+        :key="item.to"
+        :to="item.to"
+        class="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer transition-colors duration-150 mb-0.5 no-underline hover:bg-white/7"
+        :class="{ 'bg-primary shadow-[0_2px_8px_rgba(26,122,74,0.35)]': isActive(item.to) }"
+      >
+        <component :is="item.icon" class="w-[18px] h-[18px] opacity-75 shrink-0" :class="{ 'opacity-100!': isActive(item.to) }" />
+        <span class="text-sm font-medium text-white/70" :class="{ 'text-white! font-semibold!': isActive(item.to) }">{{ item.label }}</span>
+        <span v-if="item.badge" class="ml-auto bg-[#E74C3C] text-white text-[11px] font-bold px-1.5 py-px rounded-md">{{ item.badge }}</span>
+      </NuxtLink>
+
+      <div class="text-[10px] font-semibold uppercase tracking-[1px] text-white/30 py-3 px-3 mt-3">Account</div>
+      <NuxtLink
+        v-for="item in accountNav"
+        :key="item.to"
+        :to="item.to"
+        class="flex items-center gap-2.5 py-2.5 px-3 rounded-lg cursor-pointer transition-colors duration-150 mb-0.5 no-underline hover:bg-white/7"
+        :class="{ 'bg-primary shadow-[0_2px_8px_rgba(26,122,74,0.35)]': isActive(item.to) }"
+      >
+        <component :is="item.icon" class="w-[18px] h-[18px] opacity-75 shrink-0" :class="{ 'opacity-100!': isActive(item.to) }" />
+        <span class="text-sm font-medium text-white/70" :class="{ 'text-white! font-semibold!': isActive(item.to) }">{{ item.label }}</span>
+      </NuxtLink>
+    </nav>
+
+    <SidebarUserMenu />
+  </aside>
+</template>
+
+
