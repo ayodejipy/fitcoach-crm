@@ -26,14 +26,16 @@ onMounted(async () => {
     // Write tokens into the store
     authStore.token = accessToken
     authStore.refreshToken = refreshToken
-
+    
     // Fetch the coach profile — getApiV1Me will now include the Authorization header
     const coach = await getApiV1Me()
-    authStore.coach = coach.data as ModelsCoach
+    authStore.coach = coach as ModelsCoach
+    console.log("Authenticated and no coach Callback", authStore.coach)
+    console.log("coach from callback: ", coach)
     // set login method to sso
     isSSOLogin.value = true
 
-    await navigateTo(coach.data?.onboarding_done ? '/dashboard' : '/onboarding')
+    await navigateTo(coach?.onboarding_done ? '/dashboard' : '/onboarding')
   } catch {
     authStore.clearAuth()
     errorMsg.value = 'Sign-in failed. Please try again.'

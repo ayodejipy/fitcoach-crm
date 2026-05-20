@@ -23,21 +23,30 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
  *
  * Redirects the browser to Google's consent screen. Hit this in a browser, not via curl.
  */
-export const getApiV1AuthGoogle = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1AuthGoogleData, ThrowOnError>) => (options?.client ?? client).get<unknown, GetApiV1AuthGoogleErrors, ThrowOnError>({ url: '/api/v1/auth/google', ...options });
+export const getApiV1AuthGoogle = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1AuthGoogleData, ThrowOnError>) => (options?.client ?? client).get<unknown, GetApiV1AuthGoogleErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api/v1/auth/google',
+    ...options
+});
 
 /**
  * Google OAuth callback
  *
  * Handles Google's redirect after sign-in. On success, 302-redirects to {frontend}/auth/google/callback?access_token=...&refresh_token=...
  */
-export const getApiV1AuthGoogleCallback = <ThrowOnError extends boolean = false>(options: Options<GetApiV1AuthGoogleCallbackData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1AuthGoogleCallbackErrors, ThrowOnError>({ url: '/api/v1/auth/google/callback', ...options });
+export const getApiV1AuthGoogleCallback = <ThrowOnError extends boolean = true>(options: Options<GetApiV1AuthGoogleCallbackData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1AuthGoogleCallbackErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api/v1/auth/google/callback',
+    ...options
+});
 
 /**
  * Log in a coach
  *
  * Email/password login. Returns access + refresh tokens.
  */
-export const postApiV1AuthLogin = <ThrowOnError extends boolean = false>(options: Options<PostApiV1AuthLoginData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthLoginResponses, PostApiV1AuthLoginErrors, ThrowOnError>({
+export const postApiV1AuthLogin = <ThrowOnError extends boolean = true>(options: Options<PostApiV1AuthLoginData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthLoginResponses, PostApiV1AuthLoginErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/auth/login',
     ...options,
     headers: {
@@ -51,7 +60,8 @@ export const postApiV1AuthLogin = <ThrowOnError extends boolean = false>(options
  *
  * Revokes the supplied refresh token. Idempotent.
  */
-export const postApiV1AuthLogout = <ThrowOnError extends boolean = false>(options: Options<PostApiV1AuthLogoutData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthLogoutResponses, PostApiV1AuthLogoutErrors, ThrowOnError>({
+export const postApiV1AuthLogout = <ThrowOnError extends boolean = true>(options: Options<PostApiV1AuthLogoutData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthLogoutResponses, PostApiV1AuthLogoutErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/auth/logout',
     ...options,
     headers: {
@@ -65,7 +75,8 @@ export const postApiV1AuthLogout = <ThrowOnError extends boolean = false>(option
  *
  * Exchanges a valid refresh token for a new access+refresh pair. Old refresh token is revoked. Reuse of a revoked token revokes all of the user's sessions.
  */
-export const postApiV1AuthRefresh = <ThrowOnError extends boolean = false>(options: Options<PostApiV1AuthRefreshData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthRefreshResponses, PostApiV1AuthRefreshErrors, ThrowOnError>({
+export const postApiV1AuthRefresh = <ThrowOnError extends boolean = true>(options: Options<PostApiV1AuthRefreshData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthRefreshResponses, PostApiV1AuthRefreshErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/auth/refresh',
     ...options,
     headers: {
@@ -79,7 +90,8 @@ export const postApiV1AuthRefresh = <ThrowOnError extends boolean = false>(optio
  *
  * Email/password coach registration. Returns access + refresh tokens.
  */
-export const postApiV1AuthSignup = <ThrowOnError extends boolean = false>(options: Options<PostApiV1AuthSignupData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthSignupResponses, PostApiV1AuthSignupErrors, ThrowOnError>({
+export const postApiV1AuthSignup = <ThrowOnError extends boolean = true>(options: Options<PostApiV1AuthSignupData, ThrowOnError>) => (options.client ?? client).post<PostApiV1AuthSignupResponses, PostApiV1AuthSignupErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/auth/signup',
     ...options,
     headers: {
@@ -93,7 +105,8 @@ export const postApiV1AuthSignup = <ThrowOnError extends boolean = false>(option
  *
  * Coach view, with optional filters. status = "unread" | "responded" | "pending" (read but not yet responded).
  */
-export const getApiV1CheckIns = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1CheckInsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1CheckInsResponses, GetApiV1CheckInsErrors, ThrowOnError>({
+export const getApiV1CheckIns = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1CheckInsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1CheckInsResponses, GetApiV1CheckInsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/check-ins',
     ...options
@@ -102,7 +115,8 @@ export const getApiV1CheckIns = <ThrowOnError extends boolean = false>(options?:
 /**
  * Get one check-in (coach view)
  */
-export const getApiV1CheckInsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1CheckInsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1CheckInsByIdResponses, GetApiV1CheckInsByIdErrors, ThrowOnError>({
+export const getApiV1CheckInsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1CheckInsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1CheckInsByIdResponses, GetApiV1CheckInsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/check-ins/{id}',
     ...options
@@ -113,7 +127,8 @@ export const getApiV1CheckInsById = <ThrowOnError extends boolean = false>(optio
  *
  * Saves the coach's private working response. Send {"draft":""} or {"draft":null} to clear.
  */
-export const patchApiV1CheckInsByIdDraft = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1CheckInsByIdDraftData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1CheckInsByIdDraftResponses, PatchApiV1CheckInsByIdDraftErrors, ThrowOnError>({
+export const patchApiV1CheckInsByIdDraft = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1CheckInsByIdDraftData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1CheckInsByIdDraftResponses, PatchApiV1CheckInsByIdDraftErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/check-ins/{id}/draft',
     ...options,
@@ -126,7 +141,8 @@ export const patchApiV1CheckInsByIdDraft = <ThrowOnError extends boolean = false
 /**
  * Mark a check-in as read
  */
-export const postApiV1CheckInsByIdRead = <ThrowOnError extends boolean = false>(options: Options<PostApiV1CheckInsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1CheckInsByIdReadResponses, PostApiV1CheckInsByIdReadErrors, ThrowOnError>({
+export const postApiV1CheckInsByIdRead = <ThrowOnError extends boolean = true>(options: Options<PostApiV1CheckInsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1CheckInsByIdReadResponses, PostApiV1CheckInsByIdReadErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/check-ins/{id}/read',
     ...options
@@ -137,7 +153,8 @@ export const postApiV1CheckInsByIdRead = <ThrowOnError extends boolean = false>(
  *
  * Publishes the coach's response. Marks the check-in as read and clears any draft. Use PATCH /draft for autosave.
  */
-export const postApiV1CheckInsByIdRespond = <ThrowOnError extends boolean = false>(options: Options<PostApiV1CheckInsByIdRespondData, ThrowOnError>) => (options.client ?? client).post<PostApiV1CheckInsByIdRespondResponses, PostApiV1CheckInsByIdRespondErrors, ThrowOnError>({
+export const postApiV1CheckInsByIdRespond = <ThrowOnError extends boolean = true>(options: Options<PostApiV1CheckInsByIdRespondData, ThrowOnError>) => (options.client ?? client).post<PostApiV1CheckInsByIdRespondResponses, PostApiV1CheckInsByIdRespondErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/check-ins/{id}/respond',
     ...options,
@@ -152,7 +169,8 @@ export const postApiV1CheckInsByIdRespond = <ThrowOnError extends boolean = fals
  *
  * Returns the authenticated coach's clients. Supports status filter, free-text search, and offset pagination.
  */
-export const getApiV1Clients = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1ClientsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1ClientsResponses, GetApiV1ClientsErrors, ThrowOnError>({
+export const getApiV1Clients = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1ClientsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1ClientsResponses, GetApiV1ClientsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients',
     ...options
@@ -161,7 +179,8 @@ export const getApiV1Clients = <ThrowOnError extends boolean = false>(options?: 
 /**
  * Create a client
  */
-export const postApiV1Clients = <ThrowOnError extends boolean = false>(options: Options<PostApiV1ClientsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1ClientsResponses, PostApiV1ClientsErrors, ThrowOnError>({
+export const postApiV1Clients = <ThrowOnError extends boolean = true>(options: Options<PostApiV1ClientsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1ClientsResponses, PostApiV1ClientsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients',
     ...options,
@@ -176,7 +195,8 @@ export const postApiV1Clients = <ThrowOnError extends boolean = false>(options: 
  *
  * Sets status to "ended". Historical data (check-ins, sessions, payments) is preserved.
  */
-export const deleteApiV1ClientsById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1ClientsByIdResponses, DeleteApiV1ClientsByIdErrors, ThrowOnError>({
+export const deleteApiV1ClientsById = <ThrowOnError extends boolean = true>(options: Options<DeleteApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1ClientsByIdResponses, DeleteApiV1ClientsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients/{id}',
     ...options
@@ -185,7 +205,8 @@ export const deleteApiV1ClientsById = <ThrowOnError extends boolean = false>(opt
 /**
  * Get one client
  */
-export const getApiV1ClientsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1ClientsByIdResponses, GetApiV1ClientsByIdErrors, ThrowOnError>({
+export const getApiV1ClientsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1ClientsByIdResponses, GetApiV1ClientsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients/{id}',
     ...options
@@ -194,7 +215,8 @@ export const getApiV1ClientsById = <ThrowOnError extends boolean = false>(option
 /**
  * Update a client (partial)
  */
-export const patchApiV1ClientsById = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1ClientsByIdResponses, PatchApiV1ClientsByIdErrors, ThrowOnError>({
+export const patchApiV1ClientsById = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1ClientsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1ClientsByIdResponses, PatchApiV1ClientsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients/{id}',
     ...options,
@@ -209,7 +231,8 @@ export const patchApiV1ClientsById = <ThrowOnError extends boolean = false>(opti
  *
  * Generates a one-time portal invite token for a client. The raw token + invite URL is returned in the response so the coach's frontend can send the email. Expires in 7 days. Re-calling supersedes any prior invite.
  */
-export const postApiV1ClientsByIdInvitePortal = <ThrowOnError extends boolean = false>(options: Options<PostApiV1ClientsByIdInvitePortalData, ThrowOnError>) => (options.client ?? client).post<PostApiV1ClientsByIdInvitePortalResponses, PostApiV1ClientsByIdInvitePortalErrors, ThrowOnError>({
+export const postApiV1ClientsByIdInvitePortal = <ThrowOnError extends boolean = true>(options: Options<PostApiV1ClientsByIdInvitePortalData, ThrowOnError>) => (options.client ?? client).post<PostApiV1ClientsByIdInvitePortalResponses, PostApiV1ClientsByIdInvitePortalErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/clients/{id}/invite-portal',
     ...options
@@ -218,7 +241,8 @@ export const postApiV1ClientsByIdInvitePortal = <ThrowOnError extends boolean = 
 /**
  * Get my profile (coach view)
  */
-export const getApiV1Me = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1MeData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeResponses, GetApiV1MeErrors, ThrowOnError>({
+export const getApiV1Me = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1MeData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeResponses, GetApiV1MeErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me',
     ...options
@@ -227,7 +251,8 @@ export const getApiV1Me = <ThrowOnError extends boolean = false>(options?: Optio
 /**
  * Update my profile
  */
-export const patchApiV1Me = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1MeData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeResponses, PatchApiV1MeErrors, ThrowOnError>({
+export const patchApiV1Me = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1MeData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeResponses, PatchApiV1MeErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me',
     ...options,
@@ -240,8 +265,9 @@ export const patchApiV1Me = <ThrowOnError extends boolean = false>(options: Opti
 /**
  * Upload coach avatar
  */
-export const postApiV1MeAvatar = <ThrowOnError extends boolean = false>(options: Options<PostApiV1MeAvatarData, ThrowOnError>) => (options.client ?? client).post<PostApiV1MeAvatarResponses, PostApiV1MeAvatarErrors, ThrowOnError>({
+export const postApiV1MeAvatar = <ThrowOnError extends boolean = true>(options: Options<PostApiV1MeAvatarData, ThrowOnError>) => (options.client ?? client).post<PostApiV1MeAvatarResponses, PostApiV1MeAvatarErrors, ThrowOnError, 'data'>({
     ...formDataBodySerializer,
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/avatar',
     ...options,
@@ -256,7 +282,8 @@ export const postApiV1MeAvatar = <ThrowOnError extends boolean = false>(options:
  *
  * Single round-trip via SQL function. Returns active_clients, checkins_this_week, unread_checkins, sessions_today.
  */
-export const getApiV1MeDashboard = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1MeDashboardData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeDashboardResponses, GetApiV1MeDashboardErrors, ThrowOnError>({
+export const getApiV1MeDashboard = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1MeDashboardData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeDashboardResponses, GetApiV1MeDashboardErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/dashboard',
     ...options
@@ -267,7 +294,8 @@ export const getApiV1MeDashboard = <ThrowOnError extends boolean = false>(option
  *
  * Records the coach's current onboarding step (1–4). Step can only advance (lower values are ignored). onboarding_done flips to true automatically when step reaches 4.
  */
-export const patchApiV1MeOnboarding = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1MeOnboardingData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeOnboardingResponses, PatchApiV1MeOnboardingErrors, ThrowOnError>({
+export const patchApiV1MeOnboarding = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1MeOnboardingData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeOnboardingResponses, PatchApiV1MeOnboardingErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/onboarding',
     ...options,
@@ -280,7 +308,8 @@ export const patchApiV1MeOnboarding = <ThrowOnError extends boolean = false>(opt
 /**
  * Get my settings
  */
-export const getApiV1MeSettings = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1MeSettingsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeSettingsResponses, GetApiV1MeSettingsErrors, ThrowOnError>({
+export const getApiV1MeSettings = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1MeSettingsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1MeSettingsResponses, GetApiV1MeSettingsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/settings',
     ...options
@@ -291,7 +320,8 @@ export const getApiV1MeSettings = <ThrowOnError extends boolean = false>(options
  *
  * Updates scalar fields. To replace custom_questions, use PUT /api/v1/me/settings/custom-questions.
  */
-export const patchApiV1MeSettings = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1MeSettingsData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeSettingsResponses, PatchApiV1MeSettingsErrors, ThrowOnError>({
+export const patchApiV1MeSettings = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1MeSettingsData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1MeSettingsResponses, PatchApiV1MeSettingsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/settings',
     ...options,
@@ -306,7 +336,8 @@ export const patchApiV1MeSettings = <ThrowOnError extends boolean = false>(optio
  *
  * Full replace (PUT semantics). Send the entire desired array. Send an empty array to clear.
  */
-export const putApiV1MeSettingsCustomQuestions = <ThrowOnError extends boolean = false>(options: Options<PutApiV1MeSettingsCustomQuestionsData, ThrowOnError>) => (options.client ?? client).put<PutApiV1MeSettingsCustomQuestionsResponses, PutApiV1MeSettingsCustomQuestionsErrors, ThrowOnError>({
+export const putApiV1MeSettingsCustomQuestions = <ThrowOnError extends boolean = true>(options: Options<PutApiV1MeSettingsCustomQuestionsData, ThrowOnError>) => (options.client ?? client).put<PutApiV1MeSettingsCustomQuestionsResponses, PutApiV1MeSettingsCustomQuestionsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/settings/custom-questions',
     ...options,
@@ -321,7 +352,8 @@ export const putApiV1MeSettingsCustomQuestions = <ThrowOnError extends boolean =
  *
  * Returns whether the slug is free. The calling coach's own slug always reports available.
  */
-export const getApiV1MeSlugCheck = <ThrowOnError extends boolean = false>(options: Options<GetApiV1MeSlugCheckData, ThrowOnError>) => (options.client ?? client).get<GetApiV1MeSlugCheckResponses, GetApiV1MeSlugCheckErrors, ThrowOnError>({
+export const getApiV1MeSlugCheck = <ThrowOnError extends boolean = true>(options: Options<GetApiV1MeSlugCheckData, ThrowOnError>) => (options.client ?? client).get<GetApiV1MeSlugCheckResponses, GetApiV1MeSlugCheckErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/me/slug-check',
     ...options
@@ -330,7 +362,8 @@ export const getApiV1MeSlugCheck = <ThrowOnError extends boolean = false>(option
 /**
  * List my notifications (coach)
  */
-export const getApiV1Notifications = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1NotificationsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1NotificationsResponses, GetApiV1NotificationsErrors, ThrowOnError>({
+export const getApiV1Notifications = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1NotificationsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1NotificationsResponses, GetApiV1NotificationsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/notifications',
     ...options
@@ -339,7 +372,8 @@ export const getApiV1Notifications = <ThrowOnError extends boolean = false>(opti
 /**
  * Mark all my notifications as read (coach)
  */
-export const postApiV1NotificationsMarkAllRead = <ThrowOnError extends boolean = false>(options?: Options<PostApiV1NotificationsMarkAllReadData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1NotificationsMarkAllReadResponses, PostApiV1NotificationsMarkAllReadErrors, ThrowOnError>({
+export const postApiV1NotificationsMarkAllRead = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1NotificationsMarkAllReadData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1NotificationsMarkAllReadResponses, PostApiV1NotificationsMarkAllReadErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/notifications/mark-all-read',
     ...options
@@ -348,7 +382,8 @@ export const postApiV1NotificationsMarkAllRead = <ThrowOnError extends boolean =
 /**
  * My unread notification count (coach)
  */
-export const getApiV1NotificationsUnreadCount = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1NotificationsUnreadCountData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1NotificationsUnreadCountResponses, GetApiV1NotificationsUnreadCountErrors, ThrowOnError>({
+export const getApiV1NotificationsUnreadCount = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1NotificationsUnreadCountData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1NotificationsUnreadCountResponses, GetApiV1NotificationsUnreadCountErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/notifications/unread-count',
     ...options
@@ -357,7 +392,8 @@ export const getApiV1NotificationsUnreadCount = <ThrowOnError extends boolean = 
 /**
  * Delete a notification (coach)
  */
-export const deleteApiV1NotificationsById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1NotificationsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1NotificationsByIdResponses, DeleteApiV1NotificationsByIdErrors, ThrowOnError>({
+export const deleteApiV1NotificationsById = <ThrowOnError extends boolean = true>(options: Options<DeleteApiV1NotificationsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1NotificationsByIdResponses, DeleteApiV1NotificationsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/notifications/{id}',
     ...options
@@ -366,7 +402,8 @@ export const deleteApiV1NotificationsById = <ThrowOnError extends boolean = fals
 /**
  * Mark a notification as read (coach)
  */
-export const postApiV1NotificationsByIdRead = <ThrowOnError extends boolean = false>(options: Options<PostApiV1NotificationsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1NotificationsByIdReadResponses, PostApiV1NotificationsByIdReadErrors, ThrowOnError>({
+export const postApiV1NotificationsByIdRead = <ThrowOnError extends boolean = true>(options: Options<PostApiV1NotificationsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1NotificationsByIdReadResponses, PostApiV1NotificationsByIdReadErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/notifications/{id}/read',
     ...options
@@ -377,7 +414,8 @@ export const postApiV1NotificationsByIdRead = <ThrowOnError extends boolean = fa
  *
  * Returns the coach's payments newest first. Filter by client, type, status, and created_at range. `to` is exclusive.
  */
-export const getApiV1Payments = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PaymentsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PaymentsResponses, GetApiV1PaymentsErrors, ThrowOnError>({
+export const getApiV1Payments = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PaymentsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PaymentsResponses, GetApiV1PaymentsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/payments',
     ...options
@@ -388,7 +426,8 @@ export const getApiV1Payments = <ThrowOnError extends boolean = false>(options?:
  *
  * Only invoices are creatable here. Subscription rows come from Stripe webhooks (later phase). invoice_number is server-generated.
  */
-export const postApiV1Payments = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PaymentsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PaymentsResponses, PostApiV1PaymentsErrors, ThrowOnError>({
+export const postApiV1Payments = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PaymentsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PaymentsResponses, PostApiV1PaymentsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/payments',
     ...options,
@@ -401,7 +440,8 @@ export const postApiV1Payments = <ThrowOnError extends boolean = false>(options:
 /**
  * Get one payment (coach view)
  */
-export const getApiV1PaymentsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1PaymentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PaymentsByIdResponses, GetApiV1PaymentsByIdErrors, ThrowOnError>({
+export const getApiV1PaymentsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PaymentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PaymentsByIdResponses, GetApiV1PaymentsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/payments/{id}',
     ...options
@@ -412,7 +452,8 @@ export const getApiV1PaymentsById = <ThrowOnError extends boolean = false>(optio
  *
  * Allowed fields: status, description, sent_at, due_date, paid_at. amount_cents and payment_type are immutable.
  */
-export const patchApiV1PaymentsById = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1PaymentsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1PaymentsByIdResponses, PatchApiV1PaymentsByIdErrors, ThrowOnError>({
+export const patchApiV1PaymentsById = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1PaymentsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1PaymentsByIdResponses, PatchApiV1PaymentsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/payments/{id}',
     ...options,
@@ -427,7 +468,8 @@ export const patchApiV1PaymentsById = <ThrowOnError extends boolean = false>(opt
  *
  * Sets status='paid' and paid_at=NOW() atomically. Idempotent on already-paid rows (paid_at gets refreshed; harmless).
  */
-export const postApiV1PaymentsByIdMarkPaid = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PaymentsByIdMarkPaidData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PaymentsByIdMarkPaidResponses, PostApiV1PaymentsByIdMarkPaidErrors, ThrowOnError>({
+export const postApiV1PaymentsByIdMarkPaid = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PaymentsByIdMarkPaidData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PaymentsByIdMarkPaidResponses, PostApiV1PaymentsByIdMarkPaidErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/payments/{id}/mark-paid',
     ...options
@@ -438,7 +480,8 @@ export const postApiV1PaymentsByIdMarkPaid = <ThrowOnError extends boolean = fal
  *
  * Sets the client's portal password using a one-time invite token. Token is consumed on success.
  */
-export const postApiV1PortalAcceptInvite = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalAcceptInviteData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAcceptInviteResponses, PostApiV1PortalAcceptInviteErrors, ThrowOnError>({
+export const postApiV1PortalAcceptInvite = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAcceptInviteData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAcceptInviteResponses, PostApiV1PortalAcceptInviteErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/portal/accept-invite',
     ...options,
     headers: {
@@ -452,7 +495,8 @@ export const postApiV1PortalAcceptInvite = <ThrowOnError extends boolean = false
  *
  * Email/password login for clients. Returns access + refresh tokens.
  */
-export const postApiV1PortalAuthLogin = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalAuthLoginData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLoginResponses, PostApiV1PortalAuthLoginErrors, ThrowOnError>({
+export const postApiV1PortalAuthLogin = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthLoginData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLoginResponses, PostApiV1PortalAuthLoginErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/portal/auth/login',
     ...options,
     headers: {
@@ -464,7 +508,8 @@ export const postApiV1PortalAuthLogin = <ThrowOnError extends boolean = false>(o
 /**
  * Log out of the client portal
  */
-export const postApiV1PortalAuthLogout = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalAuthLogoutData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLogoutResponses, PostApiV1PortalAuthLogoutErrors, ThrowOnError>({
+export const postApiV1PortalAuthLogout = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthLogoutData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLogoutResponses, PostApiV1PortalAuthLogoutErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/portal/auth/logout',
     ...options,
     headers: {
@@ -476,7 +521,8 @@ export const postApiV1PortalAuthLogout = <ThrowOnError extends boolean = false>(
 /**
  * Refresh a portal access token
  */
-export const postApiV1PortalAuthRefresh = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalAuthRefreshData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthRefreshResponses, PostApiV1PortalAuthRefreshErrors, ThrowOnError>({
+export const postApiV1PortalAuthRefresh = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthRefreshData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthRefreshResponses, PostApiV1PortalAuthRefreshErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     url: '/api/v1/portal/auth/refresh',
     ...options,
     headers: {
@@ -488,7 +534,8 @@ export const postApiV1PortalAuthRefresh = <ThrowOnError extends boolean = false>
 /**
  * List own check-ins
  */
-export const getApiV1PortalCheckIns = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalCheckInsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalCheckInsResponses, GetApiV1PortalCheckInsErrors, ThrowOnError>({
+export const getApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalCheckInsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalCheckInsResponses, GetApiV1PortalCheckInsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins',
     ...options
@@ -499,7 +546,8 @@ export const getApiV1PortalCheckIns = <ThrowOnError extends boolean = false>(opt
  *
  * Client portal: create a new weekly check-in. Returns 409 if a check-in already exists for this week (any date in the week resolves to the same Monday).
  */
-export const postApiV1PortalCheckIns = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalCheckInsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalCheckInsResponses, PostApiV1PortalCheckInsErrors, ThrowOnError>({
+export const postApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalCheckInsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalCheckInsResponses, PostApiV1PortalCheckInsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins',
     ...options,
@@ -512,7 +560,8 @@ export const postApiV1PortalCheckIns = <ThrowOnError extends boolean = false>(op
 /**
  * Get one own check-in
  */
-export const getApiV1PortalCheckInsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1PortalCheckInsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalCheckInsByIdResponses, GetApiV1PortalCheckInsByIdErrors, ThrowOnError>({
+export const getApiV1PortalCheckInsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalCheckInsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalCheckInsByIdResponses, GetApiV1PortalCheckInsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins/{id}',
     ...options
@@ -521,7 +570,8 @@ export const getApiV1PortalCheckInsById = <ThrowOnError extends boolean = false>
 /**
  * Portal "who am I"
  */
-export const getApiV1PortalMe = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalMeData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalMeResponses, GetApiV1PortalMeErrors, ThrowOnError>({
+export const getApiV1PortalMe = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalMeData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalMeResponses, GetApiV1PortalMeErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/me',
     ...options
@@ -532,7 +582,8 @@ export const getApiV1PortalMe = <ThrowOnError extends boolean = false>(options?:
  *
  * Client self-service partial update. Currently only phone is editable; goal, plan, and program fields are coach-managed.
  */
-export const patchApiV1PortalMe = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1PortalMeData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1PortalMeResponses, PatchApiV1PortalMeErrors, ThrowOnError>({
+export const patchApiV1PortalMe = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1PortalMeData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1PortalMeResponses, PatchApiV1PortalMeErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/me',
     ...options,
@@ -545,7 +596,8 @@ export const patchApiV1PortalMe = <ThrowOnError extends boolean = false>(options
 /**
  * List my notifications (client)
  */
-export const getApiV1PortalNotifications = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalNotificationsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsResponses, GetApiV1PortalNotificationsErrors, ThrowOnError>({
+export const getApiV1PortalNotifications = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalNotificationsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsResponses, GetApiV1PortalNotificationsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications',
     ...options
@@ -554,7 +606,8 @@ export const getApiV1PortalNotifications = <ThrowOnError extends boolean = false
 /**
  * Mark all my notifications as read (client)
  */
-export const postApiV1PortalNotificationsMarkAllRead = <ThrowOnError extends boolean = false>(options?: Options<PostApiV1PortalNotificationsMarkAllReadData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalNotificationsMarkAllReadResponses, PostApiV1PortalNotificationsMarkAllReadErrors, ThrowOnError>({
+export const postApiV1PortalNotificationsMarkAllRead = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1PortalNotificationsMarkAllReadData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalNotificationsMarkAllReadResponses, PostApiV1PortalNotificationsMarkAllReadErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/mark-all-read',
     ...options
@@ -563,7 +616,8 @@ export const postApiV1PortalNotificationsMarkAllRead = <ThrowOnError extends boo
 /**
  * My unread notification count (client)
  */
-export const getApiV1PortalNotificationsUnreadCount = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalNotificationsUnreadCountData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsUnreadCountResponses, GetApiV1PortalNotificationsUnreadCountErrors, ThrowOnError>({
+export const getApiV1PortalNotificationsUnreadCount = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalNotificationsUnreadCountData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsUnreadCountResponses, GetApiV1PortalNotificationsUnreadCountErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/unread-count',
     ...options
@@ -572,7 +626,8 @@ export const getApiV1PortalNotificationsUnreadCount = <ThrowOnError extends bool
 /**
  * Delete a notification (client)
  */
-export const deleteApiV1PortalNotificationsById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1PortalNotificationsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1PortalNotificationsByIdResponses, DeleteApiV1PortalNotificationsByIdErrors, ThrowOnError>({
+export const deleteApiV1PortalNotificationsById = <ThrowOnError extends boolean = true>(options: Options<DeleteApiV1PortalNotificationsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1PortalNotificationsByIdResponses, DeleteApiV1PortalNotificationsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/{id}',
     ...options
@@ -581,7 +636,8 @@ export const deleteApiV1PortalNotificationsById = <ThrowOnError extends boolean 
 /**
  * Mark a notification as read (client)
  */
-export const postApiV1PortalNotificationsByIdRead = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalNotificationsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalNotificationsByIdReadResponses, PostApiV1PortalNotificationsByIdReadErrors, ThrowOnError>({
+export const postApiV1PortalNotificationsByIdRead = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalNotificationsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalNotificationsByIdReadResponses, PostApiV1PortalNotificationsByIdReadErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/{id}/read',
     ...options
@@ -590,7 +646,8 @@ export const postApiV1PortalNotificationsByIdRead = <ThrowOnError extends boolea
 /**
  * List own payments
  */
-export const getApiV1PortalPayments = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalPaymentsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalPaymentsResponses, GetApiV1PortalPaymentsErrors, ThrowOnError>({
+export const getApiV1PortalPayments = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalPaymentsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalPaymentsResponses, GetApiV1PortalPaymentsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/payments',
     ...options
@@ -599,7 +656,8 @@ export const getApiV1PortalPayments = <ThrowOnError extends boolean = false>(opt
 /**
  * Get one own payment
  */
-export const getApiV1PortalPaymentsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1PortalPaymentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalPaymentsByIdResponses, GetApiV1PortalPaymentsByIdErrors, ThrowOnError>({
+export const getApiV1PortalPaymentsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalPaymentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalPaymentsByIdResponses, GetApiV1PortalPaymentsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/payments/{id}',
     ...options
@@ -608,7 +666,8 @@ export const getApiV1PortalPaymentsById = <ThrowOnError extends boolean = false>
 /**
  * List own sessions
  */
-export const getApiV1PortalSessions = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1PortalSessionsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalSessionsResponses, GetApiV1PortalSessionsErrors, ThrowOnError>({
+export const getApiV1PortalSessions = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalSessionsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalSessionsResponses, GetApiV1PortalSessionsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/sessions',
     ...options
@@ -617,7 +676,8 @@ export const getApiV1PortalSessions = <ThrowOnError extends boolean = false>(opt
 /**
  * Get one own session
  */
-export const getApiV1PortalSessionsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1PortalSessionsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalSessionsByIdResponses, GetApiV1PortalSessionsByIdErrors, ThrowOnError>({
+export const getApiV1PortalSessionsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalSessionsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalSessionsByIdResponses, GetApiV1PortalSessionsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/sessions/{id}',
     ...options
@@ -626,8 +686,9 @@ export const getApiV1PortalSessionsById = <ThrowOnError extends boolean = false>
 /**
  * Upload a progress photo
  */
-export const postApiV1PortalUploadsPhoto = <ThrowOnError extends boolean = false>(options: Options<PostApiV1PortalUploadsPhotoData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalUploadsPhotoResponses, PostApiV1PortalUploadsPhotoErrors, ThrowOnError>({
+export const postApiV1PortalUploadsPhoto = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalUploadsPhotoData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalUploadsPhotoResponses, PostApiV1PortalUploadsPhotoErrors, ThrowOnError, 'data'>({
     ...formDataBodySerializer,
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/uploads/photo',
     ...options,
@@ -642,14 +703,19 @@ export const postApiV1PortalUploadsPhoto = <ThrowOnError extends boolean = false
  *
  * Requires a fresh ticket from POST /api/v1/portal/ws/ticket.
  */
-export const getApiV1PortalWs = <ThrowOnError extends boolean = false>(options: Options<GetApiV1PortalWsData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1PortalWsErrors, ThrowOnError>({ url: '/api/v1/portal/ws', ...options });
+export const getApiV1PortalWs = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalWsData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1PortalWsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api/v1/portal/ws',
+    ...options
+});
 
 /**
  * Issue a WebSocket ticket (client portal)
  *
  * Returns a single-use, 30-second ticket. Open the WS at /api/v1/portal/ws?ticket={ticket} before expires_at.
  */
-export const postApiV1PortalWsTicket = <ThrowOnError extends boolean = false>(options?: Options<PostApiV1PortalWsTicketData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalWsTicketResponses, PostApiV1PortalWsTicketErrors, ThrowOnError>({
+export const postApiV1PortalWsTicket = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1PortalWsTicketData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalWsTicketResponses, PostApiV1PortalWsTicketErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/ws/ticket',
     ...options
@@ -660,7 +726,8 @@ export const postApiV1PortalWsTicket = <ThrowOnError extends boolean = false>(op
  *
  * Returns the coach's sessions sorted by start time ascending. Filter by client, type, and date range. `to` is exclusive.
  */
-export const getApiV1Sessions = <ThrowOnError extends boolean = false>(options?: Options<GetApiV1SessionsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1SessionsResponses, GetApiV1SessionsErrors, ThrowOnError>({
+export const getApiV1Sessions = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1SessionsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1SessionsResponses, GetApiV1SessionsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/sessions',
     ...options
@@ -669,7 +736,8 @@ export const getApiV1Sessions = <ThrowOnError extends boolean = false>(options?:
 /**
  * Create a session
  */
-export const postApiV1Sessions = <ThrowOnError extends boolean = false>(options: Options<PostApiV1SessionsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1SessionsResponses, PostApiV1SessionsErrors, ThrowOnError>({
+export const postApiV1Sessions = <ThrowOnError extends boolean = true>(options: Options<PostApiV1SessionsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1SessionsResponses, PostApiV1SessionsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/sessions',
     ...options,
@@ -684,7 +752,8 @@ export const postApiV1Sessions = <ThrowOnError extends boolean = false>(options:
  *
  * Hard delete. For "soft cancel" semantics, PATCH the session with confirmed=false instead.
  */
-export const deleteApiV1SessionsById = <ThrowOnError extends boolean = false>(options: Options<DeleteApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1SessionsByIdResponses, DeleteApiV1SessionsByIdErrors, ThrowOnError>({
+export const deleteApiV1SessionsById = <ThrowOnError extends boolean = true>(options: Options<DeleteApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1SessionsByIdResponses, DeleteApiV1SessionsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/sessions/{id}',
     ...options
@@ -693,7 +762,8 @@ export const deleteApiV1SessionsById = <ThrowOnError extends boolean = false>(op
 /**
  * Get one session (coach view)
  */
-export const getApiV1SessionsById = <ThrowOnError extends boolean = false>(options: Options<GetApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1SessionsByIdResponses, GetApiV1SessionsByIdErrors, ThrowOnError>({
+export const getApiV1SessionsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1SessionsByIdResponses, GetApiV1SessionsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/sessions/{id}',
     ...options
@@ -702,7 +772,8 @@ export const getApiV1SessionsById = <ThrowOnError extends boolean = false>(optio
 /**
  * Update a session (partial)
  */
-export const patchApiV1SessionsById = <ThrowOnError extends boolean = false>(options: Options<PatchApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1SessionsByIdResponses, PatchApiV1SessionsByIdErrors, ThrowOnError>({
+export const patchApiV1SessionsById = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1SessionsByIdData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1SessionsByIdResponses, PatchApiV1SessionsByIdErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/sessions/{id}',
     ...options,
@@ -717,21 +788,30 @@ export const patchApiV1SessionsById = <ThrowOnError extends boolean = false>(opt
  *
  * Receives and processes Stripe payment events. Signature verified via Stripe-Signature header.
  */
-export const postApiV1WebhooksStripe = <ThrowOnError extends boolean = false>(options: Options<PostApiV1WebhooksStripeData, ThrowOnError>) => (options.client ?? client).post<PostApiV1WebhooksStripeResponses, PostApiV1WebhooksStripeErrors, ThrowOnError>({ url: '/api/v1/webhooks/stripe', ...options });
+export const postApiV1WebhooksStripe = <ThrowOnError extends boolean = true>(options: Options<PostApiV1WebhooksStripeData, ThrowOnError>) => (options.client ?? client).post<PostApiV1WebhooksStripeResponses, PostApiV1WebhooksStripeErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api/v1/webhooks/stripe',
+    ...options
+});
 
 /**
  * Open a coach WebSocket (push channel for notifications)
  *
  * Requires a fresh ticket from POST /api/v1/ws/ticket. Server pushes JSON-encoded notification payloads — same shape as GET /api/v1/notifications items.
  */
-export const getApiV1Ws = <ThrowOnError extends boolean = false>(options: Options<GetApiV1WsData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1WsErrors, ThrowOnError>({ url: '/api/v1/ws', ...options });
+export const getApiV1Ws = <ThrowOnError extends boolean = true>(options: Options<GetApiV1WsData, ThrowOnError>) => (options.client ?? client).get<unknown, GetApiV1WsErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/api/v1/ws',
+    ...options
+});
 
 /**
  * Issue a WebSocket ticket (coach)
  *
  * Returns a single-use, 30-second ticket. Open the WS at /api/v1/ws?ticket={ticket} before expires_at.
  */
-export const postApiV1WsTicket = <ThrowOnError extends boolean = false>(options?: Options<PostApiV1WsTicketData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1WsTicketResponses, PostApiV1WsTicketErrors, ThrowOnError>({
+export const postApiV1WsTicket = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1WsTicketData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1WsTicketResponses, PostApiV1WsTicketErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/ws/ticket',
     ...options
@@ -742,11 +822,19 @@ export const postApiV1WsTicket = <ThrowOnError extends boolean = false>(options?
  *
  * Returns 200 as long as the process is running. Does not check downstream dependencies.
  */
-export const getHealthz = <ThrowOnError extends boolean = false>(options?: Options<GetHealthzData, ThrowOnError>) => (options?.client ?? client).get<GetHealthzResponses, unknown, ThrowOnError>({ url: '/healthz', ...options });
+export const getHealthz = <ThrowOnError extends boolean = true>(options?: Options<GetHealthzData, ThrowOnError>) => (options?.client ?? client).get<GetHealthzResponses, unknown, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/healthz',
+    ...options
+});
 
 /**
  * Readiness probe
  *
  * Pings the database. Returns 503 if the DB is unreachable so load balancers stop routing here.
  */
-export const getReadyz = <ThrowOnError extends boolean = false>(options?: Options<GetReadyzData, ThrowOnError>) => (options?.client ?? client).get<GetReadyzResponses, GetReadyzErrors, ThrowOnError>({ url: '/readyz', ...options });
+export const getReadyz = <ThrowOnError extends boolean = true>(options?: Options<GetReadyzData, ThrowOnError>) => (options?.client ?? client).get<GetReadyzResponses, GetReadyzErrors, ThrowOnError, 'data'>({
+    responseStyle: 'data',
+    url: '/readyz',
+    ...options
+});

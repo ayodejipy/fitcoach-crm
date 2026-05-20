@@ -6,8 +6,6 @@ import { client as sdkClient } from '~/services/client.gen'
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
-  const authToken = useCookie<string | null>('auth_token')
-  const refreshTokenCookie = useCookie<string | null>('refresh_token')
   const authStore = useAuthStore()
   const router = useRouter()
 
@@ -19,9 +17,9 @@ export default defineNuxtPlugin(() => {
   const authFetch = $fetch.create({
     baseURL: apiBase,
     onRequest({ options }) {
-      if (authToken.value) {
+      if (authStore.token) {
         const headers = new Headers(options.headers as HeadersInit | undefined)
-        headers.set('Authorization', `Bearer ${authToken.value}`)
+        headers.set('Authorization', `Bearer ${authStore.token}`)
         options.headers = headers
       }
     },
@@ -33,7 +31,7 @@ export default defineNuxtPlugin(() => {
   function refreshAccessToken(): Promise<void> {
     if (refreshPromise) return refreshPromise
 
-    const rt = refreshTokenCookie.value
+    const rt = authStore.refreshToken
     if (!rt) return Promise.reject(new Error('no refresh token'))
 
     refreshPromise = rawFetch<HandlersAuthResponse>('/auth/refresh', {
@@ -41,8 +39,8 @@ export default defineNuxtPlugin(() => {
       body: { refresh_token: rt },
     })
       .then((res) => {
-        authToken.value = res.access_token ?? null
-        refreshTokenCookie.value = res.refresh_token ?? null
+        authStore.token = res.access_token ?? null
+        authStore.refreshToken = res.refresh_token ?? null
       })
       .finally(() => {
         refreshPromise = null
