@@ -34,13 +34,13 @@
           <button
             type="button"
             class="btn-send"
-            :disabled="modelValue.length === 0"
+            :disabled="modelValue.length === 0 || props.sending"
             @click="$emit('send')"
           >
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+            <svg v-if="!props.sending" width="13" height="13" viewBox="0 0 13 13" fill="none">
               <path d="M1 6.5L12 1l-4.5 11L6 7.5l-5-1z" stroke="white" stroke-width="1.3" stroke-linejoin="round"/>
             </svg>
-            Send Response
+            {{ props.sending ? 'Sending…' : 'Send Response' }}
           </button>
         </div>
       </div>
@@ -69,9 +69,11 @@ const props = withDefaults(defineProps<{
   maxChars?: number
   placeholder?: string
   clientName?: string
+  sending?: boolean
 }>(), {
   maxChars: 500,
   placeholder: 'Write your coaching response…',
+  sending: false,
 })
 
 const emit = defineEmits<{

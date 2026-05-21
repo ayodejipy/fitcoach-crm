@@ -110,6 +110,7 @@ const onSaveDraft = () => {
         <ResponseComposer
           v-model="response"
           :client-name="checkIn.name"
+          :sending="sending"
           @send="onSend"
           @save-draft="onSaveDraft"
         />
