@@ -1,3 +1,181 @@
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import AppTopbar from '~/components/AppTopbar.vue'
+import SearchInput from '~/components/SearchInput.vue'
+import ClientFilterChips from '~/features/clients/components/ClientFilterChips.vue'
+import ClientsTable from '~/features/clients/components/ClientsTable.vue'
+import ClientFormModal from '~/features/clients/components/ClientFormModal.vue'
+import type { FilterChip } from '~/features/clients/components/ClientFilterChips.vue'
+import type { Client } from '~/features/clients/components/ClientRow.vue'
+import type { ActionItem } from '~/features/clients/components/ClientActionsMenu.vue'
+import type { ModelsClient } from '~/services'
+import { useClientsApi } from '~/features/clients/composables/useClientsApi'
+import { toClientRow } from '~/features/clients/utils/transform'
+
+definePageMeta({ layout: 'app' })
+
+useSeoMeta({ title: 'Clients | FitCoach CRM' })
+
+const clientsApi = useClientsApi()
+const router = useRouter()
+const toast = useToast()
+
+// TODO: Move this into a composable
+
+// ── Filter / search / pagination state ────────────────────
+
+type StatusFilter = 'all' | 'active' | 'paused' | 'new' | 'ended'
+
+const search = ref('')
+const activeChip = ref<StatusFilter>('all')
+const page = ref(1)
+const sort = ref<{ column: 'name' | 'startDate' | 'lastCheckIn'; direction: 'asc' | 'desc' }>({
+  column: 'lastCheckIn',
+  direction: 'desc',
+})
+
+const debouncedSearch = refDebounced(search, 300)
+
+// Reset page when filter or search changes
+watch([activeChip, debouncedSearch], () => { page.value = 1 })
+
+// ── Initial counts (parallel per-status totals) ───────────
+
+const { data: countsData } = await useAsyncData('clients-counts', () =>
+  Promise.all([
+    clientsApi.list({ per_page: 1 }),
+    clientsApi.list({ status: 'active', per_page: 1 }),
+    clientsApi.list({ status: 'paused', per_page: 1 }),
+    clientsApi.list({ status: 'new', per_page: 1 }),
+  ]),
+)
+
+const chips = computed<FilterChip[]>(() => [
+  { id: 'all',    label: 'All',          count: countsData.value?.[0]?.total ?? 0 },
+  { id: 'active', label: 'Active',       count: countsData.value?.[1]?.total ?? 0 },
+  { id: 'paused', label: 'Paused',       count: countsData.value?.[2]?.total ?? 0 },
+  { id: 'new',    label: 'New Trial',    count: countsData.value?.[3]?.total ?? 0 },
+])
+
+const subtitle = computed(() => {
+  const active = countsData.value?.[1]?.total ?? 0
+  const paused = countsData.value?.[2]?.total ?? 0
+  const trial  = countsData.value?.[3]?.total ?? 0
+  return `${active} active · ${paused} paused · ${trial} trial`
+})
+
+// ── Reactive client list ───────────────────────────────────
+
+const listParams = computed(() => ({
+  status:   activeChip.value === 'all' ? undefined : activeChip.value,
+  search:   debouncedSearch.value || undefined,
+  page:     page.value,
+  per_page: 20,
+}))
+
+const { data: listData, pending } = await useAsyncData(
+  'clients-list',
+  () => clientsApi.list(listParams.value),
+  { watch: [listParams] },
+)
+
+const rawClients  = computed(() => listData.value?.clients ?? [])
+const totalPages  = computed(() => listData.value?.total_pages ?? 1)
+const total       = computed(() => listData.value?.total ?? 0)
+const fromItem    = computed(() => total.value === 0 ? 0 : (page.value - 1) * 20 + 1)
+const toItem      = computed(() => Math.min(page.value * 20, total.value))
+
+// ── Build client cards with action handlers ────────────────
+
+function buildMenuActions(c: ModelsClient): ActionItem[] {
+  const id = c.id!
+  const status = c.status ?? 'active'
+
+  const viewAction: ActionItem = {
+    label: 'View Profile',
+    onClick: () => router.push(`/clients/${id}`),
+  }
+  const removeAction: ActionItem = {
+    label: 'Remove',
+    danger: true,
+    onClick: () => handleRemove(c),
+  }
+
+  if (status === 'active') {
+    return [
+      viewAction,
+      { label: 'Send Message', onClick: () => toast.add({ title: 'Messaging coming soon', color: 'neutral' }) },
+      { divider: true },
+      { label: 'Pause Client', onClick: () => handleStatusChange(id, 'paused') },
+      removeAction,
+    ]
+  }
+  if (status === 'new') {
+    return [
+      viewAction,
+      { divider: true },
+      { label: 'Convert to Active', onClick: () => handleStatusChange(id, 'active') },
+      removeAction,
+    ]
+  }
+  if (status === 'paused') {
+    return [
+      viewAction,
+      { divider: true },
+      { label: 'Reactivate', onClick: () => handleStatusChange(id, 'active') },
+      removeAction,
+    ]
+  }
+  if (status === 'ended') {
+    return [viewAction, { divider: true }, removeAction]
+  }
+  return [viewAction, removeAction]
+}
+
+const cards = computed<Client[]>(() =>
+  rawClients.value.map(c => ({
+    ...toClientRow(c),
+    menuActions: buildMenuActions(c),
+  })),
+)
+
+// ACTIONS
+async function handleStatusChange(id: string, status: 'active' | 'paused' | 'new' | 'ended') {
+  try {
+    await clientsApi.update(id, { status })
+    toast.add({ title: 'Client status updated', color: 'success' })
+    refreshNuxtData(['clients-list', 'clients-counts'])
+  } catch {
+    toast.add({ title: 'Failed to update status', color: 'error' })
+  }
+}
+
+const removing = ref<string | null>(null)
+
+async function handleRemove(c: ModelsClient) {
+  if (!confirm(`Remove ${clientName(c)}? This cannot be undone.`)) return
+  removing.value = c.id ?? null
+  try {
+    await clientsApi.remove(c.id!)
+    toast.add({ title: 'Client removed', color: 'success' })
+    refreshNuxtData(['clients-list', 'clients-counts'])
+  } catch {
+    toast.add({ title: 'Failed to remove client', color: 'error' })
+  } finally {
+    removing.value = null
+  }
+}
+
+// ── Add client modal ───────────────────────────────────────
+
+const showAddModal = ref(false)
+
+function onClientSaved() {
+  showAddModal.value = false
+  refreshNuxtData(['clients-list', 'clients-counts'])
+}
+</script>
+
 <template>
   <AppTopbar title="Clients" :subtitle="subtitle">
     <template #actions>
@@ -18,7 +196,11 @@
           <path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </button>
-      <button type="button" class="h-10 px-4 rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors">
+      <button
+        type="button"
+        class="h-10 px-4 rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors"
+        @click="showAddModal = true"
+      >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
           <path d="M6.5 1v11M1 6.5h11" stroke="white" stroke-width="2" stroke-linecap="round"/>
         </svg>
@@ -30,158 +212,27 @@
   <div class="py-7 px-8 flex-1">
     <ClientFilterChips v-model="activeChip" :chips="chips" />
     <ClientsTable
-      :clients="clients"
+      :clients="cards"
       :page="page"
-      :total-pages="3"
-      :from="1"
-      :to="clients.length"
-      :total="21"
+      :total-pages="totalPages"
+      :from="fromItem"
+      :to="toItem"
+      :total="total"
       :sort="sort"
+      :loading="pending"
+      :filter-active="activeChip !== 'all' || !!debouncedSearch"
       @update:page="page = $event"
       @update:sort="sort = $event"
+      @add-client="showAddModal = true"
     />
   </div>
+
+  <ClientFormModal
+    :open="showAddModal"
+    @update:open="showAddModal = $event"
+    @saved="onClientSaved"
+  />
 </template>
-
-<script setup lang="ts">
-import { ref } from 'vue'
-import AppTopbar from '~/components/AppTopbar.vue'
-import SearchInput from '~/components/SearchInput.vue'
-import ClientFilterChips, { type FilterChip } from '~/features/clients/components/ClientFilterChips.vue'
-import ClientsTable from '~/features/clients/components/ClientsTable.vue'
-import type { Client } from '~/features/clients/components/ClientRow.vue'
-
-definePageMeta({ layout: 'app' })
-
-const subtitle = '18 active · 2 paused · 1 trial'
-const search = ref('')
-const activeChip = ref('all')
-const page = ref(1)
-const sort = ref<{ column: 'name' | 'startDate' | 'lastCheckIn'; direction: 'asc' | 'desc' }>({ column: 'lastCheckIn', direction: 'desc' })
-
-const chips: FilterChip[] = [
-  { id: 'all',      label: 'All',              count: 21 },
-  { id: 'active',   label: 'Active',           count: 18 },
-  { id: 'paused',   label: 'Paused',           count: 2 },
-  { id: 'trial',    label: 'New Trial',        count: 1 },
-  { id: 'overdue',  label: 'Overdue Payment',  count: 1, variant: 'danger' },
-]
-
-const defaultActions = [
-  { label: 'View Profile' },
-  { label: 'Send Message' },
-  { divider: true },
-  { label: 'Pause Client' },
-  { label: 'Remove', danger: true },
-]
-
-const trialActions = [
-  { label: 'View Profile' },
-  { label: 'Send Message' },
-  { divider: true },
-  { label: 'Convert to Active' },
-  { label: 'Remove', danger: true },
-]
-
-const overdueActions = [
-  { label: 'View Profile' },
-  { label: 'Send Payment Reminder' },
-  { divider: true },
-  { label: 'Reactivate' },
-  { label: 'Remove', danger: true },
-]
-
-const pausedActions = [
-  { label: 'View Profile' },
-  { label: 'Send Message' },
-  { divider: true },
-  { label: 'Reactivate' },
-  { label: 'Remove', danger: true },
-]
-
-const endedActions = [
-  { label: 'View Profile' },
-  { label: 'Re-enrol Client' },
-  { divider: true },
-  { label: 'Remove', danger: true },
-]
-
-const clients: Client[] = [
-  {
-    id: 'sr', initials: 'SR', variant: 'a', name: 'Sofia Reyes', email: 'sofia.reyes@gmail.com',
-    goal: 'Fat Loss', goalSub: '12-week program',
-    planName: 'Pro Coaching', planPrice: '$199 / mo',
-    startDate: 'Apr 2, 2026', lastCheckIn: '2 hours ago', checkInTone: 'ok',
-    sessionsCount: 18,
-    sparkline: [{ height: 8 }, { height: 11 }, { height: 9 }, { height: 13 }, { height: 16, hi: true }, { height: 18, hi: true }],
-    status: 'active', menuActions: defaultActions,
-  },
-  {
-    id: 'mt', initials: 'MT', variant: 'b', name: 'Marcus Thompson', email: 'm.thompson@outlook.com',
-    goal: 'Muscle Gain', goalSub: '16-week program',
-    planName: 'Pro Coaching', planPrice: '$249 / mo',
-    startDate: 'Mar 17, 2026', lastCheckIn: 'Yesterday', checkInTone: 'ok',
-    sessionsCount: 24,
-    sparkline: [{ height: 10 }, { height: 14 }, { height: 16, hi: true }, { height: 12 }, { height: 18, hi: true }, { height: 18, hi: true }],
-    status: 'active', menuActions: defaultActions,
-  },
-  {
-    id: 'pk', initials: 'PK', variant: 'c', name: 'Priya Kumar', email: 'priya.k@icloud.com',
-    goal: 'Nutrition + Fitness', goalSub: 'Ongoing',
-    planName: 'Starter', planPrice: '$99 / mo',
-    startDate: 'Apr 10, 2026', lastCheckIn: '3 days ago', checkInTone: 'warn',
-    sessionsCount: 3,
-    sparkline: [{ height: 6 }, { height: 10, hi: true }, { height: 14, hi: true }, { height: 0 }, { height: 0 }, { height: 0 }],
-    status: 'new', statusLabel: 'Trial', isNew: true, menuActions: trialActions,
-  },
-  {
-    id: 'dw', initials: 'DW', variant: 'd', name: 'Dante Williams', email: 'dante.w@gmail.com',
-    goal: 'General Fitness', goalSub: '8-week program',
-    planName: 'Starter', planPrice: '$99 / mo',
-    startDate: 'Feb 24, 2026',
-    lastCheckIn: 'Overdue — 9 days', checkInTone: 'late', checkInTooltip: 'Last check-in: Apr 5 · No response sent',
-    sessionsCount: 11,
-    sparkline: [{ height: 14, hi: true }, { height: 16, hi: true }, { height: 10 }, { height: 8 }, { height: 6 }, { height: 4 }],
-    status: 'active', menuActions: defaultActions,
-  },
-  {
-    id: 'ek', initials: 'EK', variant: 'e', name: 'Elena Kowalski', email: 'ekowalski@proton.me',
-    goal: 'Strength Training', goalSub: 'Ongoing',
-    planName: 'Pro Coaching', planPrice: '$199 / mo',
-    startDate: 'Jan 6, 2026', lastCheckIn: 'Today, 9:14 AM', checkInTone: 'ok',
-    sessionsCount: 32,
-    sparkline: [{ height: 12 }, { height: 14, hi: true }, { height: 16, hi: true }, { height: 15, hi: true }, { height: 17, hi: true }, { height: 18, hi: true }],
-    status: 'active', menuActions: defaultActions,
-  },
-  {
-    id: 'jl', initials: 'JL', variant: 'f', name: 'James Lowe', email: 'james.lowe@yahoo.com',
-    goal: 'Marathon Prep', goalSub: '20-week program',
-    planName: 'Pro Coaching', planPrice: '$199 overdue ⚠', planPriceOverdue: true,
-    startDate: 'Nov 18, 2025', lastCheckIn: '5 days ago', checkInTone: 'warn',
-    sessionsCount: 41,
-    sparkline: [{ height: 16, hi: true }, { height: 18, hi: true }, { height: 16, hi: true }, { height: 10 }, { height: 8 }, { height: 6 }],
-    status: 'paused', paymentOverdue: true, menuActions: overdueActions,
-  },
-  {
-    id: 'an', initials: 'AN', variant: 'g', name: 'Aisha Nwosu', email: 'aisha.n@gmail.com',
-    goal: 'Post-Partum Fitness', goalSub: 'Custom program',
-    planName: 'Starter', planPrice: '$99 / mo',
-    startDate: 'Sep 3, 2025', lastCheckIn: 'On pause', checkInTone: 'muted',
-    sessionsCount: 28,
-    sparkline: [{ height: 16, hi: true }, { height: 14, hi: true }, { height: 12 }, { height: 4 }, { height: 2 }, { height: 2 }],
-    status: 'paused', menuActions: pausedActions,
-  },
-  {
-    id: 'bh', initials: 'BH', variant: 'h', name: 'Ben Hartley', email: 'ben.hartley@work.co',
-    goal: 'Weight Loss', goalSub: '12-week program',
-    planName: 'Pro Coaching', planPrice: '$199 / mo',
-    startDate: 'Jun 1, 2025', lastCheckIn: 'Program ended', checkInTone: 'muted',
-    sessionsCount: 48,
-    sparkline: [{ height: 18, hi: true }, { height: 16, hi: true }, { height: 14, hi: true }, { height: 12, hi: true }, { height: 8, hi: true }, { height: 4, hi: true }],
-    status: 'ended', menuActions: endedActions,
-  },
-]
-</script>
 
 <style scoped>
 .btn-outline {

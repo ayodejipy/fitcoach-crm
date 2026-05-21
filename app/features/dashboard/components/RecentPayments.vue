@@ -4,7 +4,7 @@ import Avatar from '~/components/Avatar.vue'
 type PayStatus = 'paid' | 'pending' | 'failed'
 type TPayment = {
   initials: string
-  variant: 'a' | 'b' | 'c' | 'd' | 'e'
+  variant: 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
   name: string
   description: string
   amount: string
@@ -31,7 +31,7 @@ const statusLabel = (s: PayStatus) => ({ paid: 'Paid', pending: 'Pending', faile
       <span class="text-[15px] font-bold text-(--text-primary)">Recent Payments</span>
       <a href="#" class="text-xs font-semibold text-primary dark:text-(--green-light) cursor-pointer no-underline">Payments →</a>
     </header>
-    <div>
+    <div v-if="payments.length">
       <div
         v-for="(p, i) in payments"
         :key="p.name + p.date"
@@ -53,5 +53,11 @@ const statusLabel = (s: PayStatus) => ({ paid: 'Paid', pending: 'Pending', faile
         >{{ statusLabel(p.status) }}</span>
       </div>
     </div>
+    <EmptyState
+      v-else
+      icon="i-lucide-credit-card"
+      headline="No payments yet"
+      hint="Payments from your clients will appear here once recorded."
+    />
   </div>
 </template>

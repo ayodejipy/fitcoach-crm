@@ -6,7 +6,7 @@ type ClientStatus = 'active' | 'paused' | 'new' | 'ended'
 defineProps<{
   clients: Array<{
     initials: string
-    variant: 'a' | 'b' | 'c' | 'd' | 'e'
+    variant: 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
     name: string
     email: string
     goal: string
@@ -41,7 +41,7 @@ const statusLabel = (s: ClientStatus) => ({
       <span class="text-[15px] font-bold text-(--text-primary)">Client Overview</span>
       <a href="#" class="text-xs font-semibold text-primary dark:text-(--green-light) cursor-pointer no-underline">View All {{ totalClients }} Clients →</a>
     </header>
-    <table class="w-full border-collapse">
+    <table v-if="clients.length" class="w-full border-collapse">
       <thead>
         <tr>
           <th
@@ -74,6 +74,14 @@ const statusLabel = (s: ClientStatus) => ({
         </tr>
       </tbody>
     </table>
+    <EmptyState
+      v-else
+      icon="i-lucide-users"
+      headline="Add your first client"
+      hint="Your client roster is empty. Invite a client to start tracking their progress."
+      cta="Add client"
+      cta-to="/clients"
+    />
   </div>
 </template>
 

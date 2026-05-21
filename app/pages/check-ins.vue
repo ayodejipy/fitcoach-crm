@@ -81,7 +81,7 @@ const filterTabs = computed(() => [
   { id: 'week',           label: 'This Week',      count: tabCounts.value['week'] },
 ])
 
-// ── Detail state ───────────────────────────────────────────
+// STATE
 const detailCheckIn = shallowRef<ModelsCoachCheckIn | null>(null)
 const clientHistory = shallowRef<ModelsCoachCheckIn[]>([])
 const detailLoading = ref(false)

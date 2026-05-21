@@ -1,3 +1,42 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import ClientRow, { type Client } from './ClientRow.vue'
+import Pagination from '~/components/Pagination.vue'
+
+type SortCol = 'name' | 'startDate' | 'lastCheckIn'
+
+const props = defineProps<{
+  clients: Client[]
+  page: number
+  totalPages: number
+  from: number
+  to: number
+  total: number
+  sort: { column: SortCol; direction: 'asc' | 'desc' }
+  loading?: boolean
+  filterActive?: boolean
+}>()
+
+const emit = defineEmits<{
+  'update:page': [page: number]
+  'update:sort': [sort: { column: SortCol; direction: 'asc' | 'desc' }]
+  'add-client': []
+}>()
+
+const toggleSort = (col: SortCol) => {
+  if (props.sort.column === col) {
+    emit('update:sort', { column: col, direction: props.sort.direction === 'asc' ? 'desc' : 'asc' })
+  } else {
+    emit('update:sort', { column: col, direction: 'asc' })
+  }
+}
+
+const sortArrowPath = (col: SortCol) => {
+  if (props.sort.column !== col) return 'M5 2v6M2 5l3-3 3 3'
+  return props.sort.direction === 'asc' ? 'M5 2v6M2 5l3-3 3 3' : 'M5 2v6M7 7l-2 2-2-2'
+}
+</script>
+
 <template>
   <div class="bg-(--bg-surface) border border-(--border) rounded-[14px] overflow-hidden">
     <table class="w-full border-collapse">
@@ -50,7 +89,40 @@
         </tr>
       </thead>
       <tbody>
-        <ClientRow v-for="c in clients" :key="c.id" :client="c" />
+        <template v-if="loading">
+          <tr v-for="n in 6" :key="n" class="border-b border-[#F0F4F1] dark:border-white/5 last:border-b-0">
+            <td class="py-3.5 pl-[22px] pr-4">
+              <div class="flex items-center gap-3">
+                <USkeleton class="w-9 h-9 rounded-full shrink-0" />
+                <div class="space-y-1.5">
+                  <USkeleton class="h-3.5 w-28" />
+                  <USkeleton class="h-3 w-20" />
+                </div>
+              </div>
+            </td>
+            <td class="py-3.5 px-4"><div class="space-y-1.5"><USkeleton class="h-3.5 w-24" /><USkeleton class="h-3 w-16" /></div></td>
+            <td class="py-3.5 px-4"><div class="space-y-1.5"><USkeleton class="h-3.5 w-20" /><USkeleton class="h-3 w-14" /></div></td>
+            <td class="py-3.5 px-4"><USkeleton class="h-3.5 w-16" /></td>
+            <td class="py-3.5 px-4"><USkeleton class="h-3.5 w-16" /></td>
+            <td class="py-3.5 px-4"><USkeleton class="h-3.5 w-10" /></td>
+            <td class="py-3.5 px-4"><USkeleton class="h-5 w-14 rounded-full" /></td>
+            <td class="py-3.5 pl-4 pr-[22px] text-center"><USkeleton class="h-5 w-6 mx-auto" /></td>
+          </tr>
+        </template>
+        <template v-else-if="clients.length">
+          <ClientRow v-for="c in clients" :key="c.id" :client="c" />
+        </template>
+        <tr v-else>
+          <td colspan="8">
+            <EmptyState
+              :icon="filterActive ? 'i-lucide-search-x' : 'i-lucide-users'"
+              :headline="filterActive ? 'No clients match your search' : 'No clients yet'"
+              :hint="filterActive ? 'Try clearing the search or adjusting your filter.' : 'Add your first client to start tracking their progress.'"
+              :cta="filterActive ? undefined : 'Add client'"
+              @cta="$emit('add-client')"
+            />
+          </td>
+        </tr>
       </tbody>
     </table>
 
@@ -66,41 +138,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { computed } from 'vue'
-import ClientRow, { type Client } from './ClientRow.vue'
-import Pagination from '~/components/Pagination.vue'
 
-type SortCol = 'name' | 'startDate' | 'lastCheckIn'
-
-const props = defineProps<{
-  clients: Client[]
-  page: number
-  totalPages: number
-  from: number
-  to: number
-  total: number
-  sort: { column: SortCol; direction: 'asc' | 'desc' }
-}>()
-
-const emit = defineEmits<{
-  'update:page': [page: number]
-  'update:sort': [sort: { column: SortCol; direction: 'asc' | 'desc' }]
-}>()
-
-const toggleSort = (col: SortCol) => {
-  if (props.sort.column === col) {
-    emit('update:sort', { column: col, direction: props.sort.direction === 'asc' ? 'desc' : 'asc' })
-  } else {
-    emit('update:sort', { column: col, direction: 'asc' })
-  }
-}
-
-const sortArrowPath = (col: SortCol) => {
-  if (props.sort.column !== col) return 'M5 2v6M2 5l3-3 3 3'
-  return props.sort.direction === 'asc' ? 'M5 2v6M2 5l3-3 3 3' : 'M5 2v6M7 7l-2 2-2-2'
-}
-</script>
 
 <style scoped>
 .th-sort:hover { color: var(--green-brand); }

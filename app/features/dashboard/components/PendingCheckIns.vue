@@ -20,7 +20,7 @@ const { checkIns } = defineProps<{
         View All →
       </NuxtLink>
     </header>
-    <div>
+    <div v-if="checkIns.length">
       <div v-for="(c, i) in checkIns" :key="c.name + c.time"
         class="flex items-start gap-3 py-3.5 px-[22px] transition-colors duration-100 hover:bg-[#F9FBF9] dark:hover:bg-white/3"
         :class="i < checkIns.length - 1 ? 'border-b border-[#F0F4F1] dark:border-white/5' : ''">
@@ -31,7 +31,7 @@ const { checkIns } = defineProps<{
           <div class="text-xs text-(--text-muted) mt-[3px] leading-[1.4]">{{ c.preview }}</div>
           <div class="text-[11px] text-[#95A5A6] mt-1">{{ c.time }}</div>
         </div>
-        <button 
+        <button
           type="button"
           class="self-center whitespace-nowrap text-[11px] font-semibold text-primary dark:text-(--green-light) py-1 px-2.5 border-[1.5px] border-primary dark:border-(--green-light) rounded-md cursor-pointer bg-transparent"
         >
@@ -39,5 +39,13 @@ const { checkIns } = defineProps<{
         </button>
       </div>
     </div>
+    <EmptyState
+      v-else
+      icon="i-lucide-inbox"
+      headline="All caught up!"
+      hint="No check-ins waiting for your response. You're doing great."
+      cta="View all check-ins"
+      cta-to="/check-ins"
+    />
   </div>
 </template>

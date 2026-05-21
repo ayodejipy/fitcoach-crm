@@ -3,11 +3,13 @@ import Avatar from '~/components/Avatar.vue'
 
 type SessionStatus = 'virtual' | 'confirmed' | 'pending'
 
+defineEmits<{ schedule: [] }>()
+
 defineProps<{
   sessions: Array<{
     time: string
     initials: string
-    variant: 'a' | 'b' | 'c' | 'd' | 'e'
+    variant: 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
     name: string
     meta: string
     status: SessionStatus
@@ -30,7 +32,7 @@ const badgeClass = (s: SessionStatus) => ({
       <a href="#" class="text-xs font-semibold text-primary dark:text-(--green-light) cursor-pointer no-underline">View
         Calendar →</a>
     </header>
-    <div>
+    <div v-if="sessions.length">
       <div v-for="(s, i) in sessions" :key="s.name"
         class="flex items-center gap-3.5 py-3.5 px-[22px] transition-colors duration-100 hover:bg-[#F9FBF9] dark:hover:bg-white/3"
         :class="i < sessions.length - 1 ? 'border-b border-[#F0F4F1] dark:border-white/5' : ''">
@@ -44,5 +46,13 @@ const badgeClass = (s: SessionStatus) => ({
           s.statusLabel }}</span>
       </div>
     </div>
+    <EmptyState
+      v-else
+      icon="i-lucide-calendar-x-2"
+      headline="No sessions today"
+      hint="Your calendar is clear. Schedule a session with a client to get started."
+      cta="Schedule session"
+      @cta="$emit('schedule')"
+    />
   </div>
 </template>
