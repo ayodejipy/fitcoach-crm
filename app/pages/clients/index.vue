@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import AppTopbar from '~/components/AppTopbar.vue'
 import SearchInput from '~/components/SearchInput.vue'
 import ClientFilterChips from '~/features/clients/components/ClientFilterChips.vue'
+import ClientFilterPanel from '~/features/clients/components/ClientFilterPanel.vue'
+import ClientSortDropdown from '~/features/clients/components/ClientSortDropdown.vue'
 import ClientsTable from '~/features/clients/components/ClientsTable.vue'
 import ClientFormModal from '~/features/clients/components/ClientFormModal.vue'
 import type { FilterChip } from '~/features/clients/components/ClientFilterChips.vue'
@@ -10,6 +12,7 @@ import type { Client } from '~/features/clients/components/ClientRow.vue'
 import type { ActionItem } from '~/features/clients/components/ClientActionsMenu.vue'
 import type { ModelsClient } from '~/services'
 import { useClientsApi } from '~/features/clients/composables/useClientsApi'
+import { useClientsFilters } from '~/features/clients/composables/useClientsFilters'
 import { toClientRow } from '~/features/clients/utils/transform'
 
 definePageMeta({ layout: 'app' })
@@ -20,24 +23,9 @@ const clientsApi = useClientsApi()
 const router = useRouter()
 const toast = useToast()
 
-// TODO: Move this into a composable
+// ── Filter / search / pagination / sort state (URL-synced) ────────────────
 
-// ── Filter / search / pagination state ────────────────────
-
-type StatusFilter = 'all' | 'active' | 'paused' | 'new' | 'ended'
-
-const search = ref('')
-const activeChip = ref<StatusFilter>('all')
-const page = ref(1)
-const sort = ref<{ column: 'name' | 'startDate' | 'lastCheckIn'; direction: 'asc' | 'desc' }>({
-  column: 'lastCheckIn',
-  direction: 'desc',
-})
-
-const debouncedSearch = refDebounced(search, 300)
-
-// Reset page when filter or search changes
-watch([activeChip, debouncedSearch], () => { page.value = 1 })
+const { search, activeChip, page, sort, filters, filterActive, listParams } = useClientsFilters()
 
 // ── Initial counts (parallel per-status totals) ───────────
 
@@ -65,13 +53,6 @@ const subtitle = computed(() => {
 })
 
 // ── Reactive client list ───────────────────────────────────
-
-const listParams = computed(() => ({
-  status:   activeChip.value === 'all' ? undefined : activeChip.value,
-  search:   debouncedSearch.value || undefined,
-  page:     page.value,
-  per_page: 20,
-}))
 
 const { data: listData, pending } = await useAsyncData(
   'clients-list',
@@ -180,22 +161,8 @@ function onClientSaved() {
   <AppTopbar title="Clients" :subtitle="subtitle">
     <template #actions>
       <SearchInput v-model="search" placeholder="Search clients…" />
-      <button type="button" class="btn-outline">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M1 3h12M3 7h8M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        Filter
-      </button>
-      <button type="button" class="btn-outline">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M2 4l3-3 3 3M5 1v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M9 10l3 3 3-3M12 3v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        Sort
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" class="ml-0.5 opacity-50">
-          <path d="M2 4l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+      <ClientFilterPanel v-model="filters" />
+      <ClientSortDropdown v-model="sort" />
       <button
         type="button"
         class="h-10 px-4 rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors"
@@ -220,7 +187,7 @@ function onClientSaved() {
       :total="total"
       :sort="sort"
       :loading="pending"
-      :filter-active="activeChip !== 'all' || !!debouncedSearch"
+      :filter-active="filterActive"
       @update:page="page = $event"
       @update:sort="sort = $event"
       @add-client="showAddModal = true"
@@ -233,30 +200,3 @@ function onClientSaved() {
     @saved="onClientSaved"
   />
 </template>
-
-<style scoped>
-.btn-outline {
-  border: 1.5px solid #D1E0D5;
-  border-radius: 8px;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #3D5A45;
-  background: var(--bg-surface);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: border-color .15s, background .15s;
-}
-.btn-outline:hover {
-  border-color: var(--green-brand);
-  background: #F0F9F4;
-}
-</style>
-
-<style>
-/* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .btn-outline { border-color: var(--border); color: var(--text-secondary); }
-.dark .btn-outline:hover { background: var(--bg-primary-soft); }
-</style>

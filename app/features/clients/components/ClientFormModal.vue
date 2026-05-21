@@ -17,7 +17,26 @@ const emit = defineEmits<{
 }>()
 
 const mode = computed(() => props.client ? 'edit' : 'add')
-const title = computed(() => mode.value === 'add' ? 'Add New Client' : 'Edit Client')
+const title = computed(() => mode.value === 'add' ? 'Add new client' : 'Edit Client')
+const description = computed(() =>
+  mode.value === 'add' ? "They'll receive a portal invite once added" : undefined,
+)
+
+const sendInvite = ref(true)
+
+// ── Preset options ─────────────────────────────────────────
+
+const GOAL_OPTIONS = [
+  'Fat Loss', 'Muscle Gain', 'Nutrition + Fitness',
+  'Strength Training', 'Athletic Performance',
+  'Marathon / Endurance', 'General Fitness',
+].map(g => ({ label: g, value: g }))
+
+const PLAN_OPTIONS = [
+  { label: 'Starter · $99/mo',       value: 'Starter',      price: 99  as number | null },
+  { label: 'Pro Coaching · $199/mo',  value: 'Pro Coaching', price: 199 as number | null },
+  { label: 'Custom',                   value: 'Custom',        price: null as number | null },
+]
 
 // ── Zod schema ─────────────────────────────────────────────
 
@@ -72,6 +91,18 @@ watch(() => props.open, (open) => {
   if (open) Object.assign(state, buildState())
 })
 
+// Writable computed: maps plan_name ↔ PLAN_OPTIONS, also syncs plan_price
+const selectedPlanValue = computed({
+  get: () => PLAN_OPTIONS.find(p => p.value === state.plan_name)?.value ?? '',
+  set: (v: string) => {
+    const opt = PLAN_OPTIONS.find(p => p.value === v)
+    if (opt) {
+      state.plan_name = opt.value
+      state.plan_price = opt.price
+    }
+  },
+})
+
 // ── API ────────────────────────────────────────────────────
 
 const clientsApi = useClientsApi()
@@ -82,17 +113,17 @@ async function handleSubmit() {
   submitting.value = true
   try {
     const body = {
-      first_name:        state.first_name,
-      last_name:         state.last_name,
-      email:             state.email,
-      phone:             state.phone || undefined,
-      goal:              state.goal,
-      goal_sub:          state.goal_sub || undefined,
-      plan_name:         state.plan_name || undefined,
-      plan_price_cents:  state.plan_price ? Math.round(state.plan_price * 100) : undefined,
-      start_date:        state.start_date,
-      status:            state.status,
-      program_total:     state.program_total ?? undefined,
+      first_name:       state.first_name,
+      last_name:        state.last_name,
+      email:            state.email,
+      phone:            state.phone || undefined,
+      goal:             state.goal,
+      goal_sub:         state.goal_sub || undefined,
+      plan_name:        state.plan_name || undefined,
+      plan_price_cents: state.plan_price ? Math.round(state.plan_price * 100) : undefined,
+      start_date:       state.start_date,
+      status:           state.status,
+      program_total:    state.program_total ?? undefined,
     }
 
     let saved: ModelsClient
@@ -100,6 +131,9 @@ async function handleSubmit() {
       saved = await clientsApi.update(props.client.id, body)
     } else {
       saved = await clientsApi.create(body as HandlersCreateClientRequest)
+      if (sendInvite.value && saved.id) {
+        clientsApi.invite(saved.id).catch(() => {})
+      }
     }
 
     toast.add({ title: mode.value === 'add' ? 'Client added!' : 'Client updated!', color: 'success' })
@@ -113,133 +147,123 @@ async function handleSubmit() {
 }
 
 const statusOptions = [
-  { label: 'Active', value: 'active' },
+  { label: 'Active',     value: 'active' },
   { label: 'Trial / New', value: 'new' },
-  { label: 'Paused', value: 'paused' },
-  { label: 'Ended', value: 'ended' },
+  { label: 'Paused',     value: 'paused' },
+  { label: 'Ended',      value: 'ended' },
 ]
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="modal">
-      <div
-        v-if="open"
-        class="fixed inset-0 z-[200] flex items-center justify-center p-4"
-        @keydown.esc="emit('update:open', false)"
-      >
-        <div class="absolute inset-0 bg-black/40 dark:bg-black/60 backdrop-blur-[2px]" @click="emit('update:open', false)" />
-
-        <div class="relative bg-(--bg-surface) border border-(--border) rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col overflow-hidden">
-          <!-- Header -->
-          <div class="px-6 py-4 border-b border-(--border) flex items-center justify-between shrink-0">
-            <h2 class="text-[16px] font-extrabold text-(--text-primary) tracking-[-0.2px]">{{ title }}</h2>
-            <button type="button" class="w-8 h-8 rounded-lg flex items-center justify-center text-(--text-muted) hover:bg-(--bg-elevated) hover:text-(--text-primary) transition-colors" @click="emit('update:open', false)">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Body -->
-          <div class="overflow-y-auto flex-1 px-6 py-5 custom-scrollbar">
-            <UForm :schema="schema" :state="state" class="flex flex-col gap-4" @submit="handleSubmit">
-              <!-- Name -->
-              <div class="grid grid-cols-2 gap-3">
-                <UFormField name="first_name" label="First name" required>
-                  <UInput v-model="state.first_name" placeholder="Sofia" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-                <UFormField name="last_name" label="Last name" required>
-                  <UInput v-model="state.last_name" placeholder="Reyes" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-              </div>
-
-              <!-- Email + Phone -->
-              <div class="grid grid-cols-2 gap-3">
-                <UFormField name="email" label="Email" required>
-                  <UInput v-model="state.email" type="email" placeholder="sofia@example.com" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-                <UFormField name="phone" label="Phone">
-                  <UInput v-model="state.phone" type="tel" placeholder="+1 555 0100" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-              </div>
-
-              <!-- Goal -->
-              <UFormField name="goal" label="Primary goal" required>
-                <UInput v-model="state.goal" placeholder="e.g. Fat Loss" :ui="{ base: 'rounded-[10px]' }" />
-              </UFormField>
-
-              <UFormField name="goal_sub" label="Goal details">
-                <UInput v-model="state.goal_sub" placeholder="e.g. 12-week program" :ui="{ base: 'rounded-[10px]' }" />
-              </UFormField>
-
-              <!-- Plan -->
-              <div class="grid grid-cols-2 gap-3">
-                <UFormField name="plan_name" label="Plan name">
-                  <UInput v-model="state.plan_name" placeholder="Pro Coaching" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-                <UFormField name="plan_price" label="Plan price ($/mo)">
-                  <UInput
-                    v-model.number="state.plan_price"
-                    type="number"
-                    placeholder="199"
-                    :min="0"
-                    :step="1"
-                    :ui="{ base: 'rounded-[10px]' }"
-                  />
-                </UFormField>
-              </div>
-
-              <!-- Start date + Program length -->
-              <div class="grid grid-cols-2 gap-3">
-                <UFormField name="start_date" label="Start date" required>
-                  <UInput v-model="state.start_date" type="date" :ui="{ base: 'rounded-[10px]' }" />
-                </UFormField>
-                <UFormField name="program_total" label="Program length (weeks)">
-                  <UInput
-                    v-model.number="state.program_total"
-                    type="number"
-                    placeholder="12"
-                    :min="1"
-                    :step="1"
-                    :ui="{ base: 'rounded-[10px]' }"
-                  />
-                </UFormField>
-              </div>
-
-              <!-- Status -->
-              <UFormField name="status" label="Status">
-                <USelect v-model="state.status" :options="statusOptions" value-key="value" label-key="label" :ui="{ base: 'rounded-[10px]' }" />
-              </UFormField>
-
-              <!-- Footer inside form so submit works -->
-              <div class="flex justify-end gap-2 pt-2 border-t border-(--border) mt-1">
-                <UButton variant="ghost" color="neutral" :disabled="submitting" @click="emit('update:open', false)">
-                  Cancel
-                </UButton>
-                <UButton type="submit" color="primary" :loading="submitting">
-                  {{ mode === 'add' ? 'Add Client' : 'Save Changes' }}
-                </UButton>
-              </div>
-            </UForm>
-          </div>
+  <UModal
+    :open="open"
+    :title="title"
+    :description="description"
+    :ui="{ body: 'overflow-y-auto max-h-[65vh]' }"
+    @update:open="emit('update:open', $event)"
+  >
+    <template #body>
+      <UForm id="client-form" :schema="schema" :state="state" class="flex flex-col gap-4" @submit="handleSubmit">
+        <!-- Name (both modes) -->
+        <div class="grid grid-cols-2 gap-3">
+          <UFormField name="first_name" label="First name" required>
+            <UInput v-model="state.first_name" placeholder="Sofia" class="rounded-[10px]" />
+          </UFormField>
+          <UFormField name="last_name" label="Last name" required>
+            <UInput v-model="state.last_name" placeholder="Reyes" class="rounded-[10px]" />
+          </UFormField>
         </div>
+
+        <!-- ── ADD MODE ──────────────────────────────────────────── -->
+        <template v-if="mode === 'add'">
+          <UFormField name="email" label="Email address" required>
+            <UInput v-model="state.email" type="email" placeholder="sofia@example.com" class="rounded-[10px]" />
+          </UFormField>
+
+          <div class="grid grid-cols-2 gap-3">
+            <UFormField name="phone" label="Phone">
+              <UInput v-model="state.phone" type="tel" placeholder="+1 (555) 000-0000" class="rounded-[10px]" />
+            </UFormField>
+            <UFormField name="start_date" label="Start date" required>
+              <UInput v-model="state.start_date" type="date" class="rounded-[10px]" />
+            </UFormField>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <UFormField name="plan_name" label="Coaching plan">
+              <USelect v-model="selectedPlanValue" :options="PLAN_OPTIONS" value-key="value" label-key="label" placeholder="Select a plan" class="rounded-[10px]" />
+            </UFormField>
+            <UFormField name="goal" label="Primary goal" required>
+              <USelect v-model="state.goal" :options="GOAL_OPTIONS" value-key="value" label-key="label" placeholder="Select a goal" class="rounded-[10px]" />
+            </UFormField>
+          </div>
+
+          <!-- Portal invite toggle -->
+          <div class="flex items-center justify-between px-3.5 py-3 rounded-[10px] bg-(--bg-input) border border-(--border)">
+            <div>
+              <div class="text-[13px] font-semibold text-(--text-primary)">Send portal invite</div>
+              <div class="text-[12px] text-(--text-muted) mt-0.5">Client receives an email to set up their account</div>
+            </div>
+            <USwitch v-model="sendInvite" />
+          </div>
+        </template>
+
+        <!-- ── EDIT MODE ─────────────────────────────────────────── -->
+        <template v-else>
+          <div class="grid grid-cols-2 gap-3">
+            <UFormField name="email" label="Email" required>
+              <UInput v-model="state.email" type="email" placeholder="sofia@example.com" class="rounded-[10px]" />
+            </UFormField>
+            <UFormField name="phone" label="Phone">
+              <UInput v-model="state.phone" type="tel" placeholder="+1 555 0100" class="rounded-[10px]" />
+            </UFormField>
+          </div>
+
+          <UFormField name="goal" label="Primary goal" required>
+            <UInput v-model="state.goal" placeholder="e.g. Fat Loss" class="rounded-[10px]" />
+          </UFormField>
+
+          <UFormField name="goal_sub" label="Goal details">
+            <UInput v-model="state.goal_sub" placeholder="e.g. 12-week program" class="rounded-[10px]" />
+          </UFormField>
+
+          <div class="grid grid-cols-2 gap-3">
+            <UFormField name="plan_name" label="Plan name">
+              <UInput v-model="state.plan_name" placeholder="Pro Coaching" class="rounded-[10px]" />
+            </UFormField>
+            <UFormField name="plan_price" label="Plan price ($/mo)">
+              <UInput v-model.number="state.plan_price" type="number" placeholder="199" :min="0" :step="1" class="rounded-[10px]" />
+            </UFormField>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <UFormField name="start_date" label="Start date" required>
+              <UInput v-model="state.start_date" type="date" class="rounded-[10px]" />
+            </UFormField>
+            <UFormField name="program_total" label="Program length (weeks)">
+              <UInput v-model.number="state.program_total" type="number" placeholder="12" :min="1" :step="1" class="rounded-[10px]" />
+            </UFormField>
+          </div>
+
+          <UFormField name="status" label="Status">
+            <USelect v-model="state.status" :options="statusOptions" value-key="value" label-key="label" class="rounded-[10px]" />
+          </UFormField>
+        </template>
+      </UForm>
+    </template>
+
+    <template #footer>
+      <div class="flex justify-end gap-2 w-full">
+        <UButton variant="ghost" color="neutral" :disabled="submitting" @click="emit('update:open', false)">
+          Cancel
+        </UButton>
+        <UButton form="client-form" type="submit" color="primary" :loading="submitting">
+          <svg v-if="mode === 'add' && !submitting" width="12" height="12" viewBox="0 0 12 12" fill="none" class="shrink-0">
+            <path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          {{ mode === 'add' ? 'Add client' : 'Save Changes' }}
+        </UButton>
       </div>
-    </Transition>
-  </Teleport>
+    </template>
+  </UModal>
 </template>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active { transition: opacity .18s ease, transform .18s ease; }
-.modal-enter-from,
-.modal-leave-to { opacity: 0; transform: scale(.97); }
-
-.custom-scrollbar::-webkit-scrollbar { width: 5px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #D1E0D5; border-radius: 3px; }
-</style>
-
-<style>
-/* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); }
-</style>

@@ -30,7 +30,7 @@ const PILL_ICONS = {
   weight: '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 9l2-4 3 3 2-5 2 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 } as const
 
-// ── Helpers ────────────────────────────────────────────────
+// Helpers
 
 export function fmtStartDate(dateStr?: string): string {
   if (!dateStr) return '—'
@@ -89,7 +89,7 @@ function sleepTone(hrs?: number | null): CheckInValueTone {
   return 'warn'
 }
 
-// ── Exports ────────────────────────────────────────────────
+// Exports
 
 export function toClientRow(c: ModelsClient): Omit<Client, 'menuActions'> {
   const status = (c.status as Client['status']) ?? 'active'

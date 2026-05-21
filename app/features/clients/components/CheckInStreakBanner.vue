@@ -1,3 +1,10 @@
+<script setup lang="ts">
+defineProps<{
+name: string
+weeks: number
+}>()
+</script>
+
 <template>
   <div class="flex items-center justify-between rounded-xl py-4 px-[22px] mb-5 text-white" :style="{ background: 'linear-gradient(135deg, #0F2418, #1A7A4A)' }">
     <div class="flex items-center gap-3">
@@ -14,9 +21,3 @@
   </div>
 </template>
 
-<script setup lang="ts">
-defineProps<{
-  name: string
-  weeks: number
-}>()
-</script>

@@ -45,8 +45,8 @@ const sortArrowPath = (col: SortCol) => {
           <th class="text-left text-[11px] font-bold uppercase tracking-[0.7px] text-(--text-muted) py-[13px] pl-[22px] pr-4 whitespace-nowrap w-[220px]">
             <button
               type="button"
-              class="th-sort inline-flex items-center gap-1 cursor-pointer bg-transparent border-none text-inherit font-inherit text-inherit uppercase tracking-inherit"
-              :class="{ 'th-sort-active': sort.column === 'name' }"
+              class="inline-flex items-center gap-1 cursor-pointer bg-transparent border-none font-inherit uppercase tracking-[inherit] transition-colors hover:text-(--green-brand)"
+              :class="sort.column === 'name' ? 'text-(--green-brand)' : 'text-(--text-muted)'"
               @click="toggleSort('name')"
             >
               Client
@@ -60,8 +60,8 @@ const sortArrowPath = (col: SortCol) => {
           <th class="text-left text-[11px] font-bold uppercase tracking-[0.7px] text-(--text-muted) py-[13px] px-4 whitespace-nowrap">
             <button
               type="button"
-              class="th-sort inline-flex items-center gap-1 cursor-pointer bg-transparent border-none text-inherit font-inherit text-inherit uppercase tracking-inherit"
-              :class="{ 'th-sort-active': sort.column === 'startDate' }"
+              class="inline-flex items-center gap-1 cursor-pointer bg-transparent border-none font-inherit uppercase tracking-[inherit] transition-colors hover:text-(--green-brand)"
+              :class="sort.column === 'startDate' ? 'text-(--green-brand)' : 'text-(--text-muted)'"
               @click="toggleSort('startDate')"
             >
               Start Date
@@ -73,8 +73,8 @@ const sortArrowPath = (col: SortCol) => {
           <th class="text-left text-[11px] font-bold uppercase tracking-[0.7px] text-(--text-muted) py-[13px] px-4 whitespace-nowrap">
             <button
               type="button"
-              class="th-sort inline-flex items-center gap-1 cursor-pointer bg-transparent border-none font-inherit text-inherit uppercase tracking-inherit"
-              :class="sort.column === 'lastCheckIn' ? 'th-sort-active' : ''"
+              class="inline-flex items-center gap-1 cursor-pointer bg-transparent border-none font-inherit uppercase tracking-[inherit] transition-colors hover:text-(--green-brand)"
+              :class="sort.column === 'lastCheckIn' ? 'text-(--green-brand)' : 'text-(--text-muted)'"
               @click="toggleSort('lastCheckIn')"
             >
               Last Check-in
@@ -137,10 +137,3 @@ const sortArrowPath = (col: SortCol) => {
     />
   </div>
 </template>
-
-
-
-<style scoped>
-.th-sort:hover { color: var(--green-brand); }
-.th-sort-active { color: var(--green-brand); }
-</style>

@@ -1,6 +1,6 @@
 <template>
   <tr
-    class="client-row transition-colors duration-100 cursor-pointer border-b border-[#F0F4F1] dark:border-white/5 last:border-b-0"
+    class="transition-colors duration-100 cursor-pointer border-b border-[#F0F4F1] dark:border-white/5 last:border-b-0 hover:bg-[#F0F9F4]! dark:hover:bg-(--bg-primary-soft)!"
     :class="[
       { 'new-row': client.isNew },
       { 'bg-[#FFFBF7]! dark:bg-[#E67E22]/10!': client.paymentOverdue },
@@ -127,12 +127,7 @@ const checkInClass = computed(() => ({
 </script>
 
 <style scoped>
-.client-row:hover {
-  background: #F0F9F4 !important;
-}
-.new-row {
-  animation: new-row-pulse 2s ease forwards;
-}
+.new-row { animation: new-row-pulse 2s ease forwards; }
 @keyframes new-row-pulse {
   0%   { background: #EBF5FB; }
   100% { background: transparent; }
@@ -145,6 +140,5 @@ const checkInClass = computed(() => ({
 
 <style>
 /* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .client-row:hover { background: var(--bg-primary-soft) !important; }
 .dark .new-row { animation: new-row-pulse-dark 2s ease forwards; }
 </style>
