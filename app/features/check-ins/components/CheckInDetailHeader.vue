@@ -16,13 +16,13 @@
 
       <div class="flex gap-2 items-center">
         <div class="flex items-center gap-1.5">
-          <button type="button" class="wnav-btn" :disabled="!hasPrev" title="Previous week">
+          <button type="button" class="wnav-btn" :disabled="!hasPrev" title="Previous week" @click="emit('prev-week')">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M8 3L4 6l4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </button>
           <span class="text-xs font-semibold text-(--text-primary)">Wk {{ week.current }} / {{ week.total }}</span>
-          <button type="button" class="wnav-btn" :disabled="!hasNext" :title="hasNext ? 'Next week' : 'No newer check-in'">
+          <button type="button" class="wnav-btn" :disabled="!hasNext" :title="hasNext ? 'Next week' : 'No newer check-in'" @click="emit('next-week')">
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M4 3l4 3-4 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -65,6 +65,11 @@ withDefaults(defineProps<{
   hasPrev: true,
   hasNext: false,
 })
+
+const emit = defineEmits<{
+  'prev-week': []
+  'next-week': []
+}>()
 </script>
 
 <style scoped>

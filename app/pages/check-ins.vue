@@ -1,5 +1,229 @@
+<script setup lang="ts">
+import { shallowRef, computed, watch } from 'vue'
+import AppTopbar from '~/components/AppTopbar.vue'
+import CheckInFilterTabs from '~/features/check-ins/components/CheckInFilterTabs.vue'
+import CheckInList from '~/features/check-ins/components/CheckInList.vue'
+import CheckInDetailPanel from '~/features/check-ins/components/CheckInDetailPanel.vue'
+import type { CheckInSummary } from '~/features/check-ins/components/CheckInCard.vue'
+import type { CheckInMetricsData } from '~/features/check-ins/components/CheckInMetrics.vue'
+import type { PreviousResponse } from '~/features/check-ins/components/PreviousResponses.vue'
+import type { ModelsClient, ModelsCoachCheckIn } from '~/services'
+import { useCheckInsApi } from '~/features/check-ins/composables/useCheckInsApi'
+import { useClientsApi } from '~/features/clients/composables/useClientsApi'
+import { useAuthStore } from '~/features/auth/stores/useAuthStore'
+import { toCard, toMetrics, toPreviousResponse } from '~/features/check-ins/utils/transform'
+
+definePageMeta({ layout: 'app' })
+
+// ── Instances ──────────────────────────────────────────────
+const checkInsApi = useCheckInsApi()
+const clientsApi = useClientsApi()
+const authStore = useAuthStore()
+const toast = useToast()
+
+// ── Filter / selection state ───────────────────────────────
+
+type FilterId = 'needs-response' | 'all' | 'week'
+
+const activeFilter = ref<FilterId>('needs-response')
+const selectedId = ref<string | null>(null)
+const weekStart = currentWeekStart()
+
+const listParams = computed(() => {
+  if (activeFilter.value === 'needs-response') return { status: 'unread', per_page: 50 }
+  if (activeFilter.value === 'week') return { week_start: weekStart, per_page: 50 }
+  return { per_page: 50 }
+})
+
+// ── Initial load: tab counts + clients ────────────────────
+const { data: initData } = await useAsyncData('check-ins-init', () =>
+  Promise.all([
+    clientsApi.list({ per_page: 200 }),
+    checkInsApi.list({ status: 'unread', per_page: 1 }),
+    checkInsApi.list({ per_page: 1 }),
+    checkInsApi.list({ week_start: weekStart, per_page: 1 }),
+  ])
+)
+
+const clientMap = computed(() => {
+  const m = new Map<string, ModelsClient>()
+  for (const c of initData.value?.[0]?.clients ?? []) {
+    if (c.id) m.set(c.id, c)
+  }
+  return m
+})
+
+const tabCounts = computed(() => ({
+  'needs-response': initData.value?.[1]?.total ?? 0,
+  'all':            initData.value?.[2]?.total ?? 0,
+  'week':           initData.value?.[3]?.total ?? 0,
+}))
+
+// ── Reactive list (re-fetches on filter change) ────────────
+const { data: listData, pending: listPending } = await useAsyncData(
+  'check-ins-list',
+  () => checkInsApi.list(listParams.value),
+  { watch: [activeFilter] },
+)
+
+const checkIns = computed(() => listData.value?.check_ins ?? [])
+const cards = computed<CheckInSummary[]>(() =>
+  checkIns.value.map(ci => toCard(ci, clientMap.value.get(ci.client_id ?? '')))
+)
+
+const unreadCount = computed(() => tabCounts.value['needs-response'])
+const totalThisWeek = computed(() => tabCounts.value['week'])
+const weekDisplayLabel = `Week of ${fmtWeekOf(weekStart)}`
+
+const filterTabs = computed(() => [
+  { id: 'needs-response', label: 'Needs Response', count: tabCounts.value['needs-response'] },
+  { id: 'all',            label: 'All Check-ins',  count: tabCounts.value['all'] },
+  { id: 'week',           label: 'This Week',      count: tabCounts.value['week'] },
+])
+
+// ── Detail state ───────────────────────────────────────────
+const detailCheckIn = shallowRef<ModelsCoachCheckIn | null>(null)
+const clientHistory = shallowRef<ModelsCoachCheckIn[]>([])
+const detailLoading = ref(false)
+const sending = ref(false)
+const savingDraft = ref(false)
+
+watch(selectedId, async (id) => {
+  if (!id) {
+    detailCheckIn.value = null
+    clientHistory.value = []
+    return
+  }
+
+  detailLoading.value = true
+  const listItem = checkIns.value.find(ci => ci.id === id)
+  const clientId = listItem?.client_id ?? detailCheckIn.value?.client_id
+
+  try {
+    const [detail, historyRes] = await Promise.all([
+      checkInsApi.get(id),
+      clientId ? checkInsApi.list({ client_id: clientId, per_page: 30 }) : null,
+    ])
+
+    // Fire-and-forget mark-read
+    if (detail && !detail.is_read) {
+      checkInsApi.markRead(id).catch(() => {})
+      if (listItem) listItem.is_read = true
+    }
+
+    detailCheckIn.value = detail
+    clientHistory.value = historyRes?.check_ins ?? []
+  } catch {
+    toast.add({ title: 'Could not load check-in details', color: 'error' })
+  } finally {
+    detailLoading.value = false
+  }
+})
+
+// ── Week navigation ────────────────────────────────────────
+const sortedHistory = computed(() =>
+  [...clientHistory.value].sort((a, b) =>
+    (a.week_start_date ?? '').localeCompare(b.week_start_date ?? '')
+  )
+)
+
+const currentHistoryIdx = computed(() =>
+  sortedHistory.value.findIndex(ci => ci.id === selectedId.value)
+)
+
+const weekCurrent = computed(() => Math.max(1, currentHistoryIdx.value + 1))
+const weekTotal = computed(() => Math.max(1, sortedHistory.value.length))
+const hasPrev = computed(() => currentHistoryIdx.value > 0)
+const hasNext = computed(() => currentHistoryIdx.value < sortedHistory.value.length - 1)
+
+const onPrevWeek = () => {
+  if (hasPrev.value) selectedId.value = sortedHistory.value[currentHistoryIdx.value - 1]!.id!
+}
+const onNextWeek = () => {
+  if (hasNext.value) selectedId.value = sortedHistory.value[currentHistoryIdx.value + 1]!.id!
+}
+
+// ── Detail panel derived data ──────────────────────────────
+const prevCheckIn = computed(() =>
+  currentHistoryIdx.value > 0 ? sortedHistory.value[currentHistoryIdx.value - 1] : undefined
+)
+
+const detailCard = computed<CheckInSummary | null>(() => {
+  if (!detailCheckIn.value) return null
+  return toCard(detailCheckIn.value, clientMap.value.get(detailCheckIn.value.client_id ?? ''))
+})
+
+const detailWeekLabel = computed(() =>
+  detailCheckIn.value?.week_start_date
+    ? `Week of ${fmtWeekOf(detailCheckIn.value.week_start_date)}`
+    : ''
+)
+
+const detailSubmittedAt = computed(() => fmtDateTime(detailCheckIn.value?.submitted_at))
+
+const selectedMetrics = computed<CheckInMetricsData>(() =>
+  detailCheckIn.value
+    ? toMetrics(detailCheckIn.value, prevCheckIn.value, sortedHistory.value)
+    : toMetrics({})
+)
+
+const coachInitials = computed(() => {
+  const c = authStore.coach
+  return `${c?.first_name?.[0] ?? ''}${c?.last_name?.[0] ?? ''}`.toUpperCase() || '?'
+})
+
+const previousResponses = computed<PreviousResponse[]>(() =>
+  sortedHistory.value
+    .filter(ci => ci.id !== selectedId.value)
+    .reverse()
+    .map(ci => toPreviousResponse(ci, coachInitials.value))
+)
+
+const clientNote = computed(() => detailCheckIn.value?.notes ?? '')
+const initialDraft = computed(() => detailCheckIn.value?.response_draft ?? '')
+
+const photoWeekLabel = computed(() =>
+  detailCheckIn.value?.photo_urls?.length
+    ? `Week of ${fmtWeekOf(detailCheckIn.value.week_start_date)}`
+    : undefined
+)
+const photoSubmittedAt = computed(() =>
+  detailCheckIn.value?.submitted_at
+    ? new Date(detailCheckIn.value.submitted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : ''
+)
+
+// ── Response handlers ──────────────────────────────────────
+const onSend = async (text: string) => {
+  if (!selectedId.value || !text.trim()) return
+  sending.value = true
+  try {
+    const updated = await checkInsApi.respond(selectedId.value, { response: text })
+    detailCheckIn.value = updated
+    toast.add({ title: 'Response sent!', color: 'success' })
+  } catch {
+    toast.add({ title: 'Failed to send response', color: 'error' })
+  } finally {
+    sending.value = false
+  }
+}
+
+const onSaveDraft = async (text: string) => {
+  if (!selectedId.value) return
+  savingDraft.value = true
+  try {
+    await checkInsApi.saveDraft(selectedId.value, { draft: text })
+    toast.add({ title: 'Draft saved', color: 'neutral' })
+  } catch {
+    toast.add({ title: 'Failed to save draft', color: 'error' })
+  } finally {
+    savingDraft.value = false
+  }
+}
+</script>
+
 <template>
-  <AppTopbar title="Check-ins" :subtitle="weekLabel">
+  <AppTopbar title="Check-ins" :subtitle="weekDisplayLabel">
     <template #actions>
       <button type="button" class="btn-outline">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -25,7 +249,7 @@
           <div class="flex items-center gap-2.5">
             <div class="text-[22px] font-extrabold text-(--text-primary) tracking-[-0.4px]">Check-ins</div>
             <span class="bg-[#E74C3C] text-white text-[11px] font-bold py-0.5 px-2 rounded-[10px]">{{ unreadCount }} unread</span>
-            <span class="text-[11px] font-semibold text-primary dark:text-(--green-light) bg-(--green-pale) dark:bg-(--bg-primary-soft) py-0.5 px-2 rounded-[10px]">🔥 Week of Apr 14</span>
+            <span class="text-[11px] font-semibold text-primary dark:text-(--green-light) bg-(--green-pale) dark:bg-(--bg-primary-soft) py-0.5 px-2 rounded-[10px]">🔥 {{ weekDisplayLabel }}</span>
           </div>
           <div class="text-[13px] text-(--text-muted) mt-0.5 flex items-center gap-1.5">
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -45,169 +269,45 @@
       <CheckInList
         v-model:selected-id="selectedId"
         :cards="cards"
+        :loading="listPending"
       />
+
       <CheckInDetailPanel
-        v-if="selectedCheckIn"
-        :check-in="selectedCheckIn"
+        v-if="detailCard || detailLoading"
+        :key="selectedId ?? 'none'"
+        :check-in="detailCard ?? cards[0]!"
         :metrics="selectedMetrics"
         :previous-responses="previousResponses"
+        :client-note="clientNote"
+        :week-label="detailWeekLabel"
+        :submitted-at="detailSubmittedAt"
+        :week-current="weekCurrent"
+        :week-total="weekTotal"
+        :has-prev="hasPrev"
+        :has-next="hasNext"
+        :initial-draft="initialDraft"
+        :photo-week-label="photoWeekLabel"
+        :photo-submitted-at="photoSubmittedAt"
+        :loading="detailLoading"
+        :sending="sending"
+        @send="onSend"
+        @save-draft="onSaveDraft"
+        @prev-week="onPrevWeek"
+        @next-week="onNextWeek"
       />
-      <div v-else class="flex-1 min-w-0 bg-(--bg-surface) rounded-[14px] border border-(--border) flex items-center justify-center p-10 text-(--text-muted) text-center">
-        Select a check-in from the left to view details.
+
+      <div
+        v-else
+        class="flex-1 min-w-0 bg-(--bg-surface) rounded-[14px] border border-(--border) flex items-center justify-center p-10 text-(--text-muted) text-center"
+      >
+        <div>
+          <div class="text-[32px] mb-3">📋</div>
+          <div class="text-sm font-medium">Select a check-in to view details</div>
+        </div>
       </div>
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import AppTopbar from '~/components/AppTopbar.vue'
-import CheckInFilterTabs from '~/features/check-ins/components/CheckInFilterTabs.vue'
-import CheckInList from '~/features/check-ins/components/CheckInList.vue'
-import CheckInDetailPanel from '~/features/check-ins/components/CheckInDetailPanel.vue'
-import type { CheckInSummary } from '~/features/check-ins/components/CheckInCard.vue'
-import type { CheckInMetricsData } from '~/features/check-ins/components/CheckInMetrics.vue'
-import type { PreviousResponse } from '~/features/check-ins/components/PreviousResponses.vue'
-
-definePageMeta({ layout: 'app' })
-
-const weekLabel = 'Week of April 14, 2026'
-const totalThisWeek = 18
-
-const activeFilter = ref<'needs-response' | 'all' | 'week'>('needs-response')
-const selectedId = ref<string | null>('sofia')
-
-const filterTabs = [
-  { id: 'needs-response', label: 'Needs Response', count: 4 },
-  { id: 'all',            label: 'All Check-ins',  count: 18 },
-  { id: 'week',           label: 'This Week',      count: 14 },
-] as const
-
-const cards: CheckInSummary[] = [
-  {
-    id: 'sofia', initials: 'SR', variant: 'a', name: 'Sofia Reyes',
-    week: 'Week 14', submittedLabel: 'Submitted 2 hours ago',
-    unread: true, streakWeeks: 6,
-    preview: '"Feeling really strong this week! Hit all 4 workouts and actually enjoyed the Saturday circuit..."',
-    metrics: [
-      { label: 'Energy 8/10',  tone: 'good', icon: 'clock' },
-      { label: 'Sleep 7/10',   tone: 'default', icon: 'sleep' },
-      { label: '4/4 workouts', tone: 'good', icon: 'check' },
-      { label: '143 lbs ↓',    tone: 'good', icon: 'trend' },
-    ],
-    group: 'unread',
-  },
-  {
-    id: 'dante', initials: 'DW', variant: 'd', name: 'Dante Williams',
-    week: 'Week 14', submittedLabel: 'Submitted 5 hours ago',
-    unread: true,
-    preview: '"Tough week honestly. Quarter-end at work absolutely wiped me out. Missed two sessions..."',
-    metrics: [
-      { label: 'Energy 4/10',  tone: 'warn',  icon: 'clock' },
-      { label: 'Sleep 4/10',   tone: 'warn',  icon: 'sleep' },
-      { label: '2/4 workouts', tone: 'alert', icon: 'minus' },
-      { label: '187 lbs →',    tone: 'default', icon: 'trend' },
-    ],
-    group: 'unread',
-  },
-  {
-    id: 'elena', initials: 'EK', variant: 'e', name: 'Elena Kowalski',
-    week: 'Week 14', submittedLabel: 'Yesterday at 9:14 PM',
-    unread: true, streakWeeks: 10,
-    preview: '"PB on deadlift this week — hit 95kg! First time ever. I cried a little honestly..."',
-    metrics: [
-      { label: 'Energy 9/10',  tone: 'good', icon: 'clock' },
-      { label: 'Sleep 8/10',   tone: 'good', icon: 'sleep' },
-      { label: '4/4 workouts', tone: 'good', icon: 'check' },
-      { label: '161 lbs ↓',    tone: 'good', icon: 'trend' },
-    ],
-    group: 'unread',
-  },
-  {
-    id: 'marcus', initials: 'MT', variant: 'b', name: 'Marcus Thompson',
-    week: 'Week 14', submittedLabel: 'Yesterday at 6:52 PM',
-    unread: true,
-    preview: '"Good week overall. Training felt solid. Cardio still feels really hard though..."',
-    metrics: [
-      { label: 'Energy 7/10',  tone: 'default', icon: 'clock' },
-      { label: 'Sleep 6/10',   tone: 'default', icon: 'sleep' },
-      { label: '4/4 workouts', tone: 'good', icon: 'check' },
-      { label: '212 lbs ↑',    tone: 'warn', icon: 'trend' },
-    ],
-    group: 'unread',
-  },
-  {
-    id: 'priya', initials: 'PK', variant: 'c', name: 'Priya Kumar',
-    week: 'Week 13', submittedLabel: 'Apr 7 at 11:22 AM',
-    responded: true,
-    preview: '"Doing well this week. Managed to stick to the nutrition plan 5 out of 7 days..."',
-    metrics: [
-      { label: 'Energy 7/10',  tone: 'good' },
-      { label: 'Sleep 7/10',   tone: 'good' },
-      { label: '3/4 workouts', tone: 'good' },
-      { label: '128 lbs ↓',    tone: 'good' },
-    ],
-    group: 'responded',
-  },
-  {
-    id: 'james', initials: 'JL', variant: 'g', name: 'James Lowe',
-    week: 'Week 13', submittedLabel: 'Apr 7 at 8:03 AM',
-    responded: true,
-    preview: '"Leg is still a bit sore from the long run Sunday. Had to skip two sessions to rest it..."',
-    metrics: [
-      { label: 'Energy 5/10',  tone: 'warn' },
-      { label: 'Sleep 6/10',   tone: 'default' },
-      { label: '2/4 workouts', tone: 'alert' },
-      { label: '188 lbs →',    tone: 'default' },
-    ],
-    group: 'responded',
-  },
-]
-
-const unreadCount = computed(() => cards.filter((c) => c.unread).length)
-const selectedCheckIn = computed(() => cards.find((c) => c.id === selectedId.value) ?? null)
-
-// Detail / metrics / previous-responses remain hard-coded to Sofia for now
-// (same behavior as the raw HTML mockup).
-const selectedMetrics: CheckInMetricsData = {
-  energy: { value: 8, delta: 'Up 1 point from last week', deltaTone: 'good' },
-  sleep:  { value: 7, delta: 'Same as last week',        deltaTone: 'muted' },
-  adherence: { done: 4, total: 4, delta: 'Perfect week · 4 of 4 completed', deltaTone: 'good' },
-  weight: {
-    value: 143, unit: 'lbs',
-    trend: 'down',
-    delta: 'Down 1.5 lbs from last week', deltaTone: 'good',
-    history: [151, 150, 148.5, 147, 145.5, 143],
-  },
-}
-
-const previousResponses: PreviousResponse[] = [
-  {
-    id: 'wk-13', week: 'Week 13', date: 'Apr 7, 2026',
-    metrics: ['Energy 9/10', 'Sleep 8/10', '4/4 ✓', '144.5 lbs'],
-    snippet: '"Best week so far. Energy is through the roof. I actually looked forward to training…"',
-    coachInitials: 'JR', coachVariant: 'a',
-    coachRespondedAt: 'Apr 7 at 2:14 PM',
-    coachText: '"This is incredible progress Sofia — two weeks of perfect adherence and consistent weight loss. The fact that you\'re looking forward to sessions is the biggest win here. Keep leaning into that morning energy, and let\'s add a bit more volume to Thursday\'s session this week. You\'re ready for it. 🔥"',
-  },
-  {
-    id: 'wk-12', week: 'Week 12', date: 'Mar 31, 2026',
-    metrics: ['Energy 5/10', 'Sleep 5/10', '2/4', '145.5 lbs'],
-    snippet: '"Tough week honestly. Quarter-end at work absolutely wiped me out…"',
-    coachInitials: 'JR', coachVariant: 'a',
-    coachRespondedAt: 'Mar 31 at 4:48 PM',
-    coachText: '"Hey Sofia, first — 2 sessions in a brutal work week is still a win. Life happens and the fact that you showed up at all matters. Let\'s try calorie cycling this week to reset your energy levels — I\'ll send you the plan. Don\'t stress about the week, just focus on getting back on track."',
-  },
-  {
-    id: 'wk-11', week: 'Week 11', date: 'Mar 24, 2026',
-    metrics: ['Energy 7/10', 'Sleep 7/10', '4/4 ✓', '147 lbs'],
-    snippet: '"Really good week. Starting to see the shape change, especially in my arms…"',
-    coachInitials: 'JR', coachVariant: 'a',
-    coachRespondedAt: '',
-    coachText: '',
-  },
-]
-</script>
 
 <style scoped>
 .btn-outline {
