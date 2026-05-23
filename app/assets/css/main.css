@@ -31,6 +31,27 @@
 }
 
 :root {
+  /* ── Nuxt UI token overrides ───────────────────────────────
+     Binds Nuxt UI's --ui-* semantic variables to the design
+     system tokens so every component (USelect, UInput, UModal,
+     etc.) automatically inherits the correct surfaces, borders,
+     and text in both light and dark mode.
+     These rules are outside @layer so they beat Nuxt UI's
+     @layer theme defaults without needing !important.
+  */
+  --ui-bg:                var(--bg-surface);
+  --ui-bg-muted:          var(--bg-input);
+  --ui-bg-elevated:       var(--bg-surface);
+  --ui-bg-accented:       var(--bg-primary-soft);
+  --ui-border:            var(--border);
+  --ui-border-muted:      var(--border-muted);
+  --ui-border-accented:   var(--border-strong);
+  --ui-text-dimmed:       var(--text-muted);
+  --ui-text-muted:        var(--text-muted);
+  --ui-text-toned:        var(--text-secondary);
+  --ui-text:              var(--text-secondary);
+  --ui-text-highlighted:  var(--text-primary);
+
   /* ── Brand palette (invariant across modes) ── */
   --green-brand:  #1A7A4A;
   --green-light:  #2ECC71;
@@ -76,6 +97,10 @@
   Override semantic tokens only — brand palette stays intact.
 */
 .dark {
+  /* Elevated surfaces (modals, popovers, dropdown panels) sit
+     one level above the dark base surface for depth. */
+  --ui-bg-elevated: var(--bg-surface-raised);
+
   /* Text — lift for contrast on dark surfaces */
   --text-primary:   #F5F7F6;
   --text-secondary: #A8C2B3;

@@ -1,31 +1,38 @@
+import {
+  getApiV1Sessions,
+  getApiV1SessionsById,
+  postApiV1Sessions,
+  patchApiV1SessionsById,
+  deleteApiV1SessionsById,
+} from '~/services/sdk.gen'
 import type {
-  HandlersListSessionsResponse,
   HandlersCreateSessionRequest,
   HandlersUpdateSessionRequest,
-  ModelsCoachSession,
 } from '~/services/types.gen'
 
 export function useScheduleApi() {
-  const { $api } = useNuxtApp()
-
-  // --- reads ---
-
-  const list = (params?: { from?: string; to?: string; session_type?: string; client_id?: string; page?: number; per_page?: number }) =>
-    $api<HandlersListSessionsResponse>('/sessions', { params })
+  // reads
+  const list = (params?: {
+    from?: string
+    to?: string
+    session_type?: string
+    client_id?: string
+    page?: number
+    per_page?: number
+  }) => getApiV1Sessions({ query: params })
 
   const get = (id: string) =>
-    $api<ModelsCoachSession>(`/sessions/${id}`)
+    getApiV1SessionsById({ path: { id } })
 
-  // --- mutations ---
-
+  // mutations
   const create = (body: HandlersCreateSessionRequest) =>
-    $api<ModelsCoachSession>('/sessions', { method: 'POST', body })
+    postApiV1Sessions({ body })
 
   const update = (id: string, body: HandlersUpdateSessionRequest) =>
-    $api<ModelsCoachSession>(`/sessions/${id}`, { method: 'PATCH', body })
+    patchApiV1SessionsById({ path: { id }, body })
 
   const cancel = (id: string) =>
-    $api(`/sessions/${id}`, { method: 'DELETE' })
+    deleteApiV1SessionsById({ path: { id } })
 
   return { list, get, create, update, cancel }
 }

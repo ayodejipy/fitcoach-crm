@@ -60,9 +60,14 @@ async function handleSubmit(event: FormSubmitEvent<LoginSchema>) {
         class="z-20 absolute -top-2.5 right-3 border border-primary-300 bg-primary-300/80 rounded-full">
         Used last
       </UBadge>
-      <button
-        class="flex items-center justify-center gap-2.5 w-full h-11 bg-(--bg-input) border-[1.5px] border-(--border) rounded-md font-inherit text-sm font-semibold text-(--text-primary) cursor-pointer transition-all duration-150 shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-none hover:border-(--border-strong) hover:shadow-[0_2px_8px_rgba(0,0,0,0.07)] hover:-translate-y-px"
-        :class="mounted && isSSOLogin === true ? 'border-(--green-mid)' : ''" @click="handleGoogleSignIn">
+      <UButton
+        variant="outline"
+        color="neutral"
+        block
+        class="h-11 gap-2.5 bg-(--bg-input) border-[1.5px] text-sm font-semibold text-(--text-primary) shadow-[0_1px_3px_rgba(0,0,0,0.04)] dark:shadow-none transition-all duration-150 hover:shadow-[0_2px_8px_rgba(0,0,0,0.07)] hover:-translate-y-px"
+        :class="mounted && isSSOLogin === true ? 'border-(--green-mid)' : 'border-(--border) hover:border-(--border-strong)'"
+        @click="handleGoogleSignIn"
+      >
         <svg width="18" height="18" viewBox="0 0 24 24">
           <path
             d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -78,7 +83,7 @@ async function handleSubmit(event: FormSubmitEvent<LoginSchema>) {
             fill="#EA4335" />
         </svg>
         Continue with Google
-      </button>
+      </UButton>
     </div>
 
     <div class="flex items-center gap-3 my-5">
@@ -104,10 +109,12 @@ async function handleSubmit(event: FormSubmitEvent<LoginSchema>) {
       <UFormField name="password" :ui="{ label: 'flex w-full items-center justify-between' }">
         <template #label>
           <span class="text-[13px] font-semibold text-(--text-secondary)">Password</span>
-          <button type="button"
-            class="text-[12px] font-medium text-(--text-accent) bg-transparent border-none cursor-pointer p-0 hover:underline"
-            @click.prevent="toast.add({ title: 'Coming soon', description: 'Password reset is not available yet.', color: 'neutral' })">Forgot
-            password?</button>
+          <UButton
+            variant="link"
+            color="neutral"
+            class="p-0 h-auto text-[12px] font-medium text-(--text-accent) hover:underline"
+            @click.prevent="toast.add({ title: 'Coming soon', description: 'Password reset is not available yet.', color: 'neutral' })"
+          >Forgot password?</UButton>
         </template>
 
         <UInput v-model="state.password" :type="showPass ? 'text' : 'password'" size="xl"

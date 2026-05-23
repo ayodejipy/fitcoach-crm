@@ -1,3 +1,55 @@
+<script setup lang="ts">
+import { onMounted, useTemplateRef } from 'vue'
+import SessionBlock, { type SessionType } from './SessionBlock.vue'
+
+export interface SessionData {
+  id: string
+  client: string
+  type: string
+  shortType?: string
+  time: string
+  location: string
+  sessionType: SessionType
+  initials: string
+  variant: 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
+  status: 'confirmed' | 'pending'
+  top: number
+  height: number
+  short?: boolean
+  unconfirmed?: boolean
+  badge?: string
+}
+
+export interface UnavailableBlock { top: number; height: number; label: string }
+
+export interface DayColumn {
+  id: string
+  dayName: string
+  dayNum: string
+  today?: boolean
+  weekend?: boolean
+  muted?: boolean
+  sessions: SessionData[]
+  unavailable?: UnavailableBlock[]
+  currentTimeTop?: number
+}
+
+defineProps<{
+  days: DayColumn[]
+  timeLabels: string[]
+}>()
+
+defineEmits<{
+  'session-click': [event: MouseEvent, session: SessionData]
+}>()
+
+const calBodyEl = useTemplateRef<HTMLElement>('calBodyEl')
+
+onMounted(() => {
+  if (calBodyEl.value) calBodyEl.value.scrollTop = 440 // start at 12 AM
+})
+</script>
+
 <template>
   <div class="cal-card bg-(--bg-surface) border border-(--border) rounded-[14px] overflow-hidden">
     <!-- Day header row -->
@@ -31,7 +83,7 @@
 
     <!-- Scrollable body -->
     <div ref="calBodyEl" class="cal-body flex overflow-y-auto max-h-[628px]">
-      <div class="flex min-h-[784px] w-full">
+      <div class="flex min-h-[784px] sm:min-h-[1344px] w-full">
         <!-- Time labels -->
         <div class="w-[54px] shrink-0 border-r border-(--border) relative">
           <div
@@ -48,7 +100,7 @@
           <div
             v-for="day in days"
             :key="day.id"
-            class="day-col relative border-r border-[#F0F4F1] dark:border-(--border-muted) last:border-r-0 min-h-[784px]"
+            class="day-col relative border-r border-[#F0F4F1] dark:border-(--border-muted) last:border-r-0 min-h-[784px] sm:min-h-[1344px]"
             :class="[
               day.today ? 'bg-primary/[0.03]' : '',
               day.weekend ? 'bg-black/[0.012] dark:bg-white/[0.012]' : '',
@@ -110,57 +162,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, useTemplateRef } from 'vue'
-import SessionBlock, { type SessionType } from './SessionBlock.vue'
-
-export interface SessionData {
-  id: string
-  client: string
-  type: string
-  shortType?: string
-  time: string
-  location: string
-  sessionType: SessionType
-  initials: string
-  variant: 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
-  status: 'confirmed' | 'pending'
-  top: number
-  height: number
-  short?: boolean
-  unconfirmed?: boolean
-  badge?: string
-}
-
-export interface UnavailableBlock { top: number; height: number; label: string }
-
-export interface DayColumn {
-  id: string
-  dayName: string
-  dayNum: string
-  today?: boolean
-  weekend?: boolean
-  muted?: boolean
-  sessions: SessionData[]
-  unavailable?: UnavailableBlock[]
-  currentTimeTop?: number
-}
-
-defineProps<{
-  days: DayColumn[]
-  timeLabels: string[]
-}>()
-
-defineEmits<{
-  'session-click': [event: MouseEvent, session: SessionData]
-}>()
-
-const calBodyEl = useTemplateRef<HTMLElement>('calBodyEl')
-
-onMounted(() => {
-  if (calBodyEl.value) calBodyEl.value.scrollTop = 56 // start at 8 AM
-})
-</script>
 
 <style scoped>
 /* Hour grid lines on the days grid */
