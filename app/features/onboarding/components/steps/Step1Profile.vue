@@ -22,7 +22,6 @@ const emit = defineEmits<{
 
 const api = useOnboardingApi();
 
-const firstNameValid = ref(false)
 const firstNameInvalid = ref(false)
 const slugStatus = ref<'idle' | 'checking' | 'available' | 'taken' | 'error'>('idle')
 const specErr = ref(false)
@@ -43,17 +42,10 @@ const selectSpec = (id: string) => {
 const liveValFirst = () => {
   if (firstNameInvalid.value && props.form.firstName.trim()) {
     firstNameInvalid.value = false
-    firstNameValid.value = true
   }
 }
 const blurFirst = () => {
-  if (!props.form.firstName.trim()) {
-    firstNameInvalid.value = true
-    firstNameValid.value = false
-  } else {
-    firstNameValid.value = true
-    firstNameInvalid.value = false
-  }
+  firstNameInvalid.value = !props.form.firstName.trim()
 }
 
 const checkSlug = useDebounceFn(async () => {
@@ -120,7 +112,7 @@ onMounted(() => {
     </StepHeader>
 
     <div class="px-9 py-7 min-h-[340px] max-[600px]:px-5 max-[600px]:py-5">
-      <!-- Photo upload -->
+      <!-- Photo upload — <label> wraps the hidden file input; keep native -->
       <label class="flex items-center gap-5 p-[18px] rounded-xl border-[1.5px] border-dashed border-(--border) bg-(--bg-input) cursor-pointer mb-[22px] transition-[border-color,background] duration-200 hover:border-(--green-mid) hover:bg-(--green-pale) dark:hover:bg-(--bg-primary-soft)">
         <div class="w-16 h-16 rounded-full bg-(--green-pale) dark:bg-(--bg-primary-soft) flex items-center justify-center overflow-hidden shrink-0 border-2 border-(--border)">
           <img v-if="form.photo" :src="form.photo" alt="" class="w-full h-full object-cover">
@@ -136,81 +128,72 @@ onMounted(() => {
 
       <!-- Name row -->
       <div class="field-row">
-        <div class="field mb-0!">
-          <label class="field-label">First name</label>
-          <input
+        <UFormField
+          label="First name"
+          name="firstName"
+          :error="firstNameInvalid ? 'Required' : undefined"
+          class="field mb-0!"
+        >
+          <UInput
             v-model="form.firstName"
-            type="text"
-            class="field-input"
-            :class="{ valid: firstNameValid, invalid: firstNameInvalid }"
             placeholder="Jordan"
+            class="w-full"
             @input="liveValFirst"
             @blur="blurFirst"
-          >
-          <div class="field-msg err" :class="{ show: firstNameInvalid }">
-            <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
-            Required
-          </div>
-        </div>
-        <div class="field mb-0!">
-          <label class="field-label">Last name</label>
-          <input v-model="form.lastName" type="text" class="field-input" placeholder="Cole">
-        </div>
+          />
+        </UFormField>
+        <UFormField label="Last name" name="lastName" class="field mb-0!">
+          <UInput v-model="form.lastName" placeholder="Cole" class="w-full" />
+        </UFormField>
       </div>
 
       <!-- Portal URL slug -->
-      <div class="field">
-        <label class="field-label">Your client portal URL <span>— how clients find you</span></label>
-        <div class="prefix-input-wrap">
-          <span class="prefix-label-text">fitcoach.io/</span>
-          <input
-            v-model="form.slug"
-            type="text"
-            class="prefix-input"
-            placeholder="jordan-cole"
-            @input="onSlugInput"
-            @blur="onSlugBlur"
-          >
-          <span v-if="slugStatus === 'checking'" class="slug-status-icon">
-            <UIcon name="i-lucide-loader-circle" class="size-3.5 animate-spin" />
-          </span>
-          <span v-else-if="slugStatus === 'available'" class="slug-status-icon ok">
-            <UIcon name="i-lucide-circle-check" class="size-3.5" />
-          </span>
-          <span v-else-if="slugStatus === 'taken' || slugStatus === 'error'" class="slug-status-icon err">
-            <UIcon name="i-lucide-circle-x" class="size-3.5" />
-          </span>
-        </div>
-        <div class="field-msg ok" :class="{ show: slugStatus === 'available' }">
+      <UFormField label="Your client portal URL" name="slug" hint="how clients find you" class="field">
+        <UInput
+          v-model="form.slug"
+          placeholder="jordan-cole"
+          class="w-full"
+          @input="onSlugInput"
+          @blur="onSlugBlur"
+        >
+          <template #leading>
+            <span class="text-(--text-muted) text-xs font-medium select-none">fitcoach.io/</span>
+          </template>
+          <template #trailing>
+            <UIcon v-if="slugStatus === 'checking'" name="i-lucide-loader-circle" class="size-3.5 animate-spin text-(--text-muted)" />
+            <UIcon v-else-if="slugStatus === 'available'" name="i-lucide-circle-check" class="size-3.5 text-primary" />
+            <UIcon v-else-if="slugStatus === 'taken' || slugStatus === 'error'" name="i-lucide-circle-x" class="size-3.5 text-[var(--red)]" />
+          </template>
+        </UInput>
+        <div class="field-msg ok mt-1.5" :class="{ show: slugStatus === 'available' }">
           <UIcon name="i-lucide-circle-check" class="size-3 shrink-0" />
           fitcoach.io/{{ form.slug }} is available
         </div>
-        <div class="field-msg err" :class="{ show: slugStatus === 'taken' }">
+        <div class="field-msg err mt-1.5" :class="{ show: slugStatus === 'taken' }">
           <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
           fitcoach.io/{{ form.slug }} is already taken
         </div>
-        <div class="field-msg err" :class="{ show: slugStatus === 'error' }">
+        <div class="field-msg err mt-1.5" :class="{ show: slugStatus === 'error' }">
           <UIcon name="i-lucide-circle-alert" class="size-3 shrink-0" />
           Could not check availability — please try again
         </div>
-      </div>
+      </UFormField>
 
       <!-- Bio -->
-      <div class="field">
-        <label class="field-label">Short bio <span>— optional</span></label>
-        <textarea
+      <UFormField label="Short bio" name="bio" hint="optional" class="field">
+        <UTextarea
           v-model="form.bio"
-          class="field-textarea"
-          rows="3"
+          :rows="3"
+          class="w-full resize-y"
           placeholder="I help busy professionals build sustainable fitness habits through personalized programming and weekly accountability…"
           maxlength="240"
-        ></textarea>
-        <div class="field-hint">{{ form.bio.length }} / 240 characters</div>
-      </div>
+        />
+        <div class="field-hint mt-1">{{ form.bio.length }} / 240 characters</div>
+      </UFormField>
 
-      <!-- Specialty -->
+      <!-- Specialty — custom selection cards, keep as native buttons -->
       <div>
-        <label class="field-label">Primary coaching type</label>
+        <div class="field-label mb-2">Primary coaching type</div>
         <div
           class="grid grid-cols-2 gap-2.5 mb-5 max-[600px]:grid-cols-1 rounded-xl transition-[outline] duration-300"
           :class="{ 'outline-2 outline-(--red)': specErr }"
@@ -254,5 +237,3 @@ onMounted(() => {
     />
   </div>
 </template>
-
-

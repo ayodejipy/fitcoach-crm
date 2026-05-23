@@ -8,6 +8,7 @@
     </div>
 
     <div class="response-area">
+      <!-- Native textarea retained — container uses focus-within for unified focus ring -->
       <textarea
         ref="textareaRef"
         :value="modelValue"
@@ -20,43 +21,56 @@
           <div class="text-[11px] font-semibold text-[#8FAD97] dark:text-(--text-muted)">
             <span :style="{ color: charColor }">{{ modelValue.length }}</span> / {{ maxChars }} characters
           </div>
-          <button type="button" class="inline-flex items-center gap-1 text-xs text-[#8FAD97] dark:text-(--text-muted) cursor-pointer hover:text-primary dark:hover:text-(--green-light) transition-colors" title="Use a response template">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            size="xs"
+            class="gap-1 text-[#8FAD97] dark:text-(--text-muted) hover:text-primary dark:hover:text-(--green-light)"
+            title="Use a response template"
+          >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <rect x="1" y="1" width="10" height="10" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
               <path d="M3 4h6M3 6h4M3 8h5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
             </svg>
             Templates
-          </button>
+          </UButton>
         </div>
 
         <div class="flex gap-2">
-          <button type="button" class="btn-draft" @click="$emit('save-draft')">Save Draft</button>
-          <button
-            type="button"
-            class="btn-send"
+          <UButton
+            variant="outline"
+            color="neutral"
+            size="xs"
+            class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)"
+            @click="$emit('save-draft')"
+          >Save Draft</UButton>
+          <UButton
+            color="primary"
+            size="xs"
             :disabled="modelValue.length === 0 || props.sending"
+            :loading="props.sending"
             @click="$emit('send')"
           >
             <svg v-if="!props.sending" width="13" height="13" viewBox="0 0 13 13" fill="none">
               <path d="M1 6.5L12 1l-4.5 11L6 7.5l-5-1z" stroke="white" stroke-width="1.3" stroke-linejoin="round"/>
             </svg>
             {{ props.sending ? 'Sending…' : 'Send Response' }}
-          </button>
+          </UButton>
         </div>
       </div>
     </div>
 
     <div class="mt-2.5 flex gap-[7px] flex-wrap items-center">
       <span class="text-[11px] font-semibold text-[#8FAD97] dark:text-(--text-muted)">Quick phrases:</span>
-      <button
+      <UButton
         v-for="phrase in quickPhrases"
         :key="phrase.label"
-        type="button"
-        class="text-[11px] font-semibold bg-[#F0F9F4] dark:bg-(--bg-primary-soft) border-[1.5px] border-(--green-soft) dark:border-transparent rounded-md py-[3px] px-[9px] text-primary dark:text-(--green-light) cursor-pointer hover:bg-(--green-pale) transition-colors"
+        variant="soft"
+        color="primary"
+        size="xs"
+        class="text-[11px] font-semibold border-[1.5px] border-(--green-soft) dark:border-transparent"
         @click="appendPhrase(phrase.insert)"
-      >
-        {{ phrase.label }}
-      </button>
+      >{{ phrase.label }}</UButton>
     </div>
   </div>
 </template>
@@ -165,36 +179,6 @@ const charColor = computed(() => {
   border-top: 1px solid #F0F4F1;
   background: #FAFCFB;
 }
-
-.btn-draft {
-  background: transparent;
-  border: 1.5px solid #D1E0D5;
-  border-radius: 8px;
-  padding: 7px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #3D5A45;
-  cursor: pointer;
-  transition: border-color .12s, background .12s, color .12s;
-}
-.btn-draft:hover { border-color: var(--green-brand); background: #F0F9F4; color: var(--green-brand); }
-
-.btn-send {
-  background: var(--green-brand);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: background .15s, opacity .15s;
-}
-.btn-send:hover:not(:disabled) { background: var(--green-hover); }
-.btn-send:disabled { opacity: .4; cursor: not-allowed; }
 </style>
 
 <style>
@@ -204,6 +188,4 @@ const charColor = computed(() => {
 .dark .response-area { border-color: var(--border); }
 .dark .response-textarea::placeholder { color: var(--text-muted); opacity: .55; }
 .dark .response-footer { border-top-color: var(--border); background: rgba(255,255,255,.02); }
-.dark .btn-draft { border-color: var(--border); color: var(--text-secondary); }
-.dark .btn-draft:hover { background: var(--bg-primary-soft); color: var(--green-light); }
 </style>

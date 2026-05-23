@@ -104,13 +104,13 @@ async function handleSend() {
               {{ selectedCount }} selected
             </span>
           </div>
-          <button
-            type="button"
-            class="text-[12px] font-semibold text-primary dark:text-(--green-light) hover:bg-(--green-pale) dark:hover:bg-(--bg-primary-soft) px-2 py-1 rounded-md transition-colors"
+          <UButton
+            variant="ghost"
+            color="primary"
+            size="xs"
+            class="text-[12px] font-semibold"
             @click="toggleAll"
-          >
-            {{ allSelected ? 'Deselect all' : 'Select all' }}
-          </button>
+          >{{ allSelected ? 'Deselect all' : 'Select all' }}</UButton>
         </div>
 
         <!-- Client list -->
@@ -161,15 +161,15 @@ async function handleSend() {
             class="w-full border-[1.5px] border-[#D1E0D5] dark:border-(--border) rounded-[10px] px-3 py-2.5 text-[13px] leading-[1.6] text-(--text-primary) bg-(--bg-surface) resize-none outline-none focus:border-(--green-brand) dark:focus:border-(--green-light) transition-colors min-h-[80px] font-[inherit]"
           />
           <div class="flex gap-1.5 flex-wrap mt-2">
-            <button
+            <UButton
               v-for="v in VARS"
               :key="v"
-              type="button"
-              class="text-[11px] font-semibold text-primary dark:text-(--green-light) bg-(--green-pale) dark:bg-(--bg-primary-soft) border border-[#A8D4BC] dark:border-(--green-light)/30 rounded-md py-[3px] px-2 cursor-pointer hover:bg-[#D1F0E0] dark:hover:bg-(--bg-primary-soft)/80 transition-colors"
+              variant="soft"
+              color="primary"
+              size="xs"
+              class="text-[11px] font-semibold border border-[#A8D4BC] dark:border-(--green-light)/30 hover:bg-[#D1F0E0] dark:hover:bg-(--bg-primary-soft)/80"
               @click="insertVar(v)"
-            >
-              + {{ v }}
-            </button>
+            >+ {{ v }}</UButton>
           </div>
         </div>
 

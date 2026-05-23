@@ -32,7 +32,12 @@
 
     <td class="py-[13px] px-4 align-middle">
       <div class="flex items-center gap-1.5">
-        <button type="button" class="act-btn">View</button>
+        <UButton
+            variant="outline"
+            color="neutral"
+            size="xs"
+            class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)"
+          >View</UButton>
         <ClientActionsMenu :items="subscription.menuActions" />
       </div>
     </td>
@@ -71,30 +76,3 @@ const rowClass = computed(() => {
 })
 </script>
 
-<style scoped>
-.act-btn {
-  padding: 5px 11px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid var(--border);
-  background: var(--bg-surface);
-  color: var(--text-secondary);
-  transition: background .12s, border-color .12s, color .12s;
-}
-.act-btn:hover {
-  background: #F0F9F4;
-  border-color: var(--green-brand);
-  color: var(--green-brand);
-}
-</style>
-
-<style>
-/* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .act-btn:hover {
-  background: var(--bg-primary-soft);
-  border-color: var(--green-light);
-  color: var(--green-light);
-}
-</style>

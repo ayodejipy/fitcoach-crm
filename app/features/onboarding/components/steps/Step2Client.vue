@@ -28,49 +28,44 @@
 
       <!-- Name row -->
       <div class="field-row">
-        <div class="field !mb-0">
-          <label class="field-label">First name</label>
-          <input v-model="form.clientFirstName" type="text" class="field-input" placeholder="Sofia">
-        </div>
-        <div class="field !mb-0">
-          <label class="field-label">Last name <span>— optional</span></label>
-          <input v-model="form.clientLastName" type="text" class="field-input" placeholder="Rodriguez">
-        </div>
+        <UFormField label="First name" name="clientFirstName" class="field !mb-0">
+          <UInput v-model="form.clientFirstName" placeholder="Sofia" class="w-full" />
+        </UFormField>
+        <UFormField label="Last name" name="clientLastName" hint="optional" class="field !mb-0">
+          <UInput v-model="form.clientLastName" placeholder="Rodriguez" class="w-full" />
+        </UFormField>
       </div>
 
       <!-- Email -->
-      <div class="field">
-        <label class="field-label">Email address</label>
-        <input
+      <UFormField
+        label="Email address"
+        name="clientEmail"
+        :error="emailInvalid ? 'Enter a valid email address' : undefined"
+        class="field"
+      >
+        <UInput
           v-model="form.clientEmail"
           type="email"
-          class="field-input"
-          :class="{ invalid: emailInvalid, valid: emailValid }"
           placeholder="sofia@email.com"
+          class="w-full"
           @input="liveValEmail"
           @blur="blurEmail"
-        >
-        <div class="field-msg err" :class="{ show: emailInvalid }">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Enter a valid email address
-        </div>
-      </div>
+        />
+      </UFormField>
 
       <!-- Phone / Start date -->
       <div class="field-row">
-        <div class="field !mb-0">
-          <label class="field-label">Phone <span>— optional</span></label>
-          <input v-model="form.clientPhone" type="tel" class="field-input" placeholder="+1 (555) 000-0000">
-        </div>
-        <div class="field !mb-0">
-          <label class="field-label">Start date</label>
-          <input v-model="form.clientStartDate" type="date" class="field-input">
-        </div>
+        <UFormField label="Phone" name="clientPhone" hint="optional" class="field !mb-0">
+          <UInput v-model="form.clientPhone" type="tel" placeholder="+1 (555) 000-0000" class="w-full" />
+        </UFormField>
+        <UFormField label="Start date" name="clientStartDate" class="field !mb-0">
+          <UInput v-model="form.clientStartDate" type="date" class="w-full" />
+        </UFormField>
       </div>
 
-      <!-- Goals -->
+      <!-- Goals — custom pill toggles, keep as native buttons -->
       <div>
-        <label class="field-label">Primary goal <span>— pick one</span></label>
+        <div class="field-label mb-2">Primary goal <span class="font-normal text-(--text-muted)">— pick one</span></div>
         <div class="goal-pills flex flex-wrap gap-2 mb-5">
           <button
             v-for="g in goalOptions"
@@ -120,7 +115,6 @@ const emit = defineEmits<{
 }>()
 
 const emailInvalid = ref(false)
-const emailValid = ref(false)
 
 const goalOptions = [
   '🏋️ Build Muscle',
@@ -149,38 +143,20 @@ const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 const liveValEmail = () => {
   if (emailInvalid.value && props.form.clientEmail.trim() && isValidEmail(props.form.clientEmail.trim())) {
     emailInvalid.value = false
-    emailValid.value = true
   }
 }
 
 const blurEmail = () => {
   const v = props.form.clientEmail.trim()
-  if (!v) {
-    emailInvalid.value = false
-    emailValid.value = false
-    return
-  }
-  if (!isValidEmail(v)) {
-    emailInvalid.value = true
-    emailValid.value = false
-  } else {
-    emailValid.value = true
-    emailInvalid.value = false
-  }
+  if (!v) { emailInvalid.value = false; return }
+  emailInvalid.value = !isValidEmail(v)
 }
 
 const onContinue = () => {
   const email = props.form.clientEmail.trim()
   const first = props.form.clientFirstName.trim()
-  // If both empty, treat as skip (advance anyway — source behavior)
-  if (!first && !email) {
-    emit('next')
-    return
-  }
-  if (email && !isValidEmail(email)) {
-    emailInvalid.value = true
-    return
-  }
+  if (!first && !email) { emit('next'); return }
+  if (email && !isValidEmail(email)) { emailInvalid.value = true; return }
   emit('next')
 }
 </script>

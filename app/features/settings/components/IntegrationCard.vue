@@ -28,25 +28,25 @@
     <div class="flex items-center justify-between pt-3.5 border-t border-(--border-muted)">
       <span class="text-xs" :class="connected ? 'text-primary dark:text-(--green-light) font-semibold' : 'text-(--text-muted)'">{{ statusText }}</span>
 
-      <SettingsToggle
+      <UToggle
         v-if="connected"
-        :model-value="modelValue"
-        @update:model-value="$emit('update:modelValue', $event)"
+        color="primary"
+        :model-value="modelValue ?? false"
+        @update:model-value="$emit('update:modelValue', $event ?? false)"
       />
-      <button
+      <UButton
         v-else
-        type="button"
-        class="connect-btn"
+        variant="outline"
+        color="primary"
+        size="sm"
         @click="$emit('connect')"
-      >Connect</button>
+      >Connect</UButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import SettingsToggle from './SettingsToggle.vue'
-
 const props = defineProps<{
   name: string
   description: string
@@ -72,27 +72,4 @@ const logoClass = computed(() => ({
 
 <style scoped>
 .int-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.1), 0 0 0 1px rgba(0,0,0,.05); }
-
-.connect-btn {
-  padding: 7px 13px;
-  font-size: 12.5px;
-  border-radius: 7px;
-  font-weight: 600;
-  background: #fff;
-  color: var(--green-brand);
-  border: 1.5px solid var(--green-brand);
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s;
-}
-.connect-btn:hover { background: var(--green-pale); }
-</style>
-
-<style>
-.dark .connect-btn {
-  background: transparent;
-  color: var(--green-light);
-  border-color: var(--green-light);
-}
-.dark .connect-btn:hover { background: var(--bg-primary-soft); }
 </style>

@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, computed, watch } from 'vue'
+import { format } from 'date-fns'
 import StepIndicator from './StepIndicator.vue'
 import SuccessOverlay from './SuccessOverlay.vue'
 import Step1Profile from './steps/Step1Profile.vue'
@@ -64,7 +65,7 @@ const direction = ref<'forward' | 'back'>('forward')
 const success = ref(false)
 const finishing = ref(false)
 
-const today = new Date().toISOString().split('T')[0]
+const today = format(new Date(), 'yyyy-MM-dd')
 
 const form = reactive({
   // Step 1 — Profile

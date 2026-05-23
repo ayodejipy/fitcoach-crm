@@ -192,10 +192,10 @@ async function handleSave() {
 
     <template #footer>
       <div class="flex justify-end gap-2 w-full">
-        <UButton variant="ghost" color="neutral" :disabled="saving" @click="emit('update:open', false)">
+        <UButton variant="ghost" color="neutral" size="lg" :disabled="saving" @click="emit('update:open', false)">
           Cancel
         </UButton>
-        <UButton color="primary" :loading="saving" @click="handleSave">
+        <UButton color="primary" size="lg" :loading="saving" @click="handleSave">
           <svg v-if="!saving" width="13" height="13" viewBox="0 0 13 13" fill="none" class="shrink-0">
             <path d="M2 7l3 3 6-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>

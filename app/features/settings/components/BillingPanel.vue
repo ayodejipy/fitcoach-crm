@@ -32,15 +32,12 @@
           <div class="text-[13.5px] font-semibold text-(--text-primary)">Visa ending in 4242</div>
           <div class="text-xs text-(--text-muted)">Expires 08 / 2028</div>
         </div>
-        <button type="button" class="btn-ghost ml-auto">Replace</button>
+        <UButton variant="outline" color="neutral" size="sm" class="ml-auto">Replace</UButton>
       </div>
       <div class="pt-3.5">
-        <button type="button" class="btn-ghost">
-          <svg class="w-[13px] h-[13px]" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
-          </svg>
+        <UButton variant="outline" color="neutral" size="sm" leading-icon="i-heroicons-plus">
           Add Payment Method
-        </button>
+        </UButton>
       </div>
     </SettingsCard>
 
@@ -105,30 +102,9 @@ const invoices = [
 .invoice-td {
   padding: 12px 16px;
 }
-
-.btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 13px;
-  font-size: 12.5px;
-  border-radius: 7px;
-  font-weight: 600;
-  color: #374141;
-  background: #fff;
-  border: 1.5px solid #D8DFD9;
-  cursor: pointer;
-  font-family: inherit;
-  white-space: nowrap;
-  transition: background .15s, border-color .15s;
-}
-.btn-ghost:hover { background: #F5F7F5; border-color: #B8C4BB; }
 </style>
 
 <style>
 /* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
 .dark .plan-card { background: rgba(46,204,113,.08); border-color: rgba(46,204,113,.25); }
-
-.dark .btn-ghost { background: var(--bg-surface); color: var(--text-secondary); border-color: var(--border); }
-.dark .btn-ghost:hover { background: rgba(255,255,255,.04); border-color: var(--border-strong); }
 </style>

@@ -16,9 +16,9 @@
     </StepHeader>
 
     <div class="card-body px-9 py-7 min-h-[340px] max-[600px]:px-5 max-[600px]:py-5">
-      <!-- Day picker -->
+      <!-- Day picker — custom toggle buttons, keep as native -->
       <div class="field">
-        <label class="field-label">Check-in day <span>— when clients submit their weekly update</span></label>
+        <div class="field-label mb-2">Check-in day <span class="font-normal text-(--text-muted)">— when clients submit their weekly update</span></div>
         <div class="day-picker flex gap-2 flex-wrap mb-[18px]">
           <button
             v-for="day in days"
@@ -35,23 +35,17 @@
 
       <!-- Deadline / Reminder -->
       <div class="field-row">
-        <div class="field !mb-0">
-          <label class="field-label">Submission deadline</label>
-          <select v-model="form.deadline" class="field-select">
-            <option v-for="d in deadlineOptions" :key="d">{{ d }}</option>
-          </select>
-        </div>
-        <div class="field !mb-0">
-          <label class="field-label">Reminder sent</label>
-          <select v-model="form.reminder" class="field-select">
-            <option v-for="r in reminderOptions" :key="r">{{ r }}</option>
-          </select>
-        </div>
+        <UFormField label="Submission deadline" name="deadline" class="field !mb-0">
+          <USelect v-model="form.deadline" :items="deadlineOptions" class="w-full" />
+        </UFormField>
+        <UFormField label="Reminder sent" name="reminder" class="field !mb-0">
+          <USelect v-model="form.reminder" :items="reminderOptions" class="w-full" />
+        </UFormField>
       </div>
 
       <!-- Questions -->
       <div>
-        <label class="field-label">Check-in questions</label>
+        <div class="field-label mb-2">Check-in questions</div>
         <div class="question-list mb-[18px]">
           <TransitionGroup name="q">
             <div
@@ -73,23 +67,26 @@
                   ? 'bg-(--green-muted) text-primary dark:text-(--green-light)'
                   : 'bg-black/5 dark:bg-white/5 text-(--text-muted)'"
               >{{ q.required ? 'Required' : 'Optional' }}</span>
-              <button
+              <UButton
                 v-if="q.removable"
-                type="button"
-                class="q-del text-(--text-muted) cursor-pointer shrink-0 mt-px bg-transparent border-none p-0 transition-colors duration-200 hover:text-(--red)"
+                variant="ghost"
+                color="neutral"
+                class="size-6 p-0 shrink-0 mt-px text-(--text-muted) hover:text-[var(--red)]"
                 @click="removeQuestion(q.id)"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
                   <line x1="18" y1="6" x2="6" y2="18"/>
                   <line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
-              </button>
+              </UButton>
             </div>
           </TransitionGroup>
         </div>
-        <button
-          type="button"
-          class="add-q-btn flex items-center justify-center gap-[7px] py-2.5 px-3.5 rounded-[10px] border-[1.5px] border-dashed border-(--border) bg-transparent text-[13px] font-medium text-(--text-muted) cursor-pointer w-full transition-[border-color,color,background] duration-200 hover:border-(--green-mid) hover:text-primary hover:bg-(--green-pale) dark:hover:bg-(--bg-primary-soft)"
+        <UButton
+          variant="outline"
+          color="neutral"
+          block
+          class="border-dashed gap-[7px] text-(--text-muted) hover:border-(--green-mid) hover:text-primary hover:bg-(--green-pale) dark:hover:bg-(--bg-primary-soft)"
           @click="addQuestion"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -97,7 +94,7 @@
             <line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
           Add custom question
-        </button>
+        </UButton>
       </div>
 
       <!-- Preview -->
@@ -170,7 +167,7 @@ const toggleDay = (day: string) => {
   const list = props.form.selectedDays
   const i = list.indexOf(day)
   if (i >= 0) {
-    if (list.length === 1) return // keep at least one
+    if (list.length === 1) return
     list.splice(i, 1)
   } else {
     list.push(day)

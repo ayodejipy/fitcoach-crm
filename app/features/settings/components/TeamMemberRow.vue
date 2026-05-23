@@ -9,13 +9,14 @@
       class="ml-auto mr-3 text-[11.5px] font-semibold py-1 px-2.5 rounded-md"
       :class="isOwner ? 'bg-(--green-pale) text-primary dark:bg-(--bg-primary-soft) dark:text-(--green-light)' : 'bg-[#F3F4F6] dark:bg-white/5 text-[#374141] dark:text-(--text-secondary)'"
     >{{ role }}</div>
-    <button
-      type="button"
-      class="btn-ghost-sm"
-      :class="{ 'opacity-40 !cursor-default': disabled }"
+    <UButton
+      variant="outline"
+      color="neutral"
+      size="sm"
+      :class="{ 'opacity-40 pointer-events-none': disabled }"
       :disabled="disabled"
       @click="!disabled && $emit('menu')"
-    >···</button>
+    >···</UButton>
   </div>
 </template>
 
@@ -40,24 +41,3 @@ defineEmits<{
   menu: []
 }>()
 </script>
-
-<style scoped>
-.btn-ghost-sm {
-  padding: 7px 13px;
-  font-size: 12.5px;
-  border-radius: 7px;
-  font-weight: 600;
-  color: #374141;
-  background: #fff;
-  border: 1.5px solid #D8DFD9;
-  cursor: pointer;
-  font-family: inherit;
-  transition: background .15s;
-}
-.btn-ghost-sm:hover:not([disabled]) { background: #F5F7F5; border-color: #B8C4BB; }
-</style>
-
-<style>
-.dark .btn-ghost-sm { background: var(--bg-surface); color: var(--text-secondary); border-color: var(--border); }
-.dark .btn-ghost-sm:hover:not([disabled]) { background: rgba(255,255,255,.04); border-color: var(--border-strong); }
-</style>

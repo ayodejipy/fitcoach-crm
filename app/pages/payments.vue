@@ -1,18 +1,13 @@
 <template>
   <AppTopbar title="Payments">
     <template #actions>
-      <button type="button" class="btn-outline" @click="onExport">
+      <UButton variant="outline" color="neutral" class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)" @click="onExport">
         <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
         </svg>
         Export
-      </button>
-      <button type="button" class="h-10 px-[18px] rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors" @click="drawerOpen = true">
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-          <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Create Invoice
-      </button>
+      </UButton>
+      <UButton color="primary" leading-icon="i-heroicons-plus" @click="drawerOpen = true">Create Invoice</UButton>
     </template>
   </AppTopbar>
 
@@ -52,12 +47,7 @@
       <div class="flex items-center gap-3 mb-3.5">
         <div class="text-sm font-bold text-(--text-primary) flex-1">Active Subscriptions ({{ subscriptions.length }})</div>
         <SearchInput v-model="subSearch" placeholder="Search clients…" />
-        <button type="button" class="h-10 px-[18px] rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors" @click="drawerOpen = true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Create Invoice
-        </button>
+        <UButton color="primary" leading-icon="i-heroicons-plus" @click="drawerOpen = true">Create Invoice</UButton>
       </div>
 
       <SubscriptionsTable
@@ -78,12 +68,7 @@
       <div class="flex items-center gap-3 mb-3.5">
         <div class="text-sm font-bold text-(--text-primary) flex-1">All Invoices ({{ invoices.length }})</div>
         <SearchInput v-model="invSearch" placeholder="Search invoices…" />
-        <button type="button" class="h-10 px-[18px] rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors" @click="drawerOpen = true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-          Create Invoice
-        </button>
+        <UButton color="primary" leading-icon="i-heroicons-plus" @click="drawerOpen = true">Create Invoice</UButton>
       </div>
 
       <InvoicesTable
@@ -225,30 +210,3 @@ const onExport = () => { /* TODO: wire to backend export */ }
 const onSubmitInvoice = (_payload: InvoicePayload) => { /* TODO: wire to backend */ }
 </script>
 
-<style scoped>
-.btn-outline {
-  height: 40px;
-  padding: 0 16px;
-  border: 1.5px solid #D1E0D5;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #3D5A45;
-  background: var(--bg-surface);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: border-color .15s, background .15s;
-}
-.btn-outline:hover {
-  border-color: var(--green-brand);
-  background: #F0F9F4;
-}
-</style>
-
-<style>
-/* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .btn-outline { border-color: var(--border); color: var(--text-secondary); }
-.dark .btn-outline:hover { background: var(--bg-primary-soft); }
-</style>
