@@ -4,13 +4,11 @@
       <div class="text-[13.5px] font-semibold text-(--text-primary)">{{ name }}</div>
       <div class="text-xs text-(--text-muted) mt-0.5">{{ description }}</div>
     </div>
-    <SettingsToggle :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" />
+    <UToggle color="primary" :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event ?? false)" />
   </div>
 </template>
 
 <script setup lang="ts">
-import SettingsToggle from './SettingsToggle.vue'
-
 defineProps<{
   name: string
   description: string

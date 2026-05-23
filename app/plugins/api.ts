@@ -3,6 +3,7 @@ import type { FetchOptions } from 'ofetch'
 import type { HandlersAuthResponse } from '~/services/types.gen'
 import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 import { client as sdkClient } from '~/services/client.gen'
+import { jsonBodySerializer } from '~/services/core/bodySerializer.gen'
 
 export default defineNuxtPlugin(() => {
   const config = useRuntimeConfig()
@@ -134,6 +135,7 @@ export default defineNuxtPlugin(() => {
     fetch: customSdkFetch,
     responseStyle: 'data',
     throwOnError: true,
+    ...jsonBodySerializer,
   })
 
   return { provide: { api } }

@@ -190,8 +190,8 @@ const bannerStats = computed(() => [
 <template>
   <AppTopbar title="Dashboard" :subtitle="greeting">
     <template #actions>
-      <UButton color="primary" variant="outline" size="sm">Schedule Session</UButton>
-      <UButton color="primary" size="sm" icon="i-lucide-plus">Add Client</UButton>
+      <UButton color="primary" variant="outline" size="lg">Schedule Session</UButton>
+      <UButton color="primary" size="lg" icon="i-lucide-plus">Add Client</UButton>
     </template>
   </AppTopbar>
 

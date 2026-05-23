@@ -8,7 +8,7 @@
         v-for="item in section.items"
         :key="item.id"
         type="button"
-        class="snav-item flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-[13.5px] font-medium text-(--text-secondary) cursor-pointer select-none transition-colors"
+        class="snav-item flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-[13.5px] font-medium text-(--text-secondary) cursor-pointer select-none transition-colors hover:bg-(--bg-surface-muted) hover:text-(--text-primary)"
         :class="{ 'snav-item-active': modelValue === item.id }"
         @click="$emit('update:modelValue', item.id)"
       >
@@ -47,7 +47,6 @@ defineEmits<{
 </script>
 
 <style scoped>
-.snav-item:hover { background: #F0F4F1; color: #111; }
 .snav-item-active {
   background: var(--green-pale);
   color: var(--green-brand);
@@ -58,7 +57,6 @@ defineEmits<{
 
 <style>
 /* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .snav-item:hover { background: rgba(255,255,255,.04); color: var(--text-primary); }
 .dark .snav-item-active,
 .dark .snav-item-active:hover {
   background: var(--bg-primary-soft);

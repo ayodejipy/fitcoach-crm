@@ -116,9 +116,10 @@ const {
 <template>
   <AppTopbar title="Check-ins" :subtitle="weekDisplayLabel">
     <template #actions>
-      <button
-        type="button"
-        class="h-10 px-4 border-[1.5px] border-[#D1E0D5] dark:border-(--border) rounded-lg text-[13px] font-semibold text-[#3D5A45] dark:text-(--text-secondary) bg-(--bg-surface) inline-flex items-center gap-1.5 cursor-pointer transition-colors hover:border-(--green-brand) hover:bg-[#F0F9F4] hover:text-(--green-brand) dark:hover:bg-(--bg-primary-soft) dark:hover:text-(--green-light)"
+      <UButton
+        variant="outline"
+        color="neutral"
+        class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)"
         @click="customizeOpen = true"
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -126,17 +127,18 @@ const {
           <path d="M4 6.5h5M6.5 4v5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
         </svg>
         Customize Form
-      </button>
-      <button
-        type="button"
-        class="h-10 px-4 border-[1.5px] border-[#D1E0D5] dark:border-(--border) rounded-lg text-[13px] font-semibold text-[#3D5A45] dark:text-(--text-secondary) bg-(--bg-surface) inline-flex items-center gap-1.5 cursor-pointer transition-colors hover:border-(--green-brand) hover:bg-[#F0F9F4] hover:text-(--green-brand) dark:hover:bg-(--bg-primary-soft) dark:hover:text-(--green-light)"
+      </UButton>
+      <UButton
+        variant="outline"
+        color="neutral"
+        class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)"
         @click="reminderOpen = true"
       >
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
           <path d="M2 6.5h9M6.5 2l4.5 4.5L6.5 11" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
         Send Reminder
-      </button>
+      </UButton>
     </template>
   </AppTopbar>
 
