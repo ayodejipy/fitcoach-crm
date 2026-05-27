@@ -1,10 +1,13 @@
 import { computed, type Ref, type ComputedRef } from 'vue'
-import { addDays, endOfDay, format, formatISO, isSameDay, parseISO, startOfDay } from 'date-fns'
+import { addDays, endOfDay, endOfMonth, endOfWeek, format, formatISO, isSameDay, parseISO, startOfDay, startOfMonth, startOfWeek } from 'date-fns'
 import type { ModelsCoachSession } from '~/services/types.gen'
 import type { DayColumn, SessionData } from '~/features/schedule/components/CalendarGrid.vue'
+import type { CalendarView } from '~/features/schedule/components/CalendarViewToggle.vue'
 import type { UpcomingGroup } from '~/features/schedule/components/ScheduleSidePanel.vue'
 import { useScheduleApi } from '~/features/schedule/composables/useScheduleApi'
+import { useAvailability } from '~/features/schedule/composables/useAvailability'
 import {
+  buildUnavailableBlocks,
   buildWeekDays,
   formatTimeRange,
   initialsFrom,
@@ -18,19 +21,26 @@ import {
 export function useScheduleData(
   currentWeek: ComputedRef<Date>,
   liveNowTop: Ref<number>,
+  view: Ref<CalendarView>,
 ) {
   const { list } = useScheduleApi()
-
+  const { slots: availabilitySlots } = useAvailability()
 
   const { data: rawData, pending, refresh } = useAsyncData<ModelsCoachSession[]>(
     'schedule-sessions',
     async () => {
-      const from = formatISO(startOfDay(currentWeek.value))
-      const to   = formatISO(endOfDay(addDays(currentWeek.value, 6)))
-      const res  = await list({ from, to, per_page: 100 })
+      // Month view renders a full 6-week grid, so fetch the whole visible month;
+      // week/day views only need the current week's range.
+      const [rangeStart, rangeEnd] = view.value === 'month'
+        ? [
+            startOfWeek(startOfMonth(currentWeek.value), { weekStartsOn: 1 }),
+            endOfWeek(endOfMonth(currentWeek.value), { weekStartsOn: 1 }),
+          ]
+        : [startOfDay(currentWeek.value), endOfDay(addDays(currentWeek.value, 6))]
+      const res = await list({ from: formatISO(rangeStart), to: formatISO(rangeEnd), per_page: 100 })
       return res?.sessions ?? []
     },
-    { watch: [currentWeek] },
+    { watch: [currentWeek, view] },
   )
 
   const sessions = computed<ModelsCoachSession[]>(() => rawData.value ?? [])
@@ -57,6 +67,11 @@ export function useScheduleData(
         weekend:  isWeekend || undefined,
         muted:    isWeekend || undefined,
         sessions: daySessions,
+        // Only shade the grid once availability is actually configured —
+        // an empty set means "not set up", not "unavailable all week".
+        unavailable: availabilitySlots.value.length
+          ? buildUnavailableBlocks(date, availabilitySlots.value)
+          : undefined,
       }
 
       if (isToday) col.currentTimeTop = liveNowTop.value
@@ -71,7 +86,8 @@ export function useScheduleData(
 
   // Sidebar groups
   const upcomingGroups = computed<UpcomingGroup[]>(() => {
-    const today = new Date()
+    // Compare against the start of today so sessions earlier today still appear.
+    const today = startOfDay(new Date())
     const upcoming = sessions.value
       .filter(s => s.starts_at && parseISO(s.starts_at) >= today)
       .sort((a, b) => (a.starts_at ?? '') < (b.starts_at ?? '') ? -1 : 1)

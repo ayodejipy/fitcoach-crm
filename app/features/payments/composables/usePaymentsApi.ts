@@ -1,31 +1,33 @@
+import {
+  getApiV1Payments,
+  postApiV1Payments,
+  patchApiV1PaymentsById,
+  postApiV1PaymentsByIdMarkPaid,
+} from '~/services/sdk.gen'
 import type {
-  HandlersListPaymentsResponse,
   HandlersCreateInvoiceRequest,
   HandlersUpdatePaymentRequest,
-  ModelsCoachPayment,
 } from '~/services/types.gen'
 
 export function usePaymentsApi() {
-  const { $api } = useNuxtApp()
-
-  // --- reads ---
-
-  const list = (params?: { page?: number; per_page?: number; status?: string; payment_type?: string; from?: string; to?: string; client_id?: string }) =>
-    $api<HandlersListPaymentsResponse>('/payments', { params })
-
-  const get = (id: string) =>
-    $api<ModelsCoachPayment>(`/payments/${id}`)
-
-  // --- mutations ---
+  const list = (params?: {
+    page?: number
+    per_page?: number
+    status?: string
+    payment_type?: string
+    from?: string
+    to?: string
+    client_id?: string
+  }) => getApiV1Payments({ query: params })
 
   const create = (body: HandlersCreateInvoiceRequest) =>
-    $api<ModelsCoachPayment>('/payments', { method: 'POST', body })
+    postApiV1Payments({ body })
 
   const update = (id: string, body: HandlersUpdatePaymentRequest) =>
-    $api<ModelsCoachPayment>(`/payments/${id}`, { method: 'PATCH', body })
+    patchApiV1PaymentsById({ path: { id }, body })
 
   const markPaid = (id: string) =>
-    $api<ModelsCoachPayment>(`/payments/${id}/mark-paid`, { method: 'POST' })
+    postApiV1PaymentsByIdMarkPaid({ path: { id } })
 
-  return { list, get, create, update, markPaid }
+  return { list, create, update, markPaid }
 }

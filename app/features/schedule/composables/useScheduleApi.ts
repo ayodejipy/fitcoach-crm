@@ -4,10 +4,13 @@ import {
   postApiV1Sessions,
   patchApiV1SessionsById,
   deleteApiV1SessionsById,
+  getApiV1MeAvailability,
+  putApiV1MeAvailability,
 } from '~/services/sdk.gen'
 import type {
   HandlersCreateSessionRequest,
   HandlersUpdateSessionRequest,
+  HandlersUpdateMyAvailabilityRequest,
 } from '~/services/types.gen'
 
 export function useScheduleApi() {
@@ -34,5 +37,11 @@ export function useScheduleApi() {
   const cancel = (id: string) =>
     deleteApiV1SessionsById({ path: { id } })
 
-  return { list, get, create, update, cancel }
+  // availability (weekly working hours)
+  const getAvailability = () => getApiV1MeAvailability()
+
+  const updateAvailability = (body: HandlersUpdateMyAvailabilityRequest) =>
+    putApiV1MeAvailability({ body })
+
+  return { list, get, create, update, cancel, getAvailability, updateAvailability }
 }

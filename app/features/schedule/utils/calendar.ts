@@ -13,9 +13,12 @@ import {
   startOfMonth,
   startOfWeek,
 } from 'date-fns'
+import type { UnavailableBlock } from '~/features/schedule/components/CalendarGrid.vue'
+import type { ModelsCoachAvailabilitySlot } from '~/services/types.gen'
 
 export const GRID_START_HOUR = 0  // 12 AM
 export const PX_PER_HOUR = 56     // must match CalendarGrid row height
+const MINUTES_PER_DAY = 24 * 60
 
 // ── Position math ──────────────────────────────────────────
 
@@ -33,6 +36,57 @@ export function nowTop(): number {
   const now = new Date()
   const minutesSinceGridStart = (now.getHours() - GRID_START_HOUR) * 60 + now.getMinutes()
   return Math.max(0, (minutesSinceGridStart / 60) * PX_PER_HOUR)
+}
+
+// ── Availability → unavailable overlays ────────────────────
+
+/** Parse a backend "HH:MM" (24h) clock string into minutes-since-midnight. */
+export function parseClockMinutes(hhmm?: string): number | null {
+  if (!hhmm) return null
+  const m = /^(\d{1,2}):(\d{2})$/.exec(hhmm.trim())
+  if (!m) return null
+  const h = Number(m[1])
+  const min = Number(m[2])
+  if (h < 0 || h > 24 || min < 0 || min > 59) return null
+  return h * 60 + min
+}
+
+function minutesToPx(min: number): number {
+  return (min / 60) * PX_PER_HOUR
+}
+
+/**
+ * Build the striped "unavailable" overlays for a calendar date from the coach's
+ * weekly availability slots. `day_of_week` follows the backend convention
+ * (0 = Sunday … 6 = Saturday), matching JS `Date.getDay()`.
+ *
+ * - No slot for the day, disabled, or an invalid range → the whole day is off.
+ * - An enabled slot → grey out midnight→start and end→midnight.
+ */
+export function buildUnavailableBlocks(
+  date: Date,
+  slots: ModelsCoachAvailabilitySlot[],
+): UnavailableBlock[] {
+  const slot = slots.find(s => s.day_of_week === date.getDay())
+  const start = parseClockMinutes(slot?.start_time)
+  const end = parseClockMinutes(slot?.end_time)
+
+  if (!slot || slot.enabled === false || start === null || end === null || end <= start) {
+    return [{ top: 0, height: minutesToPx(MINUTES_PER_DAY), label: 'Day Off' }]
+  }
+
+  const blocks: UnavailableBlock[] = []
+  if (start > 0) {
+    blocks.push({ top: 0, height: minutesToPx(start), label: 'Unavailable' })
+  }
+  if (end < MINUTES_PER_DAY) {
+    blocks.push({
+      top: minutesToPx(end),
+      height: minutesToPx(MINUTES_PER_DAY - end),
+      label: 'Unavailable',
+    })
+  }
+  return blocks
 }
 
 // ── Time display ───────────────────────────────────────────

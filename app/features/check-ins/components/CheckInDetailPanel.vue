@@ -23,12 +23,14 @@ const props = withDefaults(defineProps<{
   photoSubmittedAt?: string
   loading?: boolean
   sending?: boolean
+  sentTick?: number
 }>(), {
   hasPrev: false,
   hasNext: false,
   initialDraft: '',
   loading: false,
   sending: false,
+  sentTick: 0,
 })
 
 const emit = defineEmits<{
@@ -40,9 +42,16 @@ const emit = defineEmits<{
 
 const response = ref(props.initialDraft)
 
+// Prefill from a saved draft once the async detail load resolves (immediate
+// covers the keyed remount where initialDraft is '' at mount, then populates).
+watch(() => props.initialDraft, (v) => { response.value = v ?? '' }, { immediate: true })
+
+// Clear only after a confirmed successful send — never optimistically, or a
+// failed send would silently discard the coach's typed response.
+watch(() => props.sentTick, () => { response.value = '' })
+
 const onSend = () => {
   emit('send', response.value)
-  response.value = ''
 }
 
 const onSaveDraft = () => {

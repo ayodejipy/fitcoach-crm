@@ -3,7 +3,7 @@ import { computed } from 'vue'
 import Avatar from '~/components/Avatar.vue'
 import type { SessionData } from './CalendarGrid.vue'
 
-const props = defineProps<{
+const {open, session} = defineProps<{
   open: boolean
   session: SessionData | null
 }>()
@@ -21,24 +21,24 @@ const TYPE_META = {
   group:    { badge: 'bg-[#F4ECF7] dark:bg-[#9B59B6]/15 text-[#9B59B6]',  label: 'Group Session', icon: 'i-hugeicons-user-multiple-02' },
 } as const
 
-const typeBadgeClass = computed(() => props.session ? TYPE_META[props.session.sessionType].badge : '')
-const typeBadgeLabel = computed(() => props.session ? TYPE_META[props.session.sessionType].label : '')
-const typeIcon       = computed(() => props.session ? TYPE_META[props.session.sessionType].icon  : '')
+const typeBadgeClass = computed(() => session ? TYPE_META[session.sessionType].badge : '')
+const typeBadgeLabel = computed(() => session ? TYPE_META[session.sessionType].label : '')
+const typeIcon       = computed(() => session ? TYPE_META[session.sessionType].icon  : '')
 
 // ── Detail rows ────────────────────────────────────────────
 const detailRows = computed(() => {
-  if (!props.session) return []
-  const confirmed = props.session.status === 'confirmed'
+  if (!session) return []
+  const confirmed = session.status === 'confirmed'
   return [
     {
       icon: 'i-hugeicons-clock-02',
-      text: props.session.time,
+      text: session.time,
       iconClass: 'text-primary dark:text-(--green-light)',
       textClass: 'text-[#3D5A45] dark:text-(--text-secondary)',
     },
     {
       icon: 'i-hugeicons-location-01',
-      text: props.session.location,
+      text: session.location,
       iconClass: 'text-primary dark:text-(--green-light)',
       textClass: 'text-[#3D5A45] dark:text-(--text-secondary)',
     },

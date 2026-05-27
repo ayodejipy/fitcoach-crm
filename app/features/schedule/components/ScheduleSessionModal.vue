@@ -3,15 +3,25 @@ import { ref, computed, watch } from 'vue'
 import { format } from 'date-fns'
 import { useClientsApi } from '~/features/clients/composables/useClientsApi'
 import { useScheduleApi } from '~/features/schedule/composables/useScheduleApi'
-import { parseStartsAt, parseDurationMins } from '~/features/schedule/utils/session'
+import {
+  parseStartsAt,
+  parseDurationMins,
+  formatDateInput,
+  formatStartTimeSlot,
+  durationLabel,
+} from '~/features/schedule/utils/session'
+import type { SessionData } from '~/features/schedule/components/CalendarGrid.vue'
 
-const props = defineProps<{ open: boolean }>()
-const emit = defineEmits<{ 'update:open': [val: boolean]; scheduled: [] }>()
+const props = defineProps<{ open: boolean; session?: SessionData | null }>()
+const emit = defineEmits<{ 'update:open': [val: boolean]; scheduled: []; updated: [] }>()
 
 type SessionType = 'virtual' | 'inperson' | 'group'
 
+const toast = useToast()
 const { list: listClients } = useClientsApi()
-const { create } = useScheduleApi()
+const { create, get, update } = useScheduleApi()
+
+const isEdit = computed(() => !!props.session)
 
 const { data: clientsData } = useAsyncData('modal-clients', () => listClients({ per_page: 200 }))
 const clientOptions = computed(() =>
@@ -31,6 +41,7 @@ const duration = ref('60 min')
 const sendInvite = ref('Email + In-app')
 const zoomEnabled = ref(true)
 const saving = ref(false)
+const loading = ref(false)
 const clientError = ref(false)
 
 const SESSION_TYPES: Array<{ value: SessionType; label: string; iconBg: string; iconColor: string; svgPath: string }> = [
@@ -82,17 +93,42 @@ const locationLabel = computed(() => {
   return 'Group Session'
 })
 
-watch(() => props.open, (val) => {
-  if (val) {
+watch(() => props.open, async (val) => {
+  if (!val) return
+  clientError.value = false
+  saving.value = false
+
+  if (props.session) {
+    // Edit mode — fetch the full session and prefill the form.
+    loading.value = true
+    try {
+      const s = await get(props.session.id)
+      sessionType.value = (s.session_type as SessionType) ?? 'virtual'
+      client.value = s.client_id ?? ''
+      focus.value = s.notes ?? ''
+      date.value = formatDateInput(s.starts_at)
+      startTime.value = formatStartTimeSlot(s.starts_at)
+      duration.value = durationLabel(s.duration_mins)
+      zoomEnabled.value = !!s.zoom_link
+    } catch {
+      toast.add({ title: 'Could not load session', color: 'error' })
+      emit('update:open', false)
+    } finally {
+      loading.value = false
+    }
+  } else {
+    // Create mode — reset to defaults.
+    sessionType.value = 'virtual'
     client.value = ''
     focus.value = ''
     date.value = format(new Date(), 'yyyy-MM-dd')
-    clientError.value = false
-    saving.value = false
+    startTime.value = '10:00 AM'
+    duration.value = '60 min'
+    zoomEnabled.value = true
   }
 })
 
-async function handleSchedule() {
+async function handleSubmit() {
   if (!client.value) {
     clientError.value = true
     setTimeout(() => { clientError.value = false }, 2000)
@@ -100,17 +136,26 @@ async function handleSchedule() {
   }
   saving.value = true
   try {
-    await create({
-      client_id: client.value,
-      title: clientName.value,
+    const body = {
+      // Fall back to the existing title on edit — clientName is empty when the
+      // session's client isn't in the loaded list, which would blank the title.
+      title: clientName.value || props.session?.client,
       session_type: sessionType.value,
       starts_at: parseStartsAt(date.value, startTime.value),
       duration_mins: parseDurationMins(duration.value),
       notes: focus.value || undefined,
-      confirmed: false,
-    })
-    emit('scheduled')
+    }
+    if (props.session) {
+      // client_id is immutable per the update API — title/time/type/notes only.
+      await update(props.session.id, body)
+      emit('updated')
+    } else {
+      await create({ ...body, client_id: client.value, confirmed: false })
+      emit('scheduled')
+    }
     emit('update:open', false)
+  } catch {
+    toast.add({ title: props.session ? 'Could not update session' : 'Could not schedule session', color: 'error' })
   } finally {
     saving.value = false
   }
@@ -124,8 +169,8 @@ async function handleSchedule() {
         <!-- Header -->
         <div class="flex items-start justify-between px-5 pt-5 pb-4 border-b border-(--border)">
           <div>
-            <div class="text-[15px] font-bold text-(--text-primary) tracking-[-0.2px]">Schedule Session</div>
-            <div class="text-[12px] text-(--text-muted) mt-0.5">Book a 1:1 or group session with a client</div>
+            <div class="text-[15px] font-bold text-(--text-primary) tracking-[-0.2px]">{{ isEdit ? 'Edit Session' : 'Schedule Session' }}</div>
+            <div class="text-[12px] text-(--text-muted) mt-0.5">{{ isEdit ? 'Update the details of this session' : 'Book a 1:1 or group session with a client' }}</div>
           </div>
           <button
             type="button"
@@ -176,6 +221,7 @@ async function handleSchedule() {
               :items="clientOptions"
               value-key="id"
               label-key="label"
+              :disabled="isEdit"
               placeholder="Select a client…"
               class="rounded-[10px] w-full"
               @update:model-value="clientError = false"
@@ -251,8 +297,8 @@ async function handleSchedule() {
           <UButton variant="ghost" color="neutral" size="lg" :disabled="saving" @click="$emit('update:open', false)">
             Cancel
           </UButton>
-          <UButton color="primary" size="lg" :loading="saving" @click="handleSchedule">
-            Schedule
+          <UButton color="primary" size="lg" :loading="saving" :disabled="loading" @click="handleSubmit">
+            {{ isEdit ? 'Save Changes' : 'Schedule' }}
           </UButton>
         </div>
       </div>

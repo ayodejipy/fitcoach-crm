@@ -1176,6 +1176,101 @@
                 }
             }
         },
+        "/api/v1/me/availability": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "me-availability"
+                ],
+                "summary": "Get my availability schedule",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/models.CoachAvailabilitySlot"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "me-availability"
+                ],
+                "summary": "Update my availability schedule",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/handlers.UpdateMyAvailabilityRequest"
+                            }
+                        }
+                    },
+                    "description": "slots payload",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/models.CoachAvailabilitySlot"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/me/avatar": {
             "post": {
                 "security": [
@@ -3769,6 +3864,9 @@
                         "maximum": 10,
                         "minimum": 1
                     },
+                    "hip_inches": {
+                        "type": "number"
+                    },
                     "mood_score": {
                         "type": "integer",
                         "maximum": 10,
@@ -3790,6 +3888,9 @@
                         "maximum": 24,
                         "minimum": 0
                     },
+                    "waist_inches": {
+                        "type": "number"
+                    },
                     "week_start_date": {
                         "type": "string"
                     },
@@ -3808,6 +3909,10 @@
                     "start_date"
                 ],
                 "properties": {
+                    "dietary_preference": {
+                        "type": "string",
+                        "maxLength": 500
+                    },
                     "email": {
                         "type": "string"
                     },
@@ -3849,6 +3954,9 @@
                         "type": "integer",
                         "minimum": 1
                     },
+                    "send_invite": {
+                        "type": "boolean"
+                    },
                     "start_date": {
                         "type": "string"
                     },
@@ -3858,8 +3966,12 @@
                             "active",
                             "paused",
                             "new",
-                            "ended"
+                            "ended",
+                            "trial"
                         ]
+                    },
+                    "target_weight_lbs": {
+                        "type": "number"
                     }
                 }
             },
@@ -4222,6 +4334,12 @@
                     "coach_avatar": {
                         "type": "string"
                     },
+                    "coach_bio": {
+                        "type": "string"
+                    },
+                    "coach_business": {
+                        "type": "string"
+                    },
                     "coach_id": {
                         "description": "Coach mini-profile",
                         "type": "string"
@@ -4380,9 +4498,36 @@
                     }
                 }
             },
+            "handlers.UpdateAvailabilitySlot": {
+                "type": "object",
+                "required": [
+                    "end_time",
+                    "start_time"
+                ],
+                "properties": {
+                    "day_of_week": {
+                        "type": "integer",
+                        "maximum": 6,
+                        "minimum": 0
+                    },
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "end_time": {
+                        "type": "string"
+                    },
+                    "start_time": {
+                        "type": "string"
+                    }
+                }
+            },
             "handlers.UpdateClientRequest": {
                 "type": "object",
                 "properties": {
+                    "dietary_preference": {
+                        "type": "string",
+                        "maxLength": 500
+                    },
                     "email": {
                         "type": "string"
                     },
@@ -4433,8 +4578,12 @@
                             "active",
                             "paused",
                             "new",
-                            "ended"
+                            "ended",
+                            "trial"
                         ]
+                    },
+                    "target_weight_lbs": {
+                        "type": "number"
                     }
                 }
             },
@@ -4444,6 +4593,14 @@
                     "avatar_url": {
                         "type": "string",
                         "maxLength": 500
+                    },
+                    "bio": {
+                        "type": "string",
+                        "maxLength": 1000
+                    },
+                    "business_name": {
+                        "type": "string",
+                        "maxLength": 200
                     },
                     "first_name": {
                         "type": "string",
@@ -4471,9 +4628,28 @@
                     }
                 }
             },
+            "handlers.UpdateMyAvailabilityRequest": {
+                "type": "object",
+                "required": [
+                    "slots"
+                ],
+                "properties": {
+                    "slots": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/handlers.UpdateAvailabilitySlot"
+                        }
+                    }
+                }
+            },
             "handlers.UpdateMySettingsRequest": {
                 "type": "object",
                 "properties": {
+                    "buffer_mins": {
+                        "type": "integer",
+                        "maximum": 1440,
+                        "minimum": 0
+                    },
                     "checkin_days": {
                         "type": "array",
                         "items": {
@@ -4482,6 +4658,16 @@
                     },
                     "checkin_deadline": {
                         "type": "string"
+                    },
+                    "max_sessions_per_day": {
+                        "type": "integer",
+                        "maximum": 100,
+                        "minimum": 0
+                    },
+                    "min_notice_hrs": {
+                        "type": "integer",
+                        "maximum": 720,
+                        "minimum": 0
                     },
                     "notif_checkin_new": {
                         "type": "boolean"
@@ -4634,6 +4820,9 @@
                     "energy_score": {
                         "type": "integer"
                     },
+                    "hip_inches": {
+                        "type": "number"
+                    },
                     "id": {
                         "type": "string"
                     },
@@ -4661,6 +4850,9 @@
                     "submitted_at": {
                         "type": "string"
                     },
+                    "waist_inches": {
+                        "type": "number"
+                    },
                     "week_start_date": {
                         "description": "YYYY-MM-DD (Monday)",
                         "type": "string"
@@ -4677,6 +4869,9 @@
                         "type": "string"
                     },
                     "created_at": {
+                        "type": "string"
+                    },
+                    "dietary_preference": {
                         "type": "string"
                     },
                     "email": {
@@ -4728,6 +4923,9 @@
                     "streak_weeks": {
                         "type": "integer"
                     },
+                    "target_weight_lbs": {
+                        "type": "number"
+                    },
                     "updated_at": {
                         "type": "string"
                     }
@@ -4737,6 +4935,12 @@
                 "type": "object",
                 "properties": {
                     "avatar_url": {
+                        "type": "string"
+                    },
+                    "bio": {
+                        "type": "string"
+                    },
+                    "business_name": {
                         "type": "string"
                     },
                     "created_at": {
@@ -4777,6 +4981,31 @@
                     }
                 }
             },
+            "models.CoachAvailabilitySlot": {
+                "type": "object",
+                "properties": {
+                    "coach_id": {
+                        "type": "string"
+                    },
+                    "day_of_week": {
+                        "type": "integer"
+                    },
+                    "enabled": {
+                        "type": "boolean"
+                    },
+                    "end_time": {
+                        "description": "\"HH:MM\"",
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "start_time": {
+                        "description": "\"HH:MM\"",
+                        "type": "string"
+                    }
+                }
+            },
             "models.CoachCheckIn": {
                 "type": "object",
                 "properties": {
@@ -4794,6 +5023,9 @@
                     },
                     "energy_score": {
                         "type": "integer"
+                    },
+                    "hip_inches": {
+                        "type": "number"
                     },
                     "id": {
                         "type": "string"
@@ -4824,6 +5056,9 @@
                     },
                     "submitted_at": {
                         "type": "string"
+                    },
+                    "waist_inches": {
+                        "type": "number"
                     },
                     "week_start_date": {
                         "description": "YYYY-MM-DD (Monday)",
@@ -4939,6 +5174,9 @@
             "models.CoachSettings": {
                 "type": "object",
                 "properties": {
+                    "buffer_mins": {
+                        "type": "integer"
+                    },
                     "checkin_days": {
                         "description": "0=Sun .. 6=Sat",
                         "type": "array",
@@ -4958,6 +5196,12 @@
                         "items": {
                             "$ref": "#/components/schemas/models.CustomQuestion"
                         }
+                    },
+                    "max_sessions_per_day": {
+                        "type": "integer"
+                    },
+                    "min_notice_hrs": {
+                        "type": "integer"
                     },
                     "notif_checkin_new": {
                         "type": "boolean"

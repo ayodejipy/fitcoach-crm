@@ -42,7 +42,7 @@ const config = useRuntimeConfig()
 const authApi = useAuthApi()
 
 const handleGoogleSignIn = () => {
-  window.location.href = `${config.public.apiBase}/api/auth/google`
+  window.location.href = `${config.public.apiBase}/api/v1/auth/google`
 }
 
 async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {

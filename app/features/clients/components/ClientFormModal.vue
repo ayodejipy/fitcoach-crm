@@ -191,10 +191,10 @@ const statusOptions = [
 
           <div class="grid grid-cols-2 gap-3">
             <UFormField name="plan_name" label="Coaching plan">
-              <USelect v-model="selectedPlanValue" :options="PLAN_OPTIONS" value-key="value" label-key="label" placeholder="Select a plan" class="rounded-[10px]" />
+              <USelect v-model="selectedPlanValue" :items="PLAN_OPTIONS" value-key="value" label-key="label" placeholder="Select a plan" class="rounded-[10px]" />
             </UFormField>
             <UFormField name="goal" label="Primary goal" required>
-              <USelect v-model="state.goal" :options="GOAL_OPTIONS" value-key="value" label-key="label" placeholder="Select a goal" class="rounded-[10px]" />
+              <USelect v-model="state.goal" :items="GOAL_OPTIONS" value-key="value" label-key="label" placeholder="Select a goal" class="rounded-[10px]" />
             </UFormField>
           </div>
 
@@ -246,7 +246,7 @@ const statusOptions = [
           </div>
 
           <UFormField name="status" label="Status">
-            <USelect v-model="state.status" :options="statusOptions" value-key="value" label-key="label" class="rounded-[10px]" />
+            <USelect v-model="state.status" :items="statusOptions" value-key="value" label-key="label" class="rounded-[10px]" />
           </UFormField>
         </template>
       </UForm>

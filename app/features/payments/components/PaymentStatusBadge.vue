@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 
-export type PaymentStatus = 'active' | 'overdue' | 'cancelling' | 'paid' | 'pending'
+export type PaymentStatus = 'active' | 'overdue' | 'cancelling' | 'paid' | 'pending' | 'failed'
 
 const props = defineProps<{
   status: PaymentStatus
@@ -24,6 +24,7 @@ const wrapClass = computed(() => ({
   overdue:    'bg-[#FEE2E2] text-(--red) dark:bg-(--red)/15',
   cancelling: 'bg-[#FFF1E6] text-[#EA580C] dark:bg-[#EA580C]/15 dark:text-[#FB923C]',
   pending:    'bg-[#EFF6FF] text-[#2563EB] dark:bg-[#2563EB]/15 dark:text-[#60A5FA]',
+  failed:     'bg-[#FEE2E2] text-(--red) dark:bg-(--red)/15',
 }[props.status]))
 
 const dotClass = computed(() => ({
@@ -32,9 +33,10 @@ const dotClass = computed(() => ({
   overdue:    'bg-(--red)',
   cancelling: 'bg-[#EA580C] dark:bg-[#FB923C]',
   pending:    'bg-[#2563EB] dark:bg-[#60A5FA]',
+  failed:     'bg-(--red)',
 }[props.status]))
 
 const defaultLabel = computed(() => ({
-  active: 'Active', overdue: 'Overdue', cancelling: 'Cancelling', paid: 'Paid', pending: 'Pending',
+  active: 'Active', overdue: 'Overdue', cancelling: 'Cancelling', paid: 'Paid', pending: 'Pending', failed: 'Failed',
 }[props.status]))
 </script>

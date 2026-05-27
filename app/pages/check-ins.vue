@@ -101,6 +101,7 @@ const {
   onPrevWeek,
   onNextWeek,
   sending,
+  sentTick,
   onSend,
   onSaveDraft,
 } = useCheckInDetail(selectedId, checkIns, clientMap, coachInitials)
@@ -186,6 +187,7 @@ const {
         :photo-submitted-at="photoSubmittedAt"
         :loading="detailLoading"
         :sending="sending"
+        :sent-tick="sentTick"
         @send="onSend"
         @save-draft="onSaveDraft"
         @prev-week="onPrevWeek"

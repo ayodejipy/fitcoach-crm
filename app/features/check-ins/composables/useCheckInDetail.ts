@@ -22,6 +22,8 @@ export function useCheckInDetail(
   const detailLoading = ref(false)
   const sending       = ref(false)
   const savingDraft   = ref(false)
+  // Bumped on each successful send so the composer can clear only on success.
+  const sentTick      = ref(0)
 
   // ── Load detail + history whenever selection changes ───────
   watch(selectedId, async (id) => {
@@ -130,6 +132,7 @@ export function useCheckInDetail(
     try {
       const updated = await checkInsApi.respond(selectedId.value, { response: text })
       detailCheckIn.value = updated
+      sentTick.value++
       toast.add({ title: 'Response sent!', color: 'success' })
     } catch {
       toast.add({ title: 'Failed to send response', color: 'error' })
@@ -169,6 +172,7 @@ export function useCheckInDetail(
     onPrevWeek,
     onNextWeek,
     sending,
+    sentTick,
     onSend,
     onSaveDraft,
   }

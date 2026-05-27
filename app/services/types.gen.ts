@@ -21,15 +21,18 @@ export type HandlersAuthResponse = {
 
 export type HandlersCreateCheckInRequest = {
     energy_score?: number;
+    hip_inches?: number;
     mood_score?: number;
     notes?: string;
     photo_urls?: Array<string>;
     sleep_hrs?: number;
+    waist_inches?: number;
     week_start_date: string;
     weight_lbs?: number;
 };
 
 export type HandlersCreateClientRequest = {
+    dietary_preference?: string;
     email: string;
     first_name: string;
     goal: string;
@@ -40,8 +43,10 @@ export type HandlersCreateClientRequest = {
     plan_price_cents?: number;
     program_total?: number;
     program_week?: number;
+    send_invite?: boolean;
     start_date: string;
-    status?: 'active' | 'paused' | 'new' | 'ended';
+    status?: 'active' | 'paused' | 'new' | 'ended' | 'trial';
+    target_weight_lbs?: number;
 };
 
 export type HandlersCreateInvoiceRequest = {
@@ -183,6 +188,8 @@ export type HandlersPortalMeResponse = {
      */
     client_id?: string;
     coach_avatar?: string;
+    coach_bio?: string;
+    coach_business?: string;
     /**
      * Coach mini-profile
      */
@@ -244,7 +251,15 @@ export type HandlersUnreadCountResponse = {
     count?: number;
 };
 
+export type HandlersUpdateAvailabilitySlot = {
+    day_of_week?: number;
+    enabled?: boolean;
+    end_time: string;
+    start_time: string;
+};
+
 export type HandlersUpdateClientRequest = {
+    dietary_preference?: string;
     email?: string;
     first_name?: string;
     goal?: string;
@@ -256,20 +271,30 @@ export type HandlersUpdateClientRequest = {
     program_total?: number;
     program_week?: number;
     start_date?: string;
-    status?: 'active' | 'paused' | 'new' | 'ended';
+    status?: 'active' | 'paused' | 'new' | 'ended' | 'trial';
+    target_weight_lbs?: number;
 };
 
 export type HandlersUpdateMeRequest = {
     avatar_url?: string;
+    bio?: string;
+    business_name?: string;
     first_name?: string;
     last_name?: string;
     slug?: string;
     specialty?: 'personal-training' | 'online-coaching' | 'nutrition' | 'studio';
 };
 
+export type HandlersUpdateMyAvailabilityRequest = {
+    slots: Array<HandlersUpdateAvailabilitySlot>;
+};
+
 export type HandlersUpdateMySettingsRequest = {
+    buffer_mins?: number;
     checkin_days?: Array<number>;
     checkin_deadline?: string;
+    max_sessions_per_day?: number;
+    min_notice_hrs?: number;
     notif_checkin_new?: boolean;
     notif_checkin_overdue?: boolean;
     notif_checkin_streak?: boolean;
@@ -320,6 +345,7 @@ export type ModelsCheckIn = {
     coach_response?: string;
     created_at?: string;
     energy_score?: number;
+    hip_inches?: number;
     id?: string;
     is_read?: boolean;
     mood_score?: number;
@@ -328,6 +354,7 @@ export type ModelsCheckIn = {
     responded_at?: string;
     sleep_hrs?: number;
     submitted_at?: string;
+    waist_inches?: number;
     /**
      * YYYY-MM-DD (Monday)
      */
@@ -338,6 +365,7 @@ export type ModelsCheckIn = {
 export type ModelsClient = {
     coach_id?: string;
     created_at?: string;
+    dietary_preference?: string;
     email?: string;
     first_name?: string;
     goal?: string;
@@ -357,11 +385,14 @@ export type ModelsClient = {
     start_date?: string;
     status?: string;
     streak_weeks?: number;
+    target_weight_lbs?: number;
     updated_at?: string;
 };
 
 export type ModelsCoach = {
     avatar_url?: string;
+    bio?: string;
+    business_name?: string;
     created_at?: string;
     email?: string;
     first_name?: string;
@@ -376,12 +407,28 @@ export type ModelsCoach = {
     updated_at?: string;
 };
 
+export type ModelsCoachAvailabilitySlot = {
+    coach_id?: string;
+    day_of_week?: number;
+    enabled?: boolean;
+    /**
+     * "HH:MM"
+     */
+    end_time?: string;
+    id?: string;
+    /**
+     * "HH:MM"
+     */
+    start_time?: string;
+};
+
 export type ModelsCoachCheckIn = {
     client_id?: string;
     coach_id?: string;
     coach_response?: string;
     created_at?: string;
     energy_score?: number;
+    hip_inches?: number;
     id?: string;
     is_read?: boolean;
     mood_score?: number;
@@ -391,6 +438,7 @@ export type ModelsCoachCheckIn = {
     response_draft?: string;
     sleep_hrs?: number;
     submitted_at?: string;
+    waist_inches?: number;
     /**
      * YYYY-MM-DD (Monday)
      */
@@ -441,6 +489,7 @@ export type ModelsCoachSession = {
 };
 
 export type ModelsCoachSettings = {
+    buffer_mins?: number;
     /**
      * 0=Sun .. 6=Sat
      */
@@ -451,6 +500,8 @@ export type ModelsCoachSettings = {
     checkin_deadline?: string;
     coach_id?: string;
     custom_questions?: Array<ModelsCustomQuestion>;
+    max_sessions_per_day?: number;
+    min_notice_hrs?: number;
     notif_checkin_new?: boolean;
     notif_checkin_overdue?: boolean;
     notif_checkin_streak?: boolean;
@@ -1210,6 +1261,63 @@ export type PatchApiV1MeResponses = {
 };
 
 export type PatchApiV1MeResponse = PatchApiV1MeResponses[keyof PatchApiV1MeResponses];
+
+export type GetApiV1MeAvailabilityData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me/availability';
+};
+
+export type GetApiV1MeAvailabilityErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+};
+
+export type GetApiV1MeAvailabilityError = GetApiV1MeAvailabilityErrors[keyof GetApiV1MeAvailabilityErrors];
+
+export type GetApiV1MeAvailabilityResponses = {
+    /**
+     * OK
+     */
+    200: Array<ModelsCoachAvailabilitySlot>;
+};
+
+export type GetApiV1MeAvailabilityResponse = GetApiV1MeAvailabilityResponses[keyof GetApiV1MeAvailabilityResponses];
+
+export type PutApiV1MeAvailabilityData = {
+    /**
+     * slots payload
+     */
+    body: HandlersUpdateMyAvailabilityRequest;
+    path?: never;
+    query?: never;
+    url: '/api/v1/me/availability';
+};
+
+export type PutApiV1MeAvailabilityErrors = {
+    /**
+     * Bad Request
+     */
+    400: ModelsAppError;
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+};
+
+export type PutApiV1MeAvailabilityError = PutApiV1MeAvailabilityErrors[keyof PutApiV1MeAvailabilityErrors];
+
+export type PutApiV1MeAvailabilityResponses = {
+    /**
+     * OK
+     */
+    200: Array<ModelsCoachAvailabilitySlot>;
+};
+
+export type PutApiV1MeAvailabilityResponse = PutApiV1MeAvailabilityResponses[keyof PutApiV1MeAvailabilityResponses];
 
 export type PostApiV1MeAvatarData = {
     body: {

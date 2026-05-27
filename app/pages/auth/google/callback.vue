@@ -30,8 +30,6 @@ onMounted(async () => {
     // Fetch the coach profile — getApiV1Me will now include the Authorization header
     const coach = await getApiV1Me()
     authStore.coach = coach as ModelsCoach
-    console.log("Authenticated and no coach Callback", authStore.coach)
-    console.log("coach from callback: ", coach)
     // set login method to sso
     isSSOLogin.value = true
 

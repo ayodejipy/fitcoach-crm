@@ -6,7 +6,7 @@ export function useOnboardingApi() {
   const advance = (body: HandlersAdvanceOnboardingRequest) =>
     $api<ModelsCoach>('/me/onboarding', { method: 'PATCH', body })
 
-  const checkSlugAvailability = async (slug: string) => $api<HandlersSlugCheckResponse>(`/me/slug-check?slug=${slug}`, { method: 'GET' })
+  const checkSlugAvailability = async (slug: string) => $api<HandlersSlugCheckResponse>(`/me/slug-check?slug=${encodeURIComponent(slug)}`, { method: 'GET' })
 
   return { advance, checkSlugAvailability }
 }

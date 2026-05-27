@@ -17,12 +17,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // 3. Authenticated flow - Ensure coach profile is loaded
   if (authStore.isAuthenticated && !authStore.coach) {
-    console.log("Authenticated and no coach Middleware", authStore.coach)
     try {
       const response = await getApiV1Me()
       authStore.coach = response || null
-      console.log("coach from middleware: ", response)
-
     } catch (err) {
       console.error('[Middleware] Failed to fetch coach profile:', err)
       // Clear invalid credentials and send to sign in
