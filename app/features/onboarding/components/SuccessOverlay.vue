@@ -1,50 +1,16 @@
-<template>
-  <div class="success-overlay absolute inset-0 z-10 bg-(--bg-surface) rounded-[20px] flex flex-col items-center justify-center p-10 text-center">
-    <div class="success-check-ring w-20 h-20 rounded-full bg-(--bg-primary-soft) flex items-center justify-center mb-[22px]">
-      <svg viewBox="0 0 52 52" width="40" height="40">
-        <circle cx="26" cy="26" r="23"/>
-        <path d="M14 27l8 8 16-16"/>
-      </svg>
-    </div>
-
-    <h2 class="success-title text-2xl font-extrabold text-(--text-primary) tracking-[-0.4px]">You're all set! 🎉</h2>
-    <p class="success-sub text-[15px] text-(--text-secondary) mt-2.5 leading-normal max-w-[360px]">Your FitCoach workspace is ready. Time to start transforming your coaching business.</p>
-
-    <div class="success-stats flex gap-6 mt-7 mb-8">
-      <div class="text-center">
-        <div class="text-[22px] font-extrabold text-primary dark:text-(--green-light)">{{ clients }}</div>
-        <div class="text-xs text-(--text-muted) mt-0.5">Client added</div>
-      </div>
-      <div class="text-center">
-        <div class="text-[22px] font-extrabold text-primary dark:text-(--green-light)">{{ questions }}</div>
-        <div class="text-xs text-(--text-muted) mt-0.5">Check-in questions</div>
-      </div>
-      <div class="text-center">
-        <div class="text-[22px] font-extrabold text-primary dark:text-(--green-light)">{{ tools }}</div>
-        <div class="text-xs text-(--text-muted) mt-0.5">Tools connected</div>
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="success-cta h-12 px-8 rounded-xl border-none bg-primary text-white text-[15px] font-bold cursor-pointer flex items-center gap-2.5 shadow-[0_4px_20px_rgba(26,122,74,0.35)] dark:shadow-[0_0_0_1px_rgba(46,204,113,0.4)] transition-[background,transform] duration-200 hover:bg-(--green-hover)"
-      @click="$emit('dashboard')"
-    >
-      Open my dashboard
-      <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </button>
-  </div>
-</template>
-
 <script setup lang="ts">
 withDefaults(defineProps<{
-  clients?: number
-  questions?: number
-  tools?: number
+  coachFirstName?: string
+  clientName?: string
+  clientsCount?: number
+  questionsCount?: number
+  connectedCount?: number
 }>(), {
-  clients: 0,
-  questions: 5,
-  tools: 0,
+  coachFirstName: '',
+  clientName: '',
+  clientsCount: 0,
+  questionsCount: 5,
+  connectedCount: 0,
 })
 
 defineEmits<{
@@ -52,41 +18,74 @@ defineEmits<{
 }>()
 </script>
 
+<template>
+  <div class="flex-1 flex flex-col items-center justify-center px-10 py-12 text-center max-md:px-5">
+    <div class="relative mb-7">
+      <span aria-hidden="true" class="absolute inset-[-12px] rounded-full pulse-ring bg-(--green-soft)" />
+      <span aria-hidden="true" class="absolute inset-[-6px] rounded-full bg-(--green-pale)" />
+      <span class="relative inline-flex h-20 w-20 items-center justify-center rounded-full bg-(--green-brand) text-white">
+        <UIcon name="i-lucide-check" class="size-9" />
+      </span>
+    </div>
+
+    <h1 class="text-[28px] font-semibold tracking-[-0.02em] text-(--text-primary)">You're all set.</h1>
+    <p class="mt-2 text-[14px] text-(--text-secondary) max-w-[460px]">
+      <template v-if="clientName">
+        {{ clientName }}'s first check-in is scheduled. We'll send them an invite to your client portal.
+      </template>
+      <template v-else>
+        Your workspace is ready. Time to start coaching.
+      </template>
+    </p>
+
+    <div class="mt-8 grid grid-cols-3 gap-3 w-full max-w-[480px] max-md:grid-cols-1">
+      <div class="rounded-[10px] border border-(--border) p-4 text-left">
+        <div class="text-[10px] font-semibold uppercase tracking-wide text-(--text-muted)">Clients</div>
+        <div class="mt-1 text-[20px] font-semibold tabular-nums text-(--text-primary)">{{ clientsCount }}</div>
+        <div class="mt-0.5 text-[10.5px] text-(--text-muted) truncate">
+          {{ clientName || 'None yet' }}
+        </div>
+      </div>
+      <div class="rounded-[10px] border border-(--border) p-4 text-left">
+        <div class="text-[10px] font-semibold uppercase tracking-wide text-(--text-muted)">Questions</div>
+        <div class="mt-1 text-[20px] font-semibold tabular-nums text-(--text-primary)">{{ questionsCount }}</div>
+        <div class="mt-0.5 text-[10.5px] text-(--text-muted)">In your check-in form</div>
+      </div>
+      <div class="rounded-[10px] border border-(--border) p-4 text-left">
+        <div class="text-[10px] font-semibold uppercase tracking-wide text-(--text-muted)">Connected</div>
+        <div class="mt-1 text-[20px] font-semibold tabular-nums text-(--text-primary)">{{ connectedCount }}</div>
+        <div class="mt-0.5 text-[10.5px] text-(--text-muted)">Payments &amp; tools</div>
+      </div>
+    </div>
+
+    <div class="mt-8 w-full max-w-[480px] rounded-[10px] border border-(--green-soft) bg-(--green-pale) px-4 py-3.5 text-left flex items-start gap-3">
+      <span class="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-(--green-brand) text-white">
+        <UIcon name="i-lucide-chevrons-right" class="size-3.5" />
+      </span>
+      <div>
+        <div class="text-[12.5px] font-semibold text-(--green-brand)">What's next</div>
+        <div class="mt-0.5 text-[11.5px] text-(--green-brand)">
+          Your dashboard shows today's sessions and any check-ins waiting on you. Create your first invoice from Payments when you're ready.
+        </div>
+      </div>
+    </div>
+
+    <UButton
+      color="primary"
+      size="lg"
+      class="mt-8"
+      trailing-icon="i-lucide-arrow-right"
+      @click="$emit('dashboard')"
+    >
+      Open my dashboard
+    </UButton>
+  </div>
+</template>
+
 <style scoped>
-.success-overlay {
-  animation: success-fade .4s ease forwards;
+@keyframes ping-slow {
+  0%, 100% { transform: scale(1); opacity: 0.4; }
+  50%       { transform: scale(1.2); opacity: 0.1; }
 }
-@keyframes success-fade {
-  from { opacity: 0; transform: scale(.97); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.success-check-ring svg circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 3;
-  fill: none;
-  stroke: var(--green-brand);
-  animation: circle-draw .6s ease .1s forwards;
-}
-.success-check-ring svg path {
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  fill: none;
-  stroke: var(--green-brand);
-  animation: check-draw .3s ease .7s forwards;
-}
-@keyframes circle-draw { to { stroke-dashoffset: 0; } }
-@keyframes check-draw { to { stroke-dashoffset: 0; } }
-</style>
-
-<style>
-/* Dark-mode overrides — unscoped to avoid vuejs/core#12404 */
-.dark .success-check-ring svg circle,
-.dark .success-check-ring svg path {
-  stroke: var(--green-light);
-}
+.pulse-ring { animation: ping-slow 2s ease-in-out infinite; }
 </style>

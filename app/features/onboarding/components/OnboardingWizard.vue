@@ -1,52 +1,11 @@
-<template>
-  <div class="wizard-wrap relative z-1 w-full max-w-[680px] flex flex-col items-center mx-auto">
-    <!-- Logo -->
-    <div class="wiz-logo flex items-center gap-2.5 mb-7 max-[600px]:mb-[18px]">
-      <div class="w-[34px] h-[34px] rounded-[9px] bg-primary flex items-center justify-center shadow-[0_2px_12px_rgba(46,204,113,0.3)] shrink-0">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
-        </svg>
-      </div>
-      <span class="text-[17px] font-bold text-white/92 tracking-[-0.2px]">FitCoach</span>
-    </div>
-
-    <StepIndicator :current-step="currentStep" />
-
-    <!-- Wizard card -->
-    <div class="wiz-card bg-(--bg-surface) w-full rounded-[20px] overflow-hidden relative shadow-[0_24px_80px_rgba(0,0,0,0.35),0_4px_20px_rgba(0,0,0,0.2)] dark:border dark:border-white/10">
-      <Transition :name="direction === 'forward' ? 'step-forward' : 'step-back'" mode="out-in">
-        <component
-          :is="stepComponent"
-          :key="currentStep"
-          :form="form"
-          :loading="finishing"
-          @next="goNext"
-          @prev="goPrev"
-          @skip="goNext"
-          @finish="finish"
-        />
-      </Transition>
-
-      <SuccessOverlay
-        v-if="success"
-        :clients="form.clientFirstName.trim() ? 1 : 0"
-        :questions="form.questions.length"
-        :tools="form.connectedTools.length"
-        @dashboard="goToDashboard"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
 import { format } from 'date-fns'
-import StepIndicator from './StepIndicator.vue'
-import SuccessOverlay from './SuccessOverlay.vue'
+import OnboardingStepRail, { type RailStep } from './OnboardingStepRail.vue'
 import Step1Profile from './steps/Step1Profile.vue'
 import Step2Client from './steps/Step2Client.vue'
 import Step3CheckIns from './steps/Step3CheckIns.vue'
-import Step4Tools from './steps/Step4Tools.vue'
+import Step4Connect from './steps/Step4Connect.vue'
+import SuccessOverlay from './SuccessOverlay.vue'
 import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 import { useOnboardingApi } from '~/features/onboarding/composables/useOnboardingApi'
 
@@ -54,6 +13,7 @@ const authStore = useAuthStore()
 const onboardingApi = useOnboardingApi()
 const route = useRoute()
 const router = useRouter()
+const toast = useToast()
 
 function clampStep(raw: unknown): number {
   const n = parseInt(raw as string)
@@ -61,29 +21,25 @@ function clampStep(raw: unknown): number {
 }
 
 const currentStep = ref(clampStep(route.query.step))
-const direction = ref<'forward' | 'back'>('forward')
-const success = ref(false)
 const finishing = ref(false)
+const success = ref(false)
 
 const today = format(new Date(), 'yyyy-MM-dd')
 
 const form = reactive({
-  // Step 1 — Profile
   photo: null as string | null,
   photoName: '',
   firstName: (route.query.first_name as string) || authStore.coach?.first_name || '',
   lastName: (route.query.last_name as string) || authStore.coach?.last_name || '',
   slug: '',
   bio: '',
-  specialty: authStore.coach?.specialty ?? null as string | null,
-  // Step 2 — Client
+  specialty: (authStore.coach?.specialty as string) ?? null,
   clientFirstName: '',
   clientLastName: '',
   clientEmail: '',
   clientPhone: '',
-  clientStartDate: today ?? '',
+  clientStartDate: today,
   clientGoal: null as string | null,
-  // Step 3 — Check-ins
   selectedDays: ['Tue'] as string[],
   deadline: '10:00 AM',
   reminder: '2 hours before',
@@ -94,38 +50,73 @@ const form = reactive({
     { id: 4, text: 'Rate your sleep quality (1–10)', required: false, removable: true },
     { id: 5, text: 'Any wins, struggles, or notes for your coach?', required: false, removable: true },
   ],
-  // Step 4 — Tools
-  connectedTools: [] as string[],
+  connectedItems: [] as string[],
 })
 
-const stepComponent = computed(() => {
-  switch (currentStep.value) {
-    case 1: return Step1Profile
-    case 2: return Step2Client
-    case 3: return Step3CheckIns
-    case 4: return Step4Tools
-    default: return Step1Profile
-  }
+const SPECIALTY_LABELS: Record<string, string> = {
+  'personal-training': 'Personal Training',
+  'online-coaching': 'Online Coaching',
+  'nutrition': 'Nutrition Coaching',
+  'studio': 'Studio / Group',
+}
+
+const greeting = computed(() => {
+  if (success.value) return 'Welcome aboard.'
+  if (currentStep.value === 1) return "Let's get you coaching."
+  if (currentStep.value === 2) return ''
+  if (currentStep.value === 3) return "You're halfway there."
+  if (currentStep.value === 4) return 'Almost done.'
+  return ''
 })
 
-const goNext = async () => {
-  if (currentStep.value >= 4) return
-  direction.value = 'forward'
+const railSteps = computed<RailStep[]>(() => {
+  const fullName = [form.firstName, form.lastName].filter(Boolean).join(' ').trim()
+  const specialtyLabel = form.specialty ? SPECIALTY_LABELS[form.specialty] : null
+  const profileSummary = fullName && specialtyLabel
+    ? `${fullName} · ${specialtyLabel}`
+    : fullName || (specialtyLabel ?? '')
+
+  const clientFullName = [form.clientFirstName, form.clientLastName].filter(Boolean).join(' ').trim()
+  const clientSummary = clientFullName ? `${clientFullName} · added` : ''
+
+  const checkinSummary = form.selectedDays.length
+    ? `${form.selectedDays.join('/')} at ${form.deadline} · ${form.questions.length} questions`
+    : ''
+
+  return [
+    { id: 1, label: 'Your coaching profile', hint: 'Name, photo, specialty', summary: profileSummary || undefined },
+    { id: 2, label: 'Add your first client', hint: 'Set up someone you coach', summary: clientSummary || undefined },
+    { id: 3, label: 'Set up check-ins', hint: 'Weekly accountability', summary: checkinSummary || undefined },
+    { id: 4, label: 'Connect payments & tools', hint: 'Paystack, Stripe, Zoom, or skip', summary: form.connectedItems.length ? `${form.connectedItems.length} connected` : undefined },
+  ]
+})
+
+const progress = computed(() => Math.round((currentStep.value / 4) * 100))
+
+const continueLabel = computed(() => {
+  if (currentStep.value === 1) return 'Continue to Add your first client'
+  if (currentStep.value === 2) return 'Continue to Set up check-ins'
+  if (currentStep.value === 3) return 'Continue to Connect payments & tools'
+  return 'Launch my dashboard'
+})
+
+async function goNext() {
+  if (currentStep.value >= 4) return finish()
   currentStep.value++
-  // Persist progress; errors are non-blocking
   try {
     const updated = await onboardingApi.advance({ step: currentStep.value })
     if (authStore.coach) authStore.coach.onboarding_step = updated.onboarding_step
-  } catch { /* progress save failed — user can still continue */ }
+  } catch {
+    /* non-blocking */
+  }
 }
 
-const goPrev = () => {
+function goPrev() {
   if (currentStep.value <= 1) return
-  direction.value = 'back'
   currentStep.value--
 }
 
-const finish = async () => {
+async function finish() {
   finishing.value = true
   try {
     const updated = await onboardingApi.advance({ step: 4 })
@@ -135,20 +126,31 @@ const finish = async () => {
     }
     success.value = true
   } catch {
-    useToast().add({ title: 'Could not save onboarding', description: 'Please try again.', color: 'error' })
+    toast.add({ title: 'Could not save onboarding', description: 'Please try again.', color: 'error' })
   } finally {
     finishing.value = false
   }
 }
 
-const goToDashboard = () => navigateTo('/')
+function goToDashboard() {
+  navigateTo('/')
+}
 
-// Keep step in URL immediately when it changes
+function onExit() {
+  toast.add({ title: 'Progress saved', description: "We'll be here when you come back.", color: 'info' })
+}
+
+const stepComponent = computed(() => ({
+  1: Step1Profile,
+  2: Step2Client,
+  3: Step3CheckIns,
+  4: Step4Connect,
+}[currentStep.value]))
+
 watch(currentStep, (step) => {
   router.replace({ query: { ...route.query, step: String(step) } })
 }, { immediate: true })
 
-// Debounce name changes so we don't spam history on every keystroke
 const syncNamesToUrl = useDebounceFn(() => {
   const query: Record<string, string> = { step: String(currentStep.value) }
   if (form.firstName) query.first_name = form.firstName
@@ -159,16 +161,77 @@ const syncNamesToUrl = useDebounceFn(() => {
 watch([() => form.firstName, () => form.lastName], syncNamesToUrl)
 </script>
 
-<style>
-/* Step transition animations (non-scoped so they apply to slotted step components) */
-.step-forward-enter-active,
-.step-forward-leave-active,
-.step-back-enter-active,
-.step-back-leave-active {
-  transition: opacity .3s cubic-bezier(.4, 0, .2, 1), transform .3s cubic-bezier(.4, 0, .2, 1);
+<template>
+  <OnboardingStepRail
+    :steps="railSteps"
+    :current-step="currentStep"
+    :greeting="success ? 'Welcome aboard.' : greeting"
+    @exit="onExit"
+  />
+
+  <main id="main-content" class="flex-1 min-w-0 flex flex-col bg-(--bg-surface)">
+    <template v-if="success">
+      <SuccessOverlay
+        :coach-first-name="form.firstName"
+        :client-name="[form.clientFirstName, form.clientLastName].filter(Boolean).join(' ').trim()"
+        :clients-count="form.clientFirstName.trim() ? 1 : 0"
+        :questions-count="form.questions.length"
+        :connected-count="form.connectedItems.length"
+        @dashboard="goToDashboard"
+      />
+    </template>
+
+    <template v-else>
+      <div class="flex items-center justify-between px-10 py-3.5 border-b border-(--border) max-md:px-5">
+        <div class="flex items-center gap-3 text-[11.5px] text-(--text-muted)">
+          <span class="font-medium">Step {{ currentStep }} of 4</span>
+          <div class="w-40 h-1 rounded-full bg-(--bg-subtle)">
+            <div class="h-1 rounded-full bg-(--green-brand) transition-[width]" :style="{ width: `${progress}%` }" />
+          </div>
+          <span class="tabular-nums">{{ progress }}%</span>
+        </div>
+        <button
+          v-if="currentStep > 1 && currentStep < 4"
+          type="button"
+          class="text-[12px] text-(--text-muted) hover:text-(--text-primary) hover:underline"
+          @click="goNext"
+        >
+          Skip for now
+        </button>
+        <button
+          v-else-if="currentStep === 4"
+          type="button"
+          class="text-[12px] text-(--text-muted) hover:text-(--text-primary) hover:underline"
+          @click="finish"
+        >
+          Skip — connect later
+        </button>
+      </div>
+
+      <Transition name="step-fade" mode="out-in">
+        <component
+          :is="stepComponent"
+          :key="currentStep"
+          :form="form"
+        />
+      </Transition>
+
+      <StepFooter
+        :show-back="currentStep > 1"
+        :continue-label="continueLabel"
+        :loading="finishing"
+        @back="goPrev"
+        @continue="goNext"
+      />
+    </template>
+  </main>
+</template>
+
+<style scoped>
+.step-fade-enter-active,
+.step-fade-leave-active {
+  transition: opacity 0.2s, transform 0.2s;
 }
-.step-forward-enter-from { opacity: 0; transform: translateX(24px); }
-.step-forward-leave-to   { opacity: 0; transform: translateX(-24px); }
-.step-back-enter-from    { opacity: 0; transform: translateX(-24px); }
-.step-back-leave-to      { opacity: 0; transform: translateX(24px); }
+.step-fade-enter-from { opacity: 0; transform: translateX(12px); }
+.step-fade-leave-to   { opacity: 0; transform: translateX(-12px); }
 </style>
