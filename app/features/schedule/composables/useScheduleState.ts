@@ -26,12 +26,14 @@ export function useScheduleState() {
     },
   })
 
-  // ── View (URL-synced: ?view=week) ──────────────────────────
-  const VALID_VIEWS = new Set<CalendarView>(['day', 'week', 'month'])
+  // Locked default per the schedule-B mockup: agenda lands first because at
+  // small client counts an empty 7-column grid reads as "you have nothing
+  // happening" — a list reads as "here is what is happening."
+  const VALID_VIEWS = new Set<CalendarView>(['day', 'week', 'month', 'agenda'])
   const view = computed<CalendarView>({
     get() {
       const v = route.query.view as CalendarView | undefined
-      return v && VALID_VIEWS.has(v) ? v : 'week'
+      return v && VALID_VIEWS.has(v) ? v : 'agenda'
     },
     set(v) {
       router.replace({ query: { ...route.query, view: v } })

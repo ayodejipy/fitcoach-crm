@@ -47,13 +47,18 @@ export function engagementReason(client: ModelsClient): EngagementReason {
   }
 
   if (!client.last_check_in) {
-    if (status === 'new' && client.start_date) {
+    // A recent start_date (≤14 days) means the client is still onboarding —
+    // softer info tone, not the red "you're failing them" tone. Status flag is
+    // a separate concept ('new' = trial), so this branch fires regardless of it.
+    if (client.start_date) {
       const joined = parse(client.start_date, 'yyyy-MM-dd', new Date())
-      const startLabel = client.start_date
-      return {
-        text: `Joined ${formatJoinedShort(joined)} · never checked in`,
-        tone: 'info',
-        icon: 'i-lucide-sun',
+      const daysSinceJoin = differenceInDays(now, joined)
+      if (daysSinceJoin <= 14) {
+        return {
+          text: `Joined ${formatJoinedShort(joined)} · never checked in`,
+          tone: 'info',
+          icon: 'i-lucide-sun',
+        }
       }
     }
     return { text: 'Never checked in', tone: 'error', icon: 'i-lucide-circle-alert' }

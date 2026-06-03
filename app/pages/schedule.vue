@@ -6,6 +6,7 @@ import CalendarControlBar from '~/features/schedule/components/CalendarControlBa
 import CalendarGrid, { type SessionData } from '~/features/schedule/components/CalendarGrid.vue'
 import CalendarDayView from '~/features/schedule/components/CalendarDayView.vue'
 import CalendarMonthView from '~/features/schedule/components/CalendarMonthView.vue'
+import ScheduleAgendaView from '~/features/schedule/components/ScheduleAgendaView.vue'
 import SessionPopover from '~/features/schedule/components/SessionPopover.vue'
 import ScheduleSidePanel from '~/features/schedule/components/ScheduleSidePanel.vue'
 import ScheduleSessionModal from '~/features/schedule/components/ScheduleSessionModal.vue'
@@ -126,37 +127,26 @@ function onSessionUpdated() {
 function onAvailabilitySaved() {
   toast.add({ title: 'Availability saved', color: 'success' })
 }
-
-function onPrint() {
-  if (import.meta.client) window.print()
-}
 </script>
 
 <template>
   <AppTopbar title="Schedule" :subtitle="weekSub">
     <template #actions>
       <UButton
-        variant="ghost"
         color="neutral"
-        class="size-9 p-0 justify-center hover:text-primary hover:bg-[#F0F4F1] dark:hover:bg-white/[.04] dark:hover:text-(--green-light)"
-        title="Print schedule"
-        @click="onPrint"
+        variant="outline"
+        size="sm"
+        @click="availabilityOpen = true"
       >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/>
-          <path d="M8 5v3.5l2 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        Set availability
       </UButton>
       <UButton
-        variant="outline"
-        color="neutral"
-        class="hover:border-primary hover:text-primary hover:bg-[#F0F9F4] dark:hover:border-(--green-light) dark:hover:text-(--green-light) dark:hover:bg-(--bg-primary-soft)"
+        color="primary"
+        size="sm"
+        icon="i-lucide-plus"
         @click="openCreate"
       >
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M6.5 1v12M1 6.5h11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
-        Schedule Session
+        Schedule session
       </UButton>
     </template>
   </AppTopbar>
@@ -174,8 +164,29 @@ function onPrint() {
       @set-availability="availabilityOpen = true"
     />
 
+    <!-- Agenda view (default) -->
+    <div v-if="view === 'agenda'" class="flex gap-4 items-start max-lg:flex-col">
+      <div class="flex-1 min-w-0">
+        <div v-if="pending" class="py-20 text-center text-(--text-muted) text-sm">Loading…</div>
+        <ScheduleAgendaView
+          v-else
+          :days="days"
+          @session-click="onSessionClick"
+        />
+      </div>
+
+      <ScheduleSidePanel
+        :grouped-sessions="upcomingGroups"
+        :confirmed="confirmedCount"
+        :total="totalCount"
+        :footer-hint="footerHint"
+        :hours="totalHours"
+        delta-sessions=""
+      />
+    </div>
+
     <!-- Week view -->
-    <div v-if="view === 'week'" class="flex gap-4 items-start">
+    <div v-else-if="view === 'week'" class="flex gap-4 items-start">
       <div class="flex-1 min-w-0">
         <CalendarGrid
           :days="days"

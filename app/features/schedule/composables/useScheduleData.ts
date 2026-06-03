@@ -155,6 +155,8 @@ function toSessionData(s: ModelsCoachSession): SessionData {
     type:        formatSessionSubtitle(s),
     shortType:   sessionType === 'virtual' ? 'Virtual · Zoom' : sessionType === 'group' ? 'Group' : 'In-Person',
     time:        s.starts_at ? formatTimeRange(s.starts_at, durationMins) : '',
+    startsAt:    s.starts_at ?? '',
+    durationMins,
     location:    sessionLocation(s),
     sessionType,
     initials:    initialsFrom(s.title),

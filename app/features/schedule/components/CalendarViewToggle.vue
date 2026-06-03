@@ -12,10 +12,10 @@
 </template>
 
 <script setup lang="ts">
-export type CalendarView = 'day' | 'week' | 'month'
+export type CalendarView = 'day' | 'week' | 'month' | 'agenda'
 
-const views: CalendarView[] = ['day', 'week', 'month']
-const labels: Record<CalendarView, string> = { day: 'Day', week: 'Week', month: 'Month' }
+const views: CalendarView[] = ['day', 'week', 'month', 'agenda']
+const labels: Record<CalendarView, string> = { day: 'Day', week: 'Week', month: 'Month', agenda: 'Agenda' }
 
 defineProps<{
   modelValue: CalendarView

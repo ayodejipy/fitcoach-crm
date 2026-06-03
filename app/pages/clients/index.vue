@@ -127,10 +127,9 @@ function onClientSaved() {
   </AppTopbar>
 
   <div class="px-8 py-3 border-b border-(--border) bg-(--bg-surface) flex items-center justify-between gap-3 max-md:px-5 max-md:flex-wrap">
-    <div class="flex items-center gap-2">
-      <UButton color="neutral" variant="outline" size="sm" trailing-icon="i-lucide-chevron-down" disabled>
-        Group: Engagement
-      </UButton>
+    <div class="inline-flex items-center gap-1.5 text-[12px] text-(--text-muted)">
+      <UIcon name="i-lucide-layout-grid" class="size-3.5" />
+      Grouped by engagement
     </div>
     <UInput
       v-model="search"

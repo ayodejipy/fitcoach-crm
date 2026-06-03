@@ -8,6 +8,8 @@ export interface SessionData {
   type: string
   shortType?: string
   time: string
+  startsAt: string
+  durationMins: number
   location: string
   sessionType: SessionType
   initials: string
