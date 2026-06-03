@@ -38,7 +38,7 @@ const workspaceGroup = [
         to="/dashboard"
         class="flex items-center gap-2.5 rounded-md px-2 py-1 flex-1 min-w-0 hover:bg-(--bg-subtle) no-underline"
       >
-        <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-(--text-primary) text-white text-[11px] font-bold shrink-0">F</span>
+        <span class="inline-flex h-6 w-6 items-center justify-center rounded-md bg-(--text-primary) text-(--bg-surface) text-[11px] font-bold shrink-0">F</span>
         <span v-if="!collapsed" class="text-[13.5px] font-semibold text-(--text-primary) tracking-[-0.01em] truncate">FitCoach</span>
       </NuxtLink>
       <button

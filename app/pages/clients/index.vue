@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { refDebounced } from '@vueuse/core'
 import AppTopbar from '~/components/AppTopbar.vue'
-import SearchInput from '~/components/SearchInput.vue'
-import ClientFilterChips from '~/features/clients/components/ClientFilterChips.vue'
-import ClientFilterPanel from '~/features/clients/components/ClientFilterPanel.vue'
-import ClientSortDropdown from '~/features/clients/components/ClientSortDropdown.vue'
-import ClientsTable from '~/features/clients/components/ClientsTable.vue'
+import ClientEngagementGroup from '~/features/clients/components/ClientEngagementGroup.vue'
+import ClientListRow from '~/features/clients/components/ClientListRow.vue'
 import ClientFormModal from '~/features/clients/components/ClientFormModal.vue'
-import type { FilterChip } from '~/features/clients/components/ClientFilterChips.vue'
-import type { Client } from '~/features/clients/components/ClientRow.vue'
-import type { ActionItem } from '~/features/clients/components/ClientActionsMenu.vue'
 import type { ModelsClient } from '~/services'
 import { useClientsApi } from '~/features/clients/composables/useClientsApi'
-import { useClientsFilters } from '~/features/clients/composables/useClientsFilters'
-import { toClientRow } from '~/features/clients/utils/transform'
+import { hashVariant, clientInitials, clientName } from '~/utils/client'
+import {
+  ENGAGEMENT_GROUPS,
+  computeEngagement,
+  engagementReason,
+  primaryActionLabel,
+  type EngagementState,
+} from '~/features/clients/utils/engagement'
 
 definePageMeta({ layout: 'app' })
 
@@ -23,176 +23,167 @@ const clientsApi = useClientsApi()
 const router = useRouter()
 const toast = useToast()
 
-// ── Filter / search / pagination / sort state (URL-synced) ────────────────
+const search = ref('')
+const debouncedSearch = refDebounced(search, 300)
+const showAddModal = ref(false)
 
-const { search, activeChip, page, sort, filters, filterActive, listParams } = useClientsFilters()
-
-// ── Initial counts (parallel per-status totals) ───────────
-
-const { data: countsData } = await useAsyncData('clients-counts', () =>
-  Promise.all([
-    clientsApi.list({ per_page: 1 }),
-    clientsApi.list({ status: 'active', per_page: 1 }),
-    clientsApi.list({ status: 'paused', per_page: 1 }),
-    clientsApi.list({ status: 'new', per_page: 1 }),
-  ]),
+const { data: listData, pending, error } = await useAsyncData(
+  'clients-list',
+  () => clientsApi.list({
+    per_page: 100,
+    ...(debouncedSearch.value ? { search: debouncedSearch.value } : {}),
+  }),
+  { watch: [debouncedSearch] },
 )
 
-const chips = computed<FilterChip[]>(() => [
-  { id: 'all',    label: 'All',          count: countsData.value?.[0]?.total ?? 0 },
-  { id: 'active', label: 'Active',       count: countsData.value?.[1]?.total ?? 0 },
-  { id: 'paused', label: 'Paused',       count: countsData.value?.[2]?.total ?? 0 },
-  { id: 'new',    label: 'New Trial',    count: countsData.value?.[3]?.total ?? 0 },
-])
+const allClients = computed<ModelsClient[]>(() => listData.value?.clients ?? [])
 
-const subtitle = computed(() => {
-  const active = countsData.value?.[1]?.total ?? 0
-  const paused = countsData.value?.[2]?.total ?? 0
-  const trial  = countsData.value?.[3]?.total ?? 0
-  return `${active} active · ${paused} paused · ${trial} trial`
+const grouped = computed(() => {
+  const buckets: Record<EngagementState, ModelsClient[]> = {
+    'needs-attention': [],
+    'active': [],
+    'quiet': [],
+  }
+  for (const client of allClients.value) {
+    buckets[computeEngagement(client)].push(client)
+  }
+  return buckets
 })
 
-// ── Reactive client list ───────────────────────────────────
+const attentionCount = computed(() => grouped.value['needs-attention'].length)
 
-const { data: listData, pending } = await useAsyncData(
-  'clients-list',
-  () => clientsApi.list(listParams.value),
-  { watch: [listParams] },
-)
-
-const rawClients  = computed(() => listData.value?.clients ?? [])
-const totalPages  = computed(() => listData.value?.total_pages ?? 1)
-const total       = computed(() => listData.value?.total ?? 0)
-const fromItem    = computed(() => total.value === 0 ? 0 : (page.value - 1) * 20 + 1)
-const toItem      = computed(() => Math.min(page.value * 20, total.value))
-
-// ── Build client cards with action handlers ────────────────
-
-function buildMenuActions(c: ModelsClient): ActionItem[] {
-  const id = c.id!
-  const status = c.status ?? 'active'
-
-  const viewAction: ActionItem = {
-    label: 'View Profile',
-    onClick: () => router.push(`/clients/${id}`),
+const subtitle = computed(() => {
+  const total = allClients.value.length
+  if (attentionCount.value > 0) {
+    return `${total} clients · ${attentionCount.value} ${attentionCount.value === 1 ? 'needs' : 'need'} attention`
   }
-  const removeAction: ActionItem = {
-    label: 'Remove',
-    danger: true,
-    onClick: () => handleRemove(c),
-  }
+  return `${total} clients · all on track`
+})
+
+function menuItemsFor(client: ModelsClient) {
+  const id = client.id!
+  const status = client.status ?? 'active'
+  const items: Array<Record<string, unknown>> = [
+    { label: 'Open profile', icon: 'i-lucide-user', onSelect: () => router.push(`/clients/${id}`) },
+    { label: 'Send message', icon: 'i-lucide-mail', onSelect: () => toast.add({ title: 'Messaging coming soon', color: 'neutral' }) },
+    { type: 'separator' },
+  ]
 
   if (status === 'active') {
-    return [
-      viewAction,
-      { label: 'Send Message', onClick: () => toast.add({ title: 'Messaging coming soon', color: 'neutral' }) },
-      { divider: true },
-      { label: 'Pause Client', onClick: () => handleStatusChange(id, 'paused') },
-      removeAction,
-    ]
+    items.push({ label: 'Pause client', icon: 'i-lucide-pause-circle', onSelect: () => updateStatus(id, 'paused') })
+  } else if (status === 'paused') {
+    items.push({ label: 'Reactivate', icon: 'i-lucide-play-circle', onSelect: () => updateStatus(id, 'active') })
+  } else if (status === 'new') {
+    items.push({ label: 'Convert to active', icon: 'i-lucide-check', onSelect: () => updateStatus(id, 'active') })
   }
-  if (status === 'new') {
-    return [
-      viewAction,
-      { divider: true },
-      { label: 'Convert to Active', onClick: () => handleStatusChange(id, 'active') },
-      removeAction,
-    ]
-  }
-  if (status === 'paused') {
-    return [
-      viewAction,
-      { divider: true },
-      { label: 'Reactivate', onClick: () => handleStatusChange(id, 'active') },
-      removeAction,
-    ]
-  }
-  if (status === 'ended') {
-    return [viewAction, { divider: true }, removeAction]
-  }
-  return [viewAction, removeAction]
+
+  items.push({ label: 'Remove', icon: 'i-lucide-trash-2', color: 'error', onSelect: () => confirmRemove(client) })
+  return items
 }
 
-const cards = computed<Client[]>(() =>
-  rawClients.value.map(c => ({
-    ...toClientRow(c),
-    menuActions: buildMenuActions(c),
-  })),
-)
-
-// ACTIONS
-async function handleStatusChange(id: string, status: 'active' | 'paused' | 'new' | 'ended') {
+async function updateStatus(id: string, status: 'active' | 'paused' | 'new' | 'ended') {
   try {
     await clientsApi.update(id, { status })
     toast.add({ title: 'Client status updated', color: 'success' })
-    refreshNuxtData(['clients-list', 'clients-counts'])
+    refreshNuxtData('clients-list')
   } catch {
     toast.add({ title: 'Failed to update status', color: 'error' })
   }
 }
 
-const removing = ref<string | null>(null)
-
-async function handleRemove(c: ModelsClient) {
-  if (!confirm(`Remove ${clientName(c)}? This cannot be undone.`)) return
-  removing.value = c.id ?? null
+async function confirmRemove(client: ModelsClient) {
+  if (!confirm(`Remove ${clientName(client)}? This cannot be undone.`)) return
   try {
-    await clientsApi.remove(c.id!)
+    await clientsApi.remove(client.id!)
     toast.add({ title: 'Client removed', color: 'success' })
-    refreshNuxtData(['clients-list', 'clients-counts'])
+    refreshNuxtData('clients-list')
   } catch {
     toast.add({ title: 'Failed to remove client', color: 'error' })
-  } finally {
-    removing.value = null
   }
 }
 
-// ── Add client modal ───────────────────────────────────────
+function onOpen(id: string) { router.push(`/clients/${id}`) }
 
-const showAddModal = ref(false)
+function onPrimary(client: ModelsClient) {
+  const engagement = computeEngagement(client)
+  const label = primaryActionLabel(client, engagement)
+  if (label === 'Open profile') return router.push(`/clients/${client.id}`)
+  if (label === 'Reactivate') return updateStatus(client.id!, 'active')
+  toast.add({ title: `${label} coming soon`, color: 'neutral' })
+}
 
 function onClientSaved() {
   showAddModal.value = false
-  refreshNuxtData(['clients-list', 'clients-counts'])
+  refreshNuxtData('clients-list')
 }
 </script>
 
 <template>
   <AppTopbar title="Clients" :subtitle="subtitle">
     <template #actions>
-      <SearchInput v-model="search" placeholder="Search clients…" />
-      <ClientFilterPanel v-model="filters" />
-      <ClientSortDropdown v-model="sort" />
-      <button
-        type="button"
-        class="h-10 px-4 rounded-lg bg-primary hover:bg-(--green-hover) text-white text-[13px] font-semibold cursor-pointer flex items-center gap-1.5 whitespace-nowrap transition-colors"
-        @click="showAddModal = true"
-      >
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-          <path d="M6.5 1v11M1 6.5h11" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Add Client
-      </button>
+      <UButton color="neutral" variant="outline" size="sm" icon="i-lucide-download">Export</UButton>
+      <UButton color="primary" size="sm" icon="i-lucide-plus" @click="showAddModal = true">Add client</UButton>
     </template>
   </AppTopbar>
 
-  <div class="py-7 px-8 flex-1">
-    <ClientFilterChips v-model="activeChip" :chips="chips" />
-    <ClientsTable
-      :clients="cards"
-      :page="page"
-      :total-pages="totalPages"
-      :from="fromItem"
-      :to="toItem"
-      :total="total"
-      :sort="sort"
-      :loading="pending"
-      :filter-active="filterActive"
-      @update:page="page = $event"
-      @update:sort="sort = $event"
-      @add-client="showAddModal = true"
+  <div class="px-8 py-3 border-b border-(--border) bg-(--bg-surface) flex items-center justify-between gap-3 max-md:px-5 max-md:flex-wrap">
+    <div class="flex items-center gap-2">
+      <UButton color="neutral" variant="outline" size="sm" trailing-icon="i-lucide-chevron-down" disabled>
+        Group: Engagement
+      </UButton>
+    </div>
+    <UInput
+      v-model="search"
+      placeholder="Filter clients…"
+      icon="i-lucide-search"
+      size="sm"
+      class="w-[240px]"
     />
   </div>
+
+  <main id="main-content" class="flex-1 px-8 py-6 space-y-5 max-md:px-5">
+    <UAlert
+      v-if="error"
+      color="error"
+      variant="soft"
+      icon="i-lucide-circle-alert"
+      title="Failed to load clients"
+      :description="error.message"
+    />
+
+    <template v-if="pending">
+      <USkeleton v-for="n in 3" :key="n" class="h-[140px] rounded-[10px]" />
+    </template>
+
+    <template v-else>
+      <ClientEngagementGroup
+        v-for="meta in ENGAGEMENT_GROUPS"
+        :key="meta.id"
+        :label="meta.label"
+        :dot-class="meta.dot"
+        :description="meta.description"
+        :count="grouped[meta.id].length"
+        :empty-hint="meta.emptyHint"
+      >
+        <ClientListRow
+          v-for="client in grouped[meta.id]"
+          :key="client.id"
+          :id="client.id!"
+          :initials="clientInitials(client)"
+          :variant="hashVariant(client.id ?? '')"
+          :name="clientName(client)"
+          :goal="client.goal"
+          :is-new="(client.status ?? 'active') === 'new'"
+          :reason="engagementReason(client)"
+          :sessions-logged="client.sessions_count"
+          :primary-action-label="primaryActionLabel(client, meta.id)"
+          :menu-items="menuItemsFor(client)"
+          @open="onOpen"
+          @primary="onPrimary(client)"
+        />
+      </ClientEngagementGroup>
+    </template>
+  </main>
 
   <ClientFormModal
     :open="showAddModal"
