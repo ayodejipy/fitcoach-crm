@@ -1,12 +1,10 @@
 <script setup lang="ts">
+import { format, differenceInDays, parseISO } from 'date-fns'
 import AppTopbar from '~/components/AppTopbar.vue'
-import WelcomeBanner from '~/features/dashboard/components/WelcomeBanner.vue'
-import StatCard from '~/features/dashboard/components/StatCard.vue'
-import TodaysSessions from '~/features/dashboard/components/TodaysSessions.vue'
-import PendingCheckIns from '~/features/dashboard/components/PendingCheckIns.vue'
-import ClientOverview from '~/features/dashboard/components/ClientOverview.vue'
-import RecentPayments from '~/features/dashboard/components/RecentPayments.vue'
-import RevenueTrend from '~/features/dashboard/components/RevenueTrend.vue'
+import DashboardKpiHero from '~/features/dashboard/components/DashboardKpiHero.vue'
+import DashboardTodayPanel from '~/features/dashboard/components/DashboardTodayPanel.vue'
+import DashboardCheckInsPanel from '~/features/dashboard/components/DashboardCheckInsPanel.vue'
+import DashboardClientsPreview from '~/features/dashboard/components/DashboardClientsPreview.vue'
 import { useDashboardApi } from '~/features/dashboard/composables/useDashboardApi'
 import { useScheduleApi } from '~/features/schedule/composables/useScheduleApi'
 import { useCheckInsApi } from '~/features/check-ins/composables/useCheckInsApi'
@@ -16,8 +14,8 @@ import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 import type {
   ModelsClient, ModelsCoachSession, ModelsCoachCheckIn, ModelsCoachPayment,
 } from '~/services/types.gen'
-import { hashVariant, clientInitials, clientName, type AvatarVariant } from '~/features/dashboard/utils/client'
-import { fmtTime, fmtDate, fmtRelative, centsToStr } from '~/features/dashboard/utils/format'
+import { hashVariant, clientInitials, clientName } from '~/utils/client'
+import { fmtTime, fmtDate, centsToStr } from '~/utils/format'
 
 definePageMeta({ layout: 'app' })
 
@@ -42,29 +40,21 @@ const { data, pending, error } = await useAsyncData('dashboard', async () => {
     scheduleApi.list({ from: todayStart.toISOString(), to: tomorrow.toISOString(), per_page: 10 }),
     checkInsApi.list({ status: 'unread', per_page: 5 }),
     clientsApi.list({ per_page: 100 }),
-    paymentsApi.list({ per_page: 5 }),
     paymentsApi.list({ from: sixMoAgo.toISOString(), per_page: 100 }),
   ])
-
-  // Log failures for rejected promises safely
   results.forEach((res, idx) => {
-    if (res.status === 'rejected') {
-      console.warn(`[Dashboard fetch warning] Request #${idx} failed:`, res.reason)
-    }
+    if (res.status === 'rejected') console.warn(`[Dashboard fetch] Request #${idx} failed:`, res.reason)
   })
-
-  // Return the mapped values, defaulting failed queries to null
   return results.map(res => (res.status === 'fulfilled' ? res.value : null))
 })
 
-const stats      = computed(() => data.value?.[0])
-const sessions   = computed((): ModelsCoachSession[]  => data.value?.[1]?.sessions   ?? [])
-const checkIns   = computed((): ModelsCoachCheckIn[]  => data.value?.[2]?.check_ins  ?? [])
-const allClients = computed((): ModelsClient[]        => data.value?.[3]?.clients    ?? [])
-const totalCount = computed(() => data.value?.[3]?.total ?? 0)
-const payments   = computed((): ModelsCoachPayment[]  => data.value?.[4]?.payments   ?? [])
-const trendPays  = computed((): ModelsCoachPayment[]  => data.value?.[5]?.payments   ?? [])
-const coach      = computed(() => authStore.coach)
+const stats        = computed(() => data.value?.[0])
+const sessions     = computed((): ModelsCoachSession[]  => data.value?.[1]?.sessions   ?? [])
+const checkIns     = computed((): ModelsCoachCheckIn[]  => data.value?.[2]?.check_ins  ?? [])
+const allClients   = computed((): ModelsClient[]        => data.value?.[3]?.clients    ?? [])
+const totalClients = computed(() => data.value?.[3]?.total ?? 0)
+const allPayments  = computed((): ModelsCoachPayment[]  => data.value?.[4]?.payments   ?? [])
+const coach        = computed(() => authStore.coach)
 
 const clientMap = computed(() => {
   const m = new Map<string, ModelsClient>()
@@ -72,17 +62,84 @@ const clientMap = computed(() => {
   return m
 })
 
-// ── Mapped data for components ────────────────────────────
+const now = new Date()
+const dateEyebrow = format(now, 'EEE · MMM d')
+const topbarDateLabel = format(now, 'EEEE, MMM d')
+const timeOfDay = now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'
+
+const greeting = computed(() => `Good ${timeOfDay}, ${coach.value?.first_name ?? 'Coach'}.`)
+
+const unconfirmedSessions = computed(() => sessions.value.filter(s => !s.confirmed && !s.zoom_link).length)
+const unreadCheckIns = computed(() => stats.value?.unread_checkins ?? checkIns.value.length)
+const attentionCount = computed(() => unconfirmedSessions.value + unreadCheckIns.value)
+
+const outstandingCents = computed(() =>
+  allPayments.value
+    .filter(p => p.status === 'pending')
+    .reduce((sum, p) => sum + (p.amount_cents ?? 0), 0)
+)
+const outstandingCount = computed(() => allPayments.value.filter(p => p.status === 'pending').length)
+
+const kpiMetrics = computed(() => {
+  const active = stats.value?.active_clients ?? 0
+  const totalRoster = totalClients.value || active
+  const checkinsThisWeek = stats.value?.checkins_this_week ?? 0
+  const needsResponse = unreadCheckIns.value
+
+  return [
+    {
+      label: 'Active clients',
+      value: String(active),
+      suffix: totalRoster > active ? `of ${totalRoster} enrolled` : 'enrolled',
+      note: active > 0 ? `${active} active` : null,
+      noteTrend: 'up' as const,
+    },
+    {
+      label: 'Check-ins this week',
+      value: String(checkinsThisWeek),
+      suffix: active > 0 ? `/ ${active}` : '',
+      note: active > 0 ? `${Math.round((checkinsThisWeek / active) * 100)}% in` : null,
+      progressFilled: checkinsThisWeek,
+      progressTotal: Math.max(1, active),
+    },
+    {
+      label: 'Needs response',
+      value: String(needsResponse),
+      suffix: needsResponse === 1 ? 'check-in' : 'check-ins',
+      note: needsResponse > 0 ? 'Live' : null,
+      noteTrend: 'live' as const,
+      href: needsResponse > 0 ? '/check-ins' : undefined,
+      href_label: 'Respond now →',
+    },
+    {
+      label: 'Outstanding',
+      prefix: '$',
+      value: centsToStr(outstandingCents.value),
+      note: outstandingCount.value > 0 ? `${outstandingCount.value} pending` : 'All paid',
+      noteTrend: outstandingCount.value > 0 ? 'down' as const : 'up' as const,
+      href: '/payments',
+      href_label: 'View invoices →',
+    },
+  ]
+})
 
 const todaySessions = computed(() =>
   sessions.value.map(s => {
     const c = s.client_id ? clientMap.value.get(s.client_id) : undefined
+    const t = fmtTime(s.starts_at)
+    const [time = '', period = ''] = t.split(' ')
     return {
-      time: fmtTime(s.starts_at),
+      id: s.id ?? '',
+      time: time.replace(':00', ''),
+      period,
       initials: c ? clientInitials(c) : '?',
-      variant: hashVariant(s.client_id ?? s.id ?? '') as AvatarVariant,
+      variant: hashVariant(s.client_id ?? s.id ?? ''),
       name: clientName(c),
-      meta: [s.title, s.duration_mins ? `${s.duration_mins} min` : null, s.zoom_link ? 'Zoom' : 'In-person'].filter(Boolean).join(' · '),
+      meta: [
+        s.duration_mins ? `${s.duration_mins} min` : null,
+        s.zoom_link ? 'Zoom' : 'In-person',
+        s.title,
+      ].filter(Boolean).join(' · '),
       status: (s.zoom_link ? 'virtual' : s.confirmed ? 'confirmed' : 'pending') as 'virtual' | 'confirmed' | 'pending',
       statusLabel: s.zoom_link ? 'Virtual' : s.confirmed ? 'Confirmed' : 'Unconfirmed',
     }
@@ -92,110 +149,71 @@ const todaySessions = computed(() =>
 const pendingCheckIns = computed(() =>
   checkIns.value.map(ci => {
     const c = ci.client_id ? clientMap.value.get(ci.client_id) : undefined
-    const preview = [
-      ci.energy_score != null ? `Energy: ${ci.energy_score}/10` : null,
-      ci.weight_lbs != null ? `Weight: ${ci.weight_lbs} lbs` : null,
-      ci.notes ? `"${ci.notes}"` : null,
-    ].filter(Boolean).join(' · ') || 'No details submitted'
     return {
+      id: ci.id ?? '',
+      initials: c ? clientInitials(c) : '?',
+      variant: hashVariant(ci.client_id ?? ci.id ?? ''),
       name: clientName(c),
-      preview,
-      time: fmtRelative(ci.submitted_at),
+      weekLabel: ci.week_start_date ? `· Week of ${fmtDate(ci.week_start_date)}` : undefined,
+      quote: ci.notes || undefined,
+      energy: ci.energy_score ?? null,
+      weightLbs: ci.weight_lbs ?? null,
+      sleepHours: ci.sleep_hrs ?? null,
       unread: !ci.is_read,
     }
   })
 )
 
+const oldestUnreadDays = computed(() => {
+  const dates = checkIns.value
+    .filter(ci => !ci.is_read && ci.submitted_at)
+    .map(ci => differenceInDays(now, parseISO(ci.submitted_at!)))
+  return dates.length ? Math.max(...dates) : null
+})
+
 const clientRows = computed(() =>
-  allClients.value.slice(0, 5).map(c => ({
-    initials: clientInitials(c),
-    variant: hashVariant(c.id ?? '') as AvatarVariant,
-    name: clientName(c),
-    email: c.email ?? '',
-    goal: [c.goal, c.goal_sub].filter(Boolean).join(' · ') || '—',
-    lastCheckIn: fmtDate(c.last_check_in),
-    status: (c.status as 'active' | 'paused' | 'new' | 'ended') ?? 'active',
-  }))
-)
-
-const recentPayments = computed(() =>
-  payments.value.map(p => {
-    const c = p.client_id ? clientMap.value.get(p.client_id) : undefined
+  allClients.value.slice(0, 5).map(c => {
+    const overdue = c.last_check_in
+      ? differenceInDays(now, parseISO(c.last_check_in)) > 7
+      : false
+    const lastLabel = c.last_check_in
+      ? (overdue
+          ? `Overdue · ${differenceInDays(now, parseISO(c.last_check_in))}d`
+          : fmtDate(c.last_check_in))
+      : 'Never checked in'
     return {
-      initials: c ? clientInitials(c) : '?',
-      variant: hashVariant(p.client_id ?? p.id ?? '') as AvatarVariant,
+      id: c.id ?? '',
+      initials: clientInitials(c),
+      variant: hashVariant(c.id ?? ''),
       name: clientName(c),
-      description: p.description ?? p.payment_type ?? 'Payment',
-      amount: centsToStr(p.amount_cents),
-      date: fmtDate(p.paid_at ?? p.due_date),
-      status: (p.status as 'paid' | 'pending' | 'failed') ?? 'pending',
+      email: c.email ?? '',
+      goal: [c.goal, c.goal_sub].filter(Boolean).join(' · ') || '—',
+      lastCheckIn: lastLabel,
+      lastCheckInOverdue: overdue,
+      status: (c.status as 'active' | 'paused' | 'new' | 'ended') ?? 'active',
     }
   })
 )
 
-const revenueTrend = computed(() => {
-  const now = new Date()
-  const months = Array.from({ length: 6 }, (_, i) => {
-    const d = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1)
-    return {
-      label: d.toLocaleDateString('en-US', { month: 'short' }),
-      key: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
-      cents: 0,
-    }
-  })
-  for (const p of trendPays.value) {
-    if (p.status !== 'paid' || !p.paid_at) continue
-    const d = new Date(p.paid_at)
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-    const m = months.find(m => m.key === key)
-    if (m) m.cents += p.amount_cents ?? 0
-  }
-  const maxCents = Math.max(...months.map(m => m.cents), 1)
-  return months.map(m => ({
-    label: m.label,
-    value: centsToStr(m.cents),
-    height: Math.max(4, Math.round((m.cents / maxCents) * 76)),
-  }))
-})
+async function onConfirmSession(id: string) {
+  if (!id) return
+  await scheduleApi.update(id, { confirmed: true })
+  await refreshNuxtData('dashboard')
+}
 
-const currentMonthRevenue = computed(() => revenueTrend.value[5]?.value ?? '0')
-
-const now = new Date()
-const hour = now.getHours()
-const tod = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening'
-const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
-
-const greeting = computed(() => {
-  const name = coach.value?.first_name ?? 'Coach'
-  return `${dateStr} — Good ${tod}, ${name} 👋`
-})
-
-const bannerTitle = computed(() => {
-  const unread = stats.value?.unread_checkins ?? 0
-  const sess = stats.value?.sessions_today ?? 0
-  if (unread > 0 && sess > 0)
-    return `${unread} unreviewed check-in${unread !== 1 ? 's' : ''} · ${sess} session${sess !== 1 ? 's' : ''} today`
-  if (unread > 0) return `${unread} unreviewed check-in${unread !== 1 ? 's' : ''} today`
-  if (sess > 0) return `${sess} session${sess !== 1 ? 's' : ''} scheduled today`
-  return "You're all caught up 🎉"
-})
-
-const bannerStats = computed(() => [
-  { value: String(stats.value?.active_clients ?? '—'), label: 'Active Clients' },
-  { value: `$${currentMonthRevenue.value}`, label: 'This Month' },
-  { value: String(stats.value?.checkins_this_week ?? '—'), label: 'Check-ins This Week' },
-])
+function onSchedule() { navigateTo('/schedule') }
+function onRespond(id: string) { navigateTo(id ? `/check-ins?focus=${id}` : '/check-ins') }
 </script>
 
 <template>
-  <AppTopbar title="Dashboard" :subtitle="greeting">
+  <AppTopbar title="Dashboard" :subtitle="topbarDateLabel">
     <template #actions>
-      <UButton color="primary" variant="outline" size="lg">Schedule Session</UButton>
-      <UButton color="primary" size="lg" icon="i-lucide-plus">Add Client</UButton>
+      <UButton color="neutral" variant="outline" size="sm" to="/schedule">Schedule session</UButton>
+      <UButton color="neutral" size="sm" icon="i-lucide-plus" to="/clients">Add client</UButton>
     </template>
   </AppTopbar>
 
-  <div class="py-7 px-8 flex-1">
+  <main id="main-content" class="flex-1 px-8 py-7 space-y-7 max-md:px-5 max-md:py-5">
     <UAlert
       v-if="error"
       color="error"
@@ -203,101 +221,52 @@ const bannerStats = computed(() => [
       icon="i-lucide-circle-alert"
       title="Failed to load dashboard"
       :description="error.message"
-      class="mb-6"
     />
 
-    <!-- Welcome banner -->
-    <template v-if="pending">
-      <USkeleton class="h-[104px] rounded-xl mb-6" />
-    </template>
-    <WelcomeBanner
+    <section aria-label="Briefing">
+      <p class="text-[11px] font-medium uppercase tracking-wide text-(--text-muted) tabular-nums">{{ dateEyebrow }}</p>
+      <h2 class="mt-1 text-[26px] font-semibold tracking-tight text-(--text-primary)">{{ greeting }}</h2>
+      <p class="mt-1.5 text-[13.5px] text-(--text-secondary)">
+        <template v-if="attentionCount > 0">
+          <span class="font-medium text-(--text-primary)">
+            {{ attentionCount }} {{ attentionCount === 1 ? 'thing' : 'things' }}
+          </span>
+          {{ attentionCount === 1 ? 'needs' : 'need' }} your attention today.
+        </template>
+        <template v-else>
+          You're all caught up. Nice work.
+        </template>
+      </p>
+    </section>
+
+    <USkeleton v-if="pending" class="h-[120px] rounded-[10px]" />
+    <DashboardKpiHero v-else :metrics="kpiMetrics" />
+
+    <div class="grid grid-cols-2 gap-5 max-[1100px]:grid-cols-1">
+      <template v-if="pending">
+        <USkeleton class="h-[240px] rounded-[10px]" />
+        <USkeleton class="h-[240px] rounded-[10px]" />
+      </template>
+      <template v-else>
+        <DashboardTodayPanel
+          :sessions="todaySessions"
+          :completed-count="0"
+          @confirm="onConfirmSession"
+          @schedule="onSchedule"
+        />
+        <DashboardCheckInsPanel
+          :check-ins="pendingCheckIns"
+          :oldest-unread-days="oldestUnreadDays"
+          @respond="onRespond"
+        />
+      </template>
+    </div>
+
+    <USkeleton v-if="pending" class="h-[320px] rounded-[10px]" />
+    <DashboardClientsPreview
       v-else
-      :title="bannerTitle"
-      subtitle="Keep up the great work — your clients are counting on you."
-      :stats="bannerStats"
+      :clients="clientRows"
+      :total-clients="totalClients"
     />
-
-    <!-- Stat cards -->
-    <div class="grid grid-cols-4 gap-4 mb-7 max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
-      <template v-if="pending">
-        <USkeleton v-for="n in 4" :key="n" class="h-[110px] rounded-xl" />
-      </template>
-      <template v-else>
-        <StatCard label="Active Clients" :value="String(stats?.active_clients ?? '—')" :change="`${stats?.active_clients ?? 0} enrolled`">
-          <template #icon>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="8" cy="6" r="3" stroke="#1A7A4A" stroke-width="1.5"/>
-              <path d="M2 17c0-3.3 2.7-6 6-6" stroke="#1A7A4A" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="14" cy="8" r="2.5" stroke="#1A7A4A" stroke-width="1.5"/>
-              <path d="M11 17c0-2.8 1.3-5 3-5s3 2.2 3 5" stroke="#1A7A4A" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard variant="orange" label="Sessions Today" :value="String(stats?.sessions_today ?? '—')" :change="stats?.sessions_today ? `${stats.sessions_today} on the books` : 'None scheduled'" change-variant="positive">
-          <template #icon>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <rect x="3" y="4" width="14" height="13" rx="2" stroke="#E67E22" stroke-width="1.5"/>
-              <path d="M7 2v3M13 2v3M3 8h14" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round"/>
-              <path d="M7 12h2M11 12h2" stroke="#E67E22" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard variant="red" label="Unread Check-ins" :value="String(stats?.unread_checkins ?? '—')" :change="stats?.unread_checkins ? 'Needs your response' : 'All caught up'" :change-variant="stats?.unread_checkins ? 'negative' : 'positive'">
-          <template #icon>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M3 5h14M3 10h10M3 15h7" stroke="#E74C3C" stroke-width="1.5" stroke-linecap="round"/>
-              <circle cx="16" cy="15" r="3" fill="#E74C3C"/>
-              <path d="M16 13.5v1.5l1 1" stroke="white" stroke-width="1" stroke-linecap="round"/>
-            </svg>
-          </template>
-        </StatCard>
-
-        <StatCard variant="blue" label="Check-ins This Week" :value="String(stats?.checkins_this_week ?? '—')" change="Weekly submissions" change-variant="info">
-          <template #icon>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle cx="10" cy="10" r="8" stroke="#3498DB" stroke-width="1.5"/>
-              <path d="M10 6v1.5M10 12.5V14M7.5 10c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5" stroke="#3498DB" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </template>
-        </StatCard>
-      </template>
-    </div>
-
-    <!-- Sessions + Check-ins -->
-    <div class="grid grid-cols-2 gap-5 mb-7 max-[1000px]:grid-cols-1">
-      <template v-if="pending">
-        <USkeleton class="h-[240px] rounded-xl" />
-        <USkeleton class="h-[240px] rounded-xl" />
-      </template>
-      <template v-else>
-        <TodaysSessions :sessions="todaySessions" />
-        <PendingCheckIns :check-ins="pendingCheckIns" />
-      </template>
-    </div>
-
-    <!-- Client overview + right rail -->
-    <div class="grid grid-cols-[2fr_1fr] gap-5 mb-7 max-[1100px]:grid-cols-1">
-      <template v-if="pending">
-        <USkeleton class="h-[280px] rounded-xl" />
-        <div class="flex flex-col gap-5">
-          <USkeleton class="h-[130px] rounded-xl" />
-          <USkeleton class="h-[130px] rounded-xl" />
-        </div>
-      </template>
-      <template v-else>
-        <ClientOverview :clients="clientRows" :total-clients="totalCount" />
-        <div class="flex flex-col gap-5">
-          <RecentPayments :payments="recentPayments" />
-          <RevenueTrend
-            :months="revenueTrend"
-            footer-label="Monthly recurring"
-            :footer-value="currentMonthRevenue"
-          />
-        </div>
-      </template>
-    </div>
-  </div>
+  </main>
 </template>
-
