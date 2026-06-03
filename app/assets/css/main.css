@@ -1,44 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme {
-  /* Override default border radius */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
   --radius-xl: 14px;
   --radius-md: 10px;
 
-  /* Map brand colors to Tailwind utility classes */
   --color-primary: var(--green-brand);
   --color-primary-light: var(--green-light);
   --color-primary-deep: var(--green-deep);
   --color-primary-hover: var(--green-hover);
   --color-primary-500: var(--green-brand);
 
-  /* Map primary scale to Nuxt UI */
-  --color-primary-50: #f0fdf4;
-  --color-primary-100: #E8F5EE; /* green-pale */
-  --color-primary-200: #C8E6D4; /* green-soft */
-  --color-primary-300: #86efac;
-  --color-primary-400: #3DAA6A; /* green-mid */
-  --color-primary-500: #1A7A4A; /* green-brand */
-  --color-primary-600: #15693E; /* green-hover */
-  --color-primary-700: #15803d;
-  --color-primary-800: #0F2418; /* green-deep */
-  --color-primary-900: #0A1C11; /* green-deep2 */
+  --color-primary-50:  #F0FDF4;
+  --color-primary-100: #DCFCE7;
+  --color-primary-200: #BBF7D0;
+  --color-primary-300: #86EFAC;
+  --color-primary-400: #4ADE80;
+  --color-primary-500: #16A34A;
+  --color-primary-600: #15803D;
+  --color-primary-700: #166534;
+  --color-primary-800: #14532D;
+  --color-primary-900: #052E16;
 
-  --color-text-primary: #1A2E1F;
-  --color-text-secondary: #4A6B54;
-  --color-text-muted: #8A9E93;
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #4F4F4F;
+  --color-text-muted: #8C8C8C;
 }
 
 :root {
-  /* ── Nuxt UI token overrides ───────────────────────────────
-     Binds Nuxt UI's --ui-* semantic variables to the design
-     system tokens so every component (USelect, UInput, UModal,
-     etc.) automatically inherits the correct surfaces, borders,
-     and text in both light and dark mode.
-     These rules are outside @layer so they beat Nuxt UI's
-     @layer theme defaults without needing !important.
-  */
   --ui-bg:                var(--bg-surface);
   --ui-bg-muted:          var(--bg-input);
   --ui-bg-elevated:       var(--bg-surface);
@@ -52,89 +45,81 @@
   --ui-text:              var(--text-secondary);
   --ui-text-highlighted:  var(--text-primary);
 
-  /* ── Brand palette (invariant across modes) ── */
-  --green-brand:  #1A7A4A;
-  --green-light:  #2ECC71;
-  --green-deep:   #0F2418;
-  --green-deep2:  #0A1C11;
-  --green-pale:   #E8F5EE;
-  --green-mid:    #3DAA6A;
-  --green-soft:   #C8E6D4;
-  --green-hover:  #15693E;
-  --green-muted:  rgba(46,204,113,.12);
-  --red:          #EF4444;
+  --green-brand:  #16A34A;
+  --green-light:  #4ADE80;
+  --green-deep:   #14532D;
+  --green-deep2:  #0A2818;
+  --green-pale:   #F0FDF4;
+  --green-mid:    #15803D;
+  --green-soft:   #DCFCE7;
+  --green-hover:  #15803D;
+  --green-muted:  rgba(22, 163, 74, .12);
+  --red:          #DC2626;
+  --warning:      #F59E0B;
+  --info:         #2563EB;
 
-  /* ── Semantic tokens: text ── */
-  --text-primary:   #1A2E1F;
-  --text-secondary: #4A6B54;
-  --text-muted:     #8A9E93;
-  --text-accent:    var(--green-brand); /* use for links/accents */
+  --text-primary:   #0A0A0A;
+  --text-secondary: #4F4F4F;
+  --text-muted:     #8C8C8C;
+  --text-accent:    var(--green-brand);
 
-  /* ── Semantic tokens: surfaces ── */
-  --bg-page:            #FFFFFF;
-  --bg-surface:         #FFFFFF; /* cards, form inputs, primary panels */
-  --bg-surface-raised:  #FFFFFF; /* elevated/floating cards */
-  --bg-surface-muted:   #E4ECE8; /* toggle tracks, subtle panels */
-  --bg-input:           #F7FAF8; /* form input fill */
-  --bg-primary-soft:    var(--green-pale); /* tinted success/selected states */
+  --bg-page:            #FAFAFA;
+  --bg-surface:         #FFFFFF;
+  --bg-surface-raised:  #FFFFFF;
+  --bg-surface-muted:   #F5F5F5;
+  --bg-input:           #FFFFFF;
+  --bg-primary-soft:    var(--green-pale);
+  --bg-subtle:          #F5F5F5;
 
-  /* ── Semantic tokens: borders ── */
-  --border:        #E2EBE6;
-  --border-muted:  #F3F6F4; /* hairline dividers inside cards */
-  --border-strong: #C0CECA; /* hover borders */
+  --border:        #E5E5E5;
+  --border-muted:  #EBEBEB;
+  --border-strong: #D4D4D4;
 
-  /* ── Shadows (light mode — brand-tinted) ── */
-  --shadow-card:  0 2px 16px rgba(26,122,74,.09), 0 1px 4px rgba(0,0,0,.05);
-  --shadow-lift:  0 8px 32px rgba(26,122,74,.14), 0 2px 8px rgba(0,0,0,.07);
-  --shadow-float: 0 20px 60px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
-  --shadow-button: 0 3px 14px rgba(26,122,74,.32);
-  --shadow-button-hover: 0 5px 20px rgba(26,122,74,.38);
+  --topbar-h: 52px;
+  --sidebar-w: 232px;
+  --sidebar-w-collapsed: 56px;
+
+  --shadow-card:  0 1px 2px rgba(0, 0, 0, .04);
+  --shadow-lift:  0 8px 24px rgba(0, 0, 0, .06);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, .12), 0 4px 16px rgba(0, 0, 0, .06);
+  --shadow-button: none;
+  --shadow-button-hover: none;
 }
 
-/*
-  Dark mode overrides.
-  @nuxt/ui toggles the `.dark` class on <html> via useColorMode().
-  Override semantic tokens only — brand palette stays intact.
-*/
 .dark {
-  /* Elevated surfaces (modals, popovers, dropdown panels) sit
-     one level above the dark base surface for depth. */
   --ui-bg-elevated: var(--bg-surface-raised);
 
-  /* Text — lift for contrast on dark surfaces */
   --text-primary:   #F5F7F6;
   --text-secondary: #A8C2B3;
   --text-muted:     #7A8F83;
-  --text-accent:    var(--green-light); /* brighter green reads cleaner on dark */
+  --text-accent:    var(--green-light);
 
-  /* Softer red — pure #EF4444 vibrates on dark backgrounds */
   --red: #F87171;
 
-  /* Surfaces — anchored on the brand deep greens for cohesion */
-  --bg-page:            var(--green-deep2);   /* #0A1C11 */
-  --bg-surface:         var(--green-deep);    /* #0F2418 — cards */
-  --bg-surface-raised:  #132E1F;              /* one step above for stacked cards */
-  --bg-surface-muted:   rgba(255,255,255,.05);
-  --bg-input:           #0A1A11;              /* inputs sink slightly below surface */
-  --bg-primary-soft:    rgba(46,204,113,.15);
+  --bg-page:            var(--green-deep2);
+  --bg-surface:         var(--green-deep);
+  --bg-surface-raised:  #132E1F;
+  --bg-surface-muted:   rgba(255, 255, 255, .05);
+  --bg-input:           #0A1A11;
+  --bg-primary-soft:    rgba(74, 222, 128, .15);
+  --bg-subtle:          rgba(255, 255, 255, .04);
 
-  /* Borders — subtle white overlays, never inverted grays */
-  --border:        rgba(255,255,255,.10);
-  --border-muted:  rgba(255,255,255,.06);
-  --border-strong: rgba(255,255,255,.20);
+  --border:        rgba(255, 255, 255, .10);
+  --border-muted:  rgba(255, 255, 255, .06);
+  --border-strong: rgba(255, 255, 255, .20);
 
-  /* Shadows — drop brand-tinted shadows (muddy on dark). Prefer subtle rings. */
   --shadow-card:  none;
   --shadow-lift:  none;
-  --shadow-float: 0 20px 60px rgba(0,0,0,.5), 0 4px 16px rgba(0,0,0,.35);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, .5), 0 4px 16px rgba(0, 0, 0, .35);
   --shadow-button: none;
-  --shadow-button-hover: 0 0 0 1px rgba(46,204,113,.4);
+  --shadow-button-hover: 0 0 0 1px rgba(74, 222, 128, .4);
 }
 
 /*
-  ─── Shared form primitives ───
-  Used by feature forms that don't adopt @nuxt/ui's <UInput>.
-  Source: crm-raw-htnl/fitcoach-onboarding.html
+  Form primitives — used by feature forms that pre-date @nuxt/ui.
+  Kept for back-compat while pages are migrated to UInput/UTextarea/USelect.
+  Once no `.field-input` / `.field-textarea` / `.field-select` references remain,
+  this whole block can be deleted.
 */
 .field { margin-bottom: 18px; }
 .field-row {
@@ -161,79 +146,41 @@
   margin-left: 4px;
 }
 
-.field-input {
-  width: 100%;
-  height: 44px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-input);
-  padding: 0 14px;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--text-primary);
-  transition: border-color .2s, box-shadow .2s, background .2s;
-  outline: none;
-}
-.field-input:focus {
-  border-color: var(--green-brand);
-  background: var(--bg-surface);
-  box-shadow: 0 0 0 3px rgba(26, 122, 74, .1);
-}
-.field-input.valid {
-  border-color: var(--green-mid);
-  background: var(--bg-surface);
-}
-.field-input.invalid {
-  border-color: var(--red);
-  background: var(--bg-surface);
-}
-.field-input::placeholder { color: var(--text-muted); opacity: .55; }
-.dark .field-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-
-.field-textarea {
-  width: 100%;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-input);
-  padding: 12px 14px;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--text-primary);
-  transition: border-color .2s, box-shadow .2s, background .2s;
-  outline: none;
-  resize: none;
-  line-height: 1.5;
-}
-.field-textarea::placeholder { color: var(--text-muted); opacity: .55; }
-.field-textarea:focus {
-  border-color: var(--green-brand);
-  background: var(--bg-surface);
-  box-shadow: 0 0 0 3px rgba(26, 122, 74, .1);
-}
-
+.field-input,
+.field-textarea,
 .field-select {
   width: 100%;
-  height: 44px;
   border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background-color: var(--bg-input);
-  padding: 0 36px 0 14px;
+  border-radius: 8px;
+  background: var(--bg-surface);
   font-family: inherit;
   font-size: 14px;
   color: var(--text-primary);
-  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s, background .2s;
   outline: none;
+}
+.field-input { height: 40px; padding: 0 12px; }
+.field-textarea { padding: 10px 12px; resize: none; line-height: 1.5; }
+.field-select {
+  height: 40px;
+  padding: 0 36px 0 12px;
+  cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238A9E93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238C8C8C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
-  transition: border-color .2s, box-shadow .2s;
 }
+.field-input:focus,
+.field-textarea:focus,
 .field-select:focus {
   border-color: var(--green-brand);
-  background-color: var(--bg-surface);
-  box-shadow: 0 0 0 3px rgba(26, 122, 74, .1);
+  box-shadow: 0 0 0 3px var(--green-soft);
 }
+.field-input.valid { border-color: var(--green-mid); }
+.field-input.invalid { border-color: var(--red); }
+.field-input::placeholder,
+.field-textarea::placeholder { color: var(--text-muted); opacity: .55; }
+.dark .field-input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
 .field-msg {
   font-size: 11.5px;
@@ -251,40 +198,35 @@
   margin-top: 5px;
 }
 
-/* Prefix input (fitcoach.io/ + slug) */
 .prefix-input-wrap {
   display: flex;
   align-items: stretch;
   border: 1.5px solid var(--border);
-  border-radius: 10px;
-  background: var(--bg-input);
+  border-radius: 8px;
+  background: var(--bg-surface);
   overflow: hidden;
-  transition: border-color .2s, box-shadow .2s, background .2s;
+  transition: border-color .2s, box-shadow .2s;
 }
 .prefix-input-wrap:focus-within {
   border-color: var(--green-brand);
-  background: var(--bg-surface);
-  box-shadow: 0 0 0 3px rgba(26, 122, 74, .1);
+  box-shadow: 0 0 0 3px var(--green-soft);
 }
 .prefix-label-text {
   padding: 0 12px;
   display: flex;
   align-items: center;
-  background: var(--green-pale);
-  color: var(--green-brand);
-  font-size: 12.5px;
-  font-weight: 600;
+  background: var(--bg-subtle);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-mono);
   border-right: 1.5px solid var(--border);
   white-space: nowrap;
   flex-shrink: 0;
 }
-.dark .prefix-label-text {
-  background: rgba(46, 204, 113, .15);
-  color: var(--green-light);
-}
 .prefix-input {
   flex: 1;
-  height: 44px;
+  height: 40px;
   border: none;
   outline: none;
   background: transparent;

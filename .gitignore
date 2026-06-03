@@ -17,10 +17,13 @@ logs
 .DS_Store
 .fleet
 .idea
+docs
 crm-raw-htnl
 plan-docs
+mockups
 
 # Local env files
 .env
 .env.*
 !.env.example
+.gstack/
