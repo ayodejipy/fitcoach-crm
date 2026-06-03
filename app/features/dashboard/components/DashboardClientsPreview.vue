@@ -54,11 +54,11 @@ const statusDot = (status: ClientStatus) => ({
 
     <table v-if="clients.length" class="w-full text-[12.5px]">
       <thead>
-        <tr class="border-b border-(--border) bg-(--bg-subtle) text-[10.5px] font-medium uppercase tracking-wide text-(--text-muted)">
-          <th scope="col" class="text-left px-5 py-2 font-medium">Client</th>
-          <th scope="col" class="text-left px-5 py-2 font-medium">Goal</th>
-          <th scope="col" class="text-left px-5 py-2 font-medium">Last check-in</th>
-          <th scope="col" class="text-left px-5 py-2 font-medium">Status</th>
+        <tr class="border-b border-(--border) bg-(--bg-subtle) text-[11px] font-semibold uppercase tracking-wide text-(--text-secondary)">
+          <th scope="col" class="text-left px-5 py-2.5">Client</th>
+          <th scope="col" class="text-left px-5 py-2.5">Goal</th>
+          <th scope="col" class="text-left px-5 py-2.5">Last check-in</th>
+          <th scope="col" class="text-left px-5 py-2.5">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -76,7 +76,7 @@ const statusDot = (status: ClientStatus) => ({
               <Avatar :initials="client.initials" :variant="client.variant" :size="28" />
               <div class="min-w-0">
                 <div class="font-semibold truncate">{{ client.name }}</div>
-                <div class="text-[10.5px] text-(--text-muted) truncate">{{ client.email }}</div>
+                <div class="text-[11px] text-(--text-secondary) truncate">{{ client.email }}</div>
               </div>
             </NuxtLink>
           </td>

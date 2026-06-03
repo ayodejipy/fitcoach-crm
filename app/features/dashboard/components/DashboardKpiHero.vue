@@ -37,25 +37,25 @@ const trendClass = (t?: Trend) => {
         class="px-6 py-5"
       >
         <div class="flex items-center justify-between gap-2">
-          <dt class="text-[10.5px] font-semibold uppercase tracking-wide text-(--text-muted)">{{ metric.label }}</dt>
+          <dt class="text-[11px] font-semibold uppercase tracking-wide text-(--text-secondary)">{{ metric.label }}</dt>
           <span
             v-if="metric.note"
-            class="text-[10px] tabular-nums inline-flex items-center gap-1"
+            class="text-[11px] font-semibold tabular-nums inline-flex items-center gap-1"
             :class="trendClass(metric.noteTrend)"
           >
             <span
               v-if="metric.noteTrend === 'live'"
               aria-hidden="true"
-              class="h-1 w-1 rounded-full animate-pulse bg-(--green-brand)"
+              class="h-1.5 w-1.5 rounded-full animate-pulse bg-(--green-brand)"
             />
             {{ metric.note }}
           </span>
         </div>
 
         <dd class="mt-3 flex items-baseline gap-1.5">
-          <span v-if="metric.prefix" class="text-[12px] text-(--text-muted) tabular-nums">{{ metric.prefix }}</span>
+          <span v-if="metric.prefix" class="text-[14px] font-medium text-(--text-secondary) tabular-nums">{{ metric.prefix }}</span>
           <span class="text-[28px] font-semibold tabular-nums tracking-tight text-(--text-primary)">{{ metric.value }}</span>
-          <span v-if="metric.suffix" class="text-[12px] text-(--text-muted)">{{ metric.suffix }}</span>
+          <span v-if="metric.suffix" class="text-[12.5px] font-medium text-(--text-secondary)">{{ metric.suffix }}</span>
         </dd>
 
         <div v-if="metric.sparkline" class="mt-2 flex items-end gap-0.5 h-5" aria-hidden="true">
@@ -84,8 +84,8 @@ const trendClass = (t?: Trend) => {
         <NuxtLink
           v-if="metric.href"
           :to="metric.href"
-          class="mt-2 inline-block text-[11.5px] font-medium hover:underline"
-          :class="metric.noteTrend === 'up' || metric.noteTrend === 'live' ? 'text-(--green-brand)' : 'text-(--text-secondary)'"
+          class="mt-2 inline-block text-[12px] font-semibold hover:underline"
+          :class="metric.noteTrend === 'up' || metric.noteTrend === 'live' ? 'text-(--green-brand)' : 'text-(--text-accent)'"
         >
           {{ metric.href_label || 'View →' }}
         </NuxtLink>

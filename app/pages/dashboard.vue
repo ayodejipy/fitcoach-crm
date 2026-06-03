@@ -224,11 +224,11 @@ function onRespond(id: string) { navigateTo(id ? `/check-ins?focus=${id}` : '/ch
     />
 
     <section aria-label="Briefing">
-      <p class="text-[11px] font-medium uppercase tracking-wide text-(--text-muted) tabular-nums">{{ dateEyebrow }}</p>
+      <p class="text-[11.5px] font-semibold uppercase tracking-wide text-(--text-secondary) tabular-nums">{{ dateEyebrow }}</p>
       <h2 class="mt-1 text-[26px] font-semibold tracking-tight text-(--text-primary)">{{ greeting }}</h2>
-      <p class="mt-1.5 text-[13.5px] text-(--text-secondary)">
+      <p class="mt-1.5 text-[14px] text-(--text-secondary)">
         <template v-if="attentionCount > 0">
-          <span class="font-medium text-(--text-primary)">
+          <span class="font-semibold text-(--text-primary)">
             {{ attentionCount }} {{ attentionCount === 1 ? 'thing' : 'things' }}
           </span>
           {{ attentionCount === 1 ? 'needs' : 'need' }} your attention today.

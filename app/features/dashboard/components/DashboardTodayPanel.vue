@@ -42,7 +42,7 @@ const statusBadge = (status: SessionStatus): { color: 'success' | 'warning' | 'i
         <h3 id="today-panel-heading" class="text-[13.5px] font-semibold text-(--text-primary)">
           Today's sessions
         </h3>
-        <p class="mt-0.5 text-[11px] text-(--text-muted)">
+        <p class="mt-0.5 text-[11.5px] font-medium text-(--text-secondary) tabular-nums">
           {{ sessions.length }} booked
           <span v-if="completedCount != null"> · {{ completedCount }} completed</span>
         </p>
@@ -61,15 +61,15 @@ const statusBadge = (status: SessionStatus): { color: 'success' | 'warning' | 'i
         :key="session.id ?? session.name + session.time"
         class="flex items-center gap-3 rounded-md px-3 py-3 hover:bg-(--bg-subtle)"
       >
-        <div class="flex flex-col items-center w-12 shrink-0 border-r border-(--border) pr-3">
-          <span class="text-[12.5px] font-semibold uppercase tabular-nums" :class="session.status === 'pending' ? 'text-(--warning)' : 'text-(--green-brand)'">
+        <div class="flex flex-col items-center w-14 shrink-0 border-r border-(--border) pr-3">
+          <span class="text-[14px] font-semibold uppercase tabular-nums leading-none" :class="session.status === 'pending' ? 'text-(--warning)' : 'text-(--green-brand)'">
             {{ session.time }}
           </span>
-          <span class="text-[9.5px] text-(--text-muted)">{{ session.period }}</span>
+          <span class="mt-1 text-[11px] font-semibold text-(--text-secondary)">{{ session.period }}</span>
         </div>
-        <Avatar :initials="session.initials" :variant="session.variant" :size="28" />
+        <Avatar :initials="session.initials" :variant="session.variant" :size="32" />
         <div class="min-w-0 flex-1">
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
             <span class="text-[13px] font-semibold text-(--text-primary) truncate">{{ session.name }}</span>
             <UBadge
               :label="session.statusLabel"
@@ -78,7 +78,7 @@ const statusBadge = (status: SessionStatus): { color: 'success' | 'warning' | 'i
               size="sm"
             />
           </div>
-          <div class="mt-0.5 text-[11.5px] text-(--text-muted) truncate">{{ session.meta }}</div>
+          <div class="mt-0.5 text-[12px] font-medium text-(--text-secondary) truncate">{{ session.meta }}</div>
         </div>
         <UButton
           v-if="session.status === 'pending'"
