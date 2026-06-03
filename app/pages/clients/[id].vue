@@ -8,10 +8,16 @@ import ClientActivityTimeline from '~/features/clients/components/ClientActivity
 import ClientAtAGlanceCard from '~/features/clients/components/ClientAtAGlanceCard.vue'
 import ClientProfileSummaryCard from '~/features/clients/components/ClientProfileSummaryCard.vue'
 import ClientNextSessionCard from '~/features/clients/components/ClientNextSessionCard.vue'
+import ClientStatsTab from '~/features/clients/components/ClientStatsTab.vue'
+import ClientSessionsTab from '~/features/clients/components/ClientSessionsTab.vue'
+import ClientCheckInsTab from '~/features/clients/components/ClientCheckInsTab.vue'
+import ClientPaymentsTab from '~/features/clients/components/ClientPaymentsTab.vue'
+import ClientDocumentsTab from '~/features/clients/components/ClientDocumentsTab.vue'
 import { useClientsApi } from '~/features/clients/composables/useClientsApi'
 import { useCheckInsApi } from '~/features/check-ins/composables/useCheckInsApi'
 import { useScheduleApi } from '~/features/schedule/composables/useScheduleApi'
-import type { ModelsClient, ModelsCoachCheckIn, ModelsCoachSession } from '~/services'
+import { usePaymentsApi } from '~/features/payments/composables/usePaymentsApi'
+import type { ModelsClient, ModelsCoachCheckIn, ModelsCoachSession, ModelsCoachPayment } from '~/services'
 import { hashVariant, clientInitials, clientName } from '~/utils/client'
 import { buildTimeline, groupByBucket } from '~/features/clients/utils/timeline'
 
@@ -23,6 +29,7 @@ const toast = useToast()
 const clientsApi = useClientsApi()
 const checkInsApi = useCheckInsApi()
 const scheduleApi = useScheduleApi()
+const paymentsApi = usePaymentsApi()
 
 const id = route.params.id as string
 
@@ -34,9 +41,15 @@ const { data, pending, error } = await useAsyncData(`client-${id}`, () =>
   ]),
 )
 
+const { data: paymentsData, pending: paymentsPending } = await useAsyncData(
+  `client-payments-${id}`,
+  () => paymentsApi.list({ client_id: id, per_page: 50 }),
+)
+
 const client   = computed(() => data.value?.[0] as ModelsClient | undefined)
 const checkIns = computed(() => (data.value?.[1]?.check_ins ?? []) as ModelsCoachCheckIn[])
 const sessions = computed(() => (data.value?.[2]?.sessions ?? []) as ModelsCoachSession[])
+const payments = computed(() => (paymentsData.value?.payments ?? []) as ModelsCoachPayment[])
 const editModalOpen = ref(false)
 
 const displayName  = computed(() => client.value ? clientName(client.value) : 'Loading…')
@@ -182,6 +195,14 @@ function onEditSaved() {
   editModalOpen.value = false
   refreshNuxtData(`client-${id}`)
 }
+
+function onBookSession() {
+  router.push(`/schedule?client=${id}`)
+}
+
+function onNewInvoice() {
+  router.push(`/payments/invoices?client=${id}&new=1`)
+}
 </script>
 
 <template>
@@ -268,10 +289,45 @@ function onEditSaved() {
       </aside>
     </div>
 
-    <div v-else-if="client" class="px-8 py-16 text-center max-md:px-5">
-      <UIcon name="i-lucide-construction" class="size-7 text-(--text-muted) mb-2 inline-block" />
-      <p class="text-[13.5px] font-medium text-(--text-secondary)">{{ tabs.find(t => t.id === activeTab)?.label }} tab</p>
-      <p class="mt-1 text-[12px] text-(--text-muted)">Coming soon. Currently lives on the Activity tab.</p>
+    <div v-else-if="activeTab === 'stats' && client" class="px-8 py-6 max-md:px-5">
+      <ClientStatsTab
+        :check-ins="checkIns"
+        :start-date="client.start_date ?? null"
+        :streak="client.streak_weeks ?? 0"
+        :program-week="client.program_week"
+        :program-total="client.program_total"
+      />
+    </div>
+
+    <div v-else-if="activeTab === 'sessions' && client" class="px-8 py-6 max-md:px-5">
+      <ClientSessionsTab
+        :sessions="sessions"
+        :client-name="displayName"
+        @book-session="onBookSession"
+      />
+    </div>
+
+    <div v-else-if="activeTab === 'checkins' && client" class="px-8 py-6 max-md:px-5">
+      <ClientCheckInsTab
+        :check-ins="checkIns"
+        :start-date="client.start_date ?? null"
+        @open="onRespondCheckIn"
+      />
+    </div>
+
+    <div v-else-if="activeTab === 'payments' && client" class="px-8 py-6 max-md:px-5">
+      <ClientPaymentsTab
+        :payments="payments"
+        :pending="paymentsPending"
+        :client-name="displayName"
+        :plan-name="client.plan_name"
+        :plan-price-cents="client.plan_price_cents"
+        @new-invoice="onNewInvoice"
+      />
+    </div>
+
+    <div v-else-if="activeTab === 'documents' && client" class="px-8 py-6 max-md:px-5">
+      <ClientDocumentsTab :client-name="displayName" />
     </div>
   </main>
 

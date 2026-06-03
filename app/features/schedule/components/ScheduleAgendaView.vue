@@ -71,14 +71,15 @@ function statusBadge(session: SessionData): { color: 'success' | 'warning' | 'in
 </script>
 
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 relative">
     <section
       v-for="day in upcomingDays"
       :key="day.id"
       :aria-labelledby="`agenda-day-${day.id}`"
+      class="relative"
     >
       <div
-        class="sticky top-0 z-10 -mx-8 max-md:-mx-5 px-8 max-md:px-5 py-2 mb-2 flex items-center gap-3 backdrop-blur"
+        class="z-10 -mx-8 max-md:-mx-5 px-8 max-md:px-5 py-2 mb-2 flex items-center gap-3 backdrop-blur"
         style="background: color-mix(in oklab, var(--bg-page) 85%, transparent);"
       >
         <div
@@ -95,7 +96,7 @@ function statusBadge(session: SessionData): { color: 'success' | 'warning' | 'in
         >
           {{ dayLabel(day) }}
         </h2>
-        <span v-if="dayMeta(day)" class="text-[11px] text-(--text-muted) tabular-nums">{{ dayMeta(day) }}</span>
+        <span v-if="dayMeta(day)" class="text-[12px] font-medium text-(--text-secondary) tabular-nums">{{ dayMeta(day) }}</span>
         <span
           v-if="isDayOff(day)"
           class="rounded-full bg-(--bg-subtle) px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-(--text-muted)"
@@ -114,13 +115,15 @@ function statusBadge(session: SessionData): { color: 'success' | 'warning' | 'in
           :style="{ borderLeftColor: leftBorderColorVar(session), borderTopColor: 'var(--border)', borderRightColor: 'var(--border)', borderBottomColor: 'var(--border)' }"
           @click="$emit('sessionClick', $event, session)"
         >
-          <div class="flex flex-col items-center justify-center w-14 shrink-0 border-r border-(--border) pr-3">
-            <span
-              class="text-[14px] font-semibold tabular-nums"
-              :style="{ color: leftBorderColorVar(session) }"
-            >{{ sessionTimeParts(session).time }}</span>
-            <span class="text-[10px] text-(--text-muted) uppercase tracking-wide">{{ sessionTimeParts(session).period }}</span>
-            <span class="mt-1 text-[9.5px] text-(--text-muted) tabular-nums">{{ session.durationMins }} min</span>
+          <div class="flex flex-col items-center justify-center w-16 shrink-0 border-r border-(--border) pr-3">
+            <div class="flex items-baseline gap-1">
+              <span
+                class="text-[17px] font-semibold tabular-nums leading-none"
+                :style="{ color: leftBorderColorVar(session) }"
+              >{{ sessionTimeParts(session).time }}</span>
+              <span class="text-[11px] font-semibold text-(--text-secondary) uppercase tracking-wide">{{ sessionTimeParts(session).period }}</span>
+            </div>
+            <span class="mt-1.5 text-[11px] text-(--text-secondary) tabular-nums font-medium">{{ session.durationMins }} min</span>
           </div>
 
           <div class="flex items-start gap-3 flex-1 min-w-0">
@@ -171,9 +174,9 @@ function statusBadge(session: SessionData): { color: 'success' | 'warning' | 'in
               class="w-full flex items-center gap-3 rounded-md px-3 py-2 text-left hover:bg-(--bg-subtle)"
               @click="$emit('sessionClick', $event, session)"
             >
-              <span class="text-[11.5px] tabular-nums text-(--text-muted) w-14 shrink-0">{{ sessionTimeParts(session).time }} {{ sessionTimeParts(session).period }}</span>
-              <span class="text-[12px] font-medium text-(--text-secondary) flex-1 truncate">{{ session.client }}</span>
-              <span class="text-[10.5px] text-(--text-muted) tabular-nums shrink-0">{{ session.durationMins }} min</span>
+              <span class="text-[12px] font-semibold tabular-nums text-(--text-secondary) w-16 shrink-0">{{ sessionTimeParts(session).time }} {{ sessionTimeParts(session).period }}</span>
+              <span class="text-[12.5px] font-medium text-(--text-primary) flex-1 truncate">{{ session.client }}</span>
+              <span class="text-[11px] font-medium text-(--text-secondary) tabular-nums shrink-0">{{ session.durationMins }} min</span>
             </button>
           </div>
         </div>

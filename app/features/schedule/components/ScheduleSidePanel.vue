@@ -1,43 +1,3 @@
-<template>
-  <div class="w-[268px] shrink-0 sticky top-20 flex flex-col gap-3.5">
-    <div class="panel-card bg-(--bg-surface) border border-(--border) rounded-[14px] overflow-hidden">
-      <div class="py-3.5 px-[18px] pb-2.5 border-b border-(--border-muted) flex items-center justify-between">
-        <span class="text-sm font-bold text-(--text-primary)">This Week</span>
-        <a href="#" class="text-xs font-semibold text-primary dark:text-(--green-light) cursor-pointer">Print schedule</a>
-      </div>
-
-      <div class="py-1">
-        <template v-for="group in groupedSessions" :key="group.label">
-          <div class="py-1.5 px-[18px] pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-[0.7px] text-[#8FAD97] dark:text-(--text-muted) bg-[#FAFCFB] dark:bg-white/[.02] border-b border-[#F5F7F5] dark:border-(--border-muted)">
-            {{ group.label }}
-          </div>
-          <UpcomingSessionItem
-            v-for="session in group.items"
-            :key="`${group.label}-${session.name}-${session.time}`"
-            v-bind="session"
-          />
-        </template>
-      </div>
-
-      <div class="py-3.5 px-[18px] border-t-[1.5px] border-(--border-muted)">
-        <div class="flex justify-between items-center text-xs mb-1.5">
-          <strong class="font-bold text-(--text-primary)">{{ confirmed }} of {{ total }} sessions confirmed</strong>
-          <span class="text-(--text-muted)">{{ total - confirmed }} pending</span>
-        </div>
-        <div class="h-1.5 bg-[#E8F2EC] dark:bg-white/5 rounded-[10px] overflow-hidden">
-          <div
-            class="h-full rounded-[10px] transition-[width] duration-300"
-            :style="{ width: `${confirmPct}%`, background: 'linear-gradient(90deg, #1A7A4A, #2ECC71)' }"
-          ></div>
-        </div>
-        <div class="text-[11px] text-[#8FAD97] dark:text-(--text-muted) mt-1.5">{{ footerHint }}</div>
-      </div>
-    </div>
-
-    <WeekAtAGlance :sessions="total" :hours="hours" :delta-sessions="deltaSessions" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import UpcomingSessionItem from './UpcomingSessionItem.vue'
@@ -68,5 +28,46 @@ const props = defineProps<{
   deltaSessions: string
 }>()
 
-const confirmPct = computed(() => props.total ? (props.confirmed / props.total) * 100 : 0)
+const confirmPct = computed(() => props.total ? Math.round((props.confirmed / props.total) * 100) : 0)
+const pendingCount = computed(() => props.total - props.confirmed)
 </script>
+
+<template>
+  <aside class="w-[280px] shrink-0 sticky top-20 flex flex-col gap-3 max-lg:w-full max-lg:static" aria-label="This week summary">
+    <section class="rounded-[10px] border border-(--border) bg-(--bg-surface) overflow-hidden">
+      <header class="flex items-center justify-between px-4 py-3 border-b border-(--border-muted)">
+        <h2 class="text-[12.5px] font-semibold text-(--text-primary)">This week</h2>
+        <span class="text-[10.5px] text-(--text-muted) tabular-nums">{{ total }} session{{ total === 1 ? '' : 's' }}</span>
+      </header>
+
+      <div v-if="!groupedSessions.length" class="px-4 py-8 text-center">
+        <UIcon name="i-lucide-calendar-x" class="size-5 text-(--text-muted) mb-1.5 inline-block" />
+        <p class="text-[11.5px] text-(--text-muted)">No sessions scheduled this week.</p>
+      </div>
+
+      <div v-else>
+        <template v-for="group in groupedSessions" :key="group.label">
+          <div class="px-4 py-1.5 text-[10.5px] font-semibold uppercase tracking-wide text-(--text-secondary) bg-(--bg-subtle)/60 border-b border-(--border-muted)">
+            {{ group.label }}
+          </div>
+          <UpcomingSessionItem
+            v-for="session in group.items"
+            :key="`${group.label}-${session.name}-${session.time}`"
+            v-bind="session"
+          />
+        </template>
+      </div>
+
+      <footer class="px-4 py-3 border-t border-(--border-muted)">
+        <div class="flex items-baseline justify-between text-[11.5px] mb-1.5">
+          <span class="font-semibold text-(--text-primary) tabular-nums">{{ confirmed }} of {{ total }} confirmed</span>
+          <span v-if="pendingCount > 0" class="text-(--text-muted) tabular-nums">{{ pendingCount }} pending</span>
+        </div>
+        <UProgress :model-value="confirmPct" color="success" size="sm" />
+        <p v-if="footerHint" class="mt-2 text-[10.5px] text-(--text-muted)">{{ footerHint }}</p>
+      </footer>
+    </section>
+
+    <WeekAtAGlance :sessions="total" :hours="hours" :delta-sessions="deltaSessions" />
+  </aside>
+</template>

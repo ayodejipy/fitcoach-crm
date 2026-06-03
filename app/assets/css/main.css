@@ -62,8 +62,8 @@
   --info-soft:    rgba(37, 99, 235, 0.10);
 
   --text-primary:   #0A0A0A;
-  --text-secondary: #4F4F4F;
-  --text-muted:     #8C8C8C;
+  --text-secondary: #404040;
+  --text-muted:     #737373;
   --text-accent:    var(--green-brand);
 
   --bg-page:            #FAFAFA;
@@ -99,8 +99,8 @@
   --bg-primary-soft:    rgba(74, 222, 128, 0.10);
 
   --text-primary:   #FAFAFA;
-  --text-secondary: rgba(255, 255, 255, 0.65);
-  --text-muted:     rgba(255, 255, 255, 0.45);
+  --text-secondary: rgba(255, 255, 255, 0.72);
+  --text-muted:     rgba(255, 255, 255, 0.58);
   --text-accent:    #4ADE80;
 
   --border:        rgba(255, 255, 255, 0.08);

@@ -1,27 +1,3 @@
-<template>
-  <div
-    class="session absolute left-[3px] right-[3px] rounded-lg py-1.5 px-2 cursor-pointer z-10 overflow-hidden transition-[filter,transform,box-shadow]"
-    :class="[sessionClass, { 'opacity-[.82]': unconfirmed, 'is-short': short }]"
-    :style="{ top: `${top}px`, height: `${height}px` }"
-    @click="onClick"
-  >
-    <div class="text-xs font-bold text-white leading-[1.2] truncate">{{ client }}</div>
-    <div v-if="!short" class="text-[10px] text-white/80 mt-0.5 truncate">{{ type }}</div>
-    <div v-else class="text-[10px] text-white/80 mt-0.5 truncate">{{ shortType }}</div>
-    <div v-if="!short" class="text-[10px] text-white/65 mt-px">{{ time }}</div>
-
-    <div v-if="!short && badge" class="mt-[3px] inline-flex items-center gap-[3px] text-[9px] font-bold bg-white/20 rounded py-px px-[5px] text-white">
-      <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
-        <circle cx="2.5" cy="2.5" r="1.5" stroke="white" stroke-width="1"/>
-        <circle cx="5.5" cy="2.5" r="1.5" stroke="white" stroke-width="1"/>
-        <path d="M0 7c0-1.7 1.1-3 2.5-3s2.5 1.3 2.5 3" stroke="white" stroke-width="1"/>
-        <path d="M5 4.5c1 .3 1.5 1 1.5 2.5" stroke="white" stroke-width="1" stroke-linecap="round"/>
-      </svg>
-      {{ badge }}
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -45,13 +21,34 @@ const emit = defineEmits<{
 }>()
 
 const sessionClass = computed(() => ({
-  virtual:  'bg-[#3498DB]',
-  inperson: 'bg-primary',
+  virtual:  'bg-(--info)',
+  inperson: 'bg-(--green-brand)',
   group:    'bg-[#9B59B6]',
 })[props.sessionType])
 
 const onClick = (e: MouseEvent) => { emit('click', e) }
 </script>
+
+<template>
+  <button
+    type="button"
+    class="session absolute left-[3px] right-[3px] rounded-md py-1.5 px-2 cursor-pointer z-10 overflow-hidden text-left transition-[filter,transform,box-shadow] focus:outline-none focus-visible:ring-2 focus-visible:ring-(--text-primary)/30"
+    :class="[sessionClass, { 'opacity-[.82]': unconfirmed, 'is-short': short }]"
+    :style="{ top: `${top}px`, height: `${height}px` }"
+    :aria-label="`${client}, ${type}, ${time}`"
+    @click="onClick"
+  >
+    <div class="text-[11.5px] font-semibold text-white leading-tight truncate">{{ client }}</div>
+    <div v-if="!short" class="text-[10px] text-white/85 mt-0.5 truncate">{{ type }}</div>
+    <div v-else class="text-[10px] text-white/85 mt-0.5 truncate">{{ shortType }}</div>
+    <div v-if="!short" class="text-[10px] text-white/70 mt-px tabular-nums">{{ time }}</div>
+
+    <div v-if="!short && badge" class="mt-1 inline-flex items-center gap-1 text-[9.5px] font-semibold bg-white/20 rounded-sm py-px px-1.5 text-white">
+      <UIcon name="i-lucide-users" class="size-2.5" />
+      {{ badge }}
+    </div>
+  </button>
+</template>
 
 <style scoped>
 .session:hover {
@@ -60,7 +57,6 @@ const onClick = (e: MouseEvent) => { emit('click', e) }
   box-shadow: 0 4px 14px rgba(0, 0, 0, .18);
   z-index: 20;
 }
-/* Striped top edge for unconfirmed sessions */
 .session.opacity-\[\.82\]::before {
   content: '';
   position: absolute;
@@ -74,5 +70,5 @@ const onClick = (e: MouseEvent) => { emit('click', e) }
     transparent 8px
   );
 }
-.session.is-short > .text-xs { font-size: 11px; }
+.session.is-short > .text-\[11\.5px\] { font-size: 10.5px; }
 </style>

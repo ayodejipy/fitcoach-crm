@@ -84,16 +84,16 @@ export function useScheduleData(
   const weekLabel = computed(() => weekRangeLabel(currentWeek.value))
   const weekSub   = computed(() => weekSubLabel(currentWeek.value, sessions.value.length))
 
-  // Sidebar groups
+  // Sidebar groups — mirror the currently-viewed week (not today-onward) so the
+  // side panel and the agenda/grid never disagree about what "this week" means.
   const upcomingGroups = computed<UpcomingGroup[]>(() => {
-    // Compare against the start of today so sessions earlier today still appear.
     const today = startOfDay(new Date())
-    const upcoming = sessions.value
-      .filter(s => s.starts_at && parseISO(s.starts_at) >= today)
+    const ordered = [...sessions.value]
+      .filter(s => s.starts_at)
       .sort((a, b) => (a.starts_at ?? '') < (b.starts_at ?? '') ? -1 : 1)
 
     const byDay = new Map<string, ModelsCoachSession[]>()
-    for (const s of upcoming) {
+    for (const s of ordered) {
       const key = format(parseISO(s.starts_at!), 'yyyy-MM-dd')
       if (!byDay.has(key)) byDay.set(key, [])
       byDay.get(key)!.push(s)
@@ -102,6 +102,7 @@ export function useScheduleData(
     return [...byDay.entries()].map(([key, items]) => {
       const date  = parseISO(key)
       const isToday = isSameDay(date, today)
+      const isPast = date < today && !isToday
       return {
         label: isToday
           ? `Today · ${format(date, 'MMM d')}`
@@ -114,6 +115,7 @@ export function useScheduleData(
           type:     formatSessionSubtitle(s),
           status:   s.confirmed ? 'confirmed' : 'pending',
           today:    isToday || undefined,
+          past:     isPast || undefined,
         })),
       }
     })
