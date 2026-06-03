@@ -55,8 +55,11 @@
   --green-hover:  #15803D;
   --green-muted:  rgba(22, 163, 74, .12);
   --red:          #DC2626;
+  --error-soft:   rgba(220, 38, 38, 0.10);
   --warning:      #F59E0B;
+  --warning-soft: rgba(245, 158, 11, 0.12);
   --info:         #2563EB;
+  --info-soft:    rgba(37, 99, 235, 0.10);
 
   --text-primary:   #0A0A0A;
   --text-secondary: #4F4F4F;
@@ -109,8 +112,11 @@
   --green-muted:  rgba(74, 222, 128, 0.10);
 
   --red:           #F87171;
+  --error-soft:    rgba(248, 113, 113, 0.15);
   --warning:       #FBBF24;
+  --warning-soft:  rgba(251, 191, 36, 0.15);
   --info:          #60A5FA;
+  --info-soft:     rgba(96, 165, 250, 0.15);
 
   --shadow-card:  none;
   --shadow-lift:  0 4px 12px rgba(0, 0, 0, 0.4);
