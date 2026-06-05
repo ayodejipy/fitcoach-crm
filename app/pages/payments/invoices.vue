@@ -119,15 +119,45 @@ const FILTER_TABS = [
   { id: 'draft',     label: 'Draft',     dot: 'bg-(--text-muted)' },
 ] as const
 
+const lastInvoiceByClient = computed(() => {
+  const map = new Map<string, number>()
+  for (const payment of payments.value) {
+    if (!payment.client_id || !payment.amount_cents) continue
+    const existing = map.get(payment.client_id)
+    if (!existing) map.set(payment.client_id, payment.amount_cents)
+  }
+  return map
+})
+
 const clientOptions = computed<InvoiceClientOption[]>(() =>
-  clients.value.map(c => ({ id: c.id ?? '', name: clientName(c) })),
+  clients.value.map(c => ({
+    id:       c.id ?? '',
+    name:     clientName(c),
+    initials: clientInitials(c),
+    variant:  hashVariant(c.id ?? ''),
+    email:    c.email,
+    plan:     c.plan_name || undefined,
+    lastInvoiceCents: c.id ? lastInvoiceByClient.value.get(c.id) : undefined,
+  })),
 )
+
+const defaultClientId = computed(() => (route.query.client as string) || '')
+
+watch(() => route.query.new, (newFlag) => {
+  if (newFlag) drawerOpen.value = true
+}, { immediate: true })
 
 const defaultDueDate = computed(() => {
   const d = new Date()
   d.setDate(d.getDate() + 30)
   return d.toISOString().slice(0, 10)
 })
+
+const SEND_VIA_LABELS: Record<string, string> = {
+  email:    'Invoice sent via email',
+  whatsapp: 'Invoice ready — share the WhatsApp link with your client',
+  url:      'Invoice link copied — share it however you like',
+}
 
 async function onSubmitInvoice(payload: InvoicePayload) {
   try {
@@ -137,12 +167,24 @@ async function onSubmitInvoice(payload: InvoicePayload) {
       description: payload.description || undefined,
       due_date: payload.dueDate || undefined,
     })
-    toast.add({ title: 'Invoice created', color: 'success' })
+    toast.add({
+      title: payload.saveAsDraft ? 'Invoice saved as draft' : SEND_VIA_LABELS[payload.sendVia] ?? 'Invoice created',
+      description: !payload.saveAsDraft && payload.sendVia !== 'url'
+        ? 'Delivery channels require backend wiring.'
+        : undefined,
+      color: 'success',
+    })
     drawerOpen.value = false
+    router.replace({ query: { ...route.query, new: undefined, client: undefined } })
     refresh()
   } catch {
     toast.add({ title: 'Failed to create invoice', color: 'error' })
   }
+}
+
+function onCreateClient() {
+  drawerOpen.value = false
+  router.push('/clients?new=1')
 }
 
 function onOpen(id: string) {
@@ -247,6 +289,8 @@ function onExport() {
     v-model="drawerOpen"
     :clients="clientOptions"
     :default-due-date="defaultDueDate"
+    :default-client-id="defaultClientId"
     @submit="onSubmitInvoice"
+    @create-client="onCreateClient"
   />
 </template>

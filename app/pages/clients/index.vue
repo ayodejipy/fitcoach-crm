@@ -64,8 +64,9 @@ function menuItemsFor(client: ModelsClient) {
   const id = client.id!
   const status = client.status ?? 'active'
   const items: Array<Record<string, unknown>> = [
-    { label: 'Open profile', icon: 'i-lucide-user', onSelect: () => router.push(`/clients/${id}`) },
-    { label: 'Send message', icon: 'i-lucide-mail', onSelect: () => toast.add({ title: 'Messaging coming soon', color: 'neutral' }) },
+    { label: 'Open profile', icon: 'i-hugeicons-user', onSelect: () => router.push(`/clients/${id}`) },
+    { label: 'Send message', icon: 'i-hugeicons-mail-01', onSelect: () => toast.add({ title: 'Messaging coming soon', color: 'neutral' }) },
+    { label: 'Resend portal invite', icon: 'i-hugeicons-sent', onSelect: () => resendInvite(client) },
     { type: 'separator' },
   ]
 
@@ -79,6 +80,20 @@ function menuItemsFor(client: ModelsClient) {
 
   items.push({ label: 'Remove', icon: 'i-lucide-trash-2', color: 'error', onSelect: () => confirmRemove(client) })
   return items
+}
+
+async function resendInvite(client: ModelsClient) {
+  if (!client.id) return
+  try {
+    await clientsApi.invite(client.id)
+    toast.add({
+      title: 'Portal invite sent',
+      description: `${clientName(client)} will get a fresh link by email. Expires in 7 days.`,
+      color: 'success',
+    })
+  } catch {
+    toast.add({ title: 'Could not send invite', color: 'error' })
+  }
 }
 
 async function updateStatus(id: string, status: 'active' | 'paused' | 'new' | 'ended') {
@@ -136,7 +151,7 @@ function onClientSaved() {
       placeholder="Filter clients…"
       icon="i-lucide-search"
       size="sm"
-      class="w-[240px]"
+      class="round-md w-[240px]"
     />
   </div>
 

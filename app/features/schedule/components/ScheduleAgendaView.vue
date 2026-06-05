@@ -63,7 +63,7 @@ function leftBorderColorVar(session: SessionData): string {
 }
 
 function statusBadge(session: SessionData): { color: 'success' | 'warning' | 'info', label: string } {
-  if (session.unconfirmed) return { color: 'warning', label: 'Unconfirmed' }
+  if (session.unconfirmed) return { color: 'warning', label: 'Awaiting client' }
   if (session.sessionType === 'virtual') return { color: 'info', label: 'Zoom' }
   if (session.sessionType === 'group') return { color: 'info', label: 'Group' }
   return { color: 'success', label: 'In-person' }

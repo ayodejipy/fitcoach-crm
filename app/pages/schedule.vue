@@ -18,7 +18,7 @@ import { useScheduleApi } from '~/features/schedule/composables/useScheduleApi'
 definePageMeta({ layout: 'app' })
 
 const toast = useToast()
-const { cancel } = useScheduleApi()
+const { cancel, update: updateSession } = useScheduleApi()
 const scheduleOpen   = ref(false)
 const availabilityOpen = ref(false)
 // Holds the session being edited; null means the modal is in "create" mode.
@@ -109,6 +109,23 @@ async function onCancelSession() {
     refresh()
   } catch {
     toast.add({ title: 'Could not cancel session', color: 'error' })
+  }
+}
+
+async function onConfirmOnBehalf() {
+  const session = popover.session
+  if (!session) return
+  popover.open = false
+  try {
+    await updateSession(session.id, { confirmed: true })
+    toast.add({
+      title: 'Session marked as confirmed',
+      description: `Use this when ${session.client} confirmed outside the portal.`,
+      color: 'success',
+    })
+    refresh()
+  } catch {
+    toast.add({ title: 'Could not mark as confirmed', color: 'error' })
   }
 }
 
@@ -242,6 +259,7 @@ function onAvailabilitySaved() {
     :session="popover.session"
     @edit="onEditSession"
     @cancel="onCancelSession"
+    @confirm="onConfirmOnBehalf"
   />
 
   <ScheduleSessionModal

@@ -22,50 +22,23 @@ const { list: listClients } = useClientsApi()
 const { create, get, update } = useScheduleApi()
 
 const isEdit = computed(() => !!props.session)
+const modalTitle = computed(() => isEdit.value ? 'Edit session' : 'Schedule session')
+const modalDescription = computed(() =>
+  isEdit.value ? 'Update the details of this session.' : 'Book a 1:1 or group session with a client.',
+)
 
 const { data: clientsData } = useAsyncData('modal-clients', () => listClients({ per_page: 200 }))
 const clientOptions = computed(() =>
-  (clientsData.value?.clients ?? []).map(c => ({
-    id: c.id ?? '',
-    label: `${c.first_name ?? ''} ${c.last_name ?? ''}`.trim(),
-  }))
+  (clientsData.value?.clients ?? []).map(client => ({
+    id: client.id ?? '',
+    label: `${client.first_name ?? ''} ${client.last_name ?? ''}`.trim(),
+  })),
 )
 
-const sessionType = ref<SessionType>('virtual')
-const client = ref('')
-const clientName = computed(() => clientOptions.value.find(c => c.id === client.value)?.label ?? '')
-const focus = ref('')
-const date = ref('')
-const startTime = ref('10:00 AM')
-const duration = ref('60 min')
-const sendInvite = ref('Email + In-app')
-const zoomEnabled = ref(true)
-const saving = ref(false)
-const loading = ref(false)
-const clientError = ref(false)
-
-const SESSION_TYPES: Array<{ value: SessionType; label: string; iconBg: string; iconColor: string; svgPath: string }> = [
-  {
-    value: 'virtual',
-    label: 'Virtual',
-    iconBg: 'bg-[#DBEAFE]',
-    iconColor: 'text-[#1E40AF]',
-    svgPath: '<rect x="1" y="2.5" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 6l4-2v7l-4-2V6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>',
-  },
-  {
-    value: 'inperson',
-    label: 'In-Person',
-    iconBg: 'bg-[#D1FAE5]',
-    iconColor: 'text-[#065F46]',
-    svgPath: '<path d="M8 1.5C5.8 1.5 4 3.3 4 5.5c0 3.5 4 9 4 9s4-5.5 4-9c0-2.2-1.8-4-4-4z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="5.5" r="1.8" stroke="currentColor" stroke-width="1.3"/>',
-  },
-  {
-    value: 'group',
-    label: 'Group',
-    iconBg: 'bg-[#EDE9FE]',
-    iconColor: 'text-[#5B21B6]',
-    svgPath: '<circle cx="6" cy="6" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 14c0-2.8 2.2-5 5-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="11" cy="6" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M11 11c1.7 0 3 1.3 3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>',
-  },
+const SESSION_TYPES: Array<{ value: SessionType; label: string; icon: string }> = [
+  { value: 'virtual',  label: 'Virtual',   icon: 'i-hugeicons-video-02' },
+  { value: 'inperson', label: 'In-person', icon: 'i-hugeicons-maps-location-01' },
+  { value: 'group',    label: 'Group',     icon: 'i-hugeicons-user-multiple-02' },
 ]
 
 const FOCUSES = [
@@ -81,16 +54,30 @@ const TIME_SLOTS = [
 const DURATIONS = ['30 min', '45 min', '60 min', '90 min', '2 hours']
 const INVITE_OPTIONS = ['Email + In-app', 'Email only', 'In-app only', "Don't notify"]
 
-const dotColor = computed(() => ({
-  virtual: '#3498DB',
-  inperson: '#1A7A4A',
-  group: '#9B59B6',
-})[sessionType.value])
+const sessionType = ref<SessionType>('virtual')
+const client = ref('')
+const focus = ref('')
+const date = ref('')
+const startTime = ref('10:00 AM')
+const duration = ref('60 min')
+const sendInvite = ref('Email + In-app')
+const zoomEnabled = ref(true)
+const saving = ref(false)
+const loading = ref(false)
+const clientError = ref(false)
+
+const clientName = computed(() => clientOptions.value.find(option => option.id === client.value)?.label ?? '')
+
+const sessionTypeColor: Record<SessionType, string> = {
+  virtual:  'bg-(--info)',
+  inperson: 'bg-(--green-brand)',
+  group:    'bg-[#9B59B6]',
+}
 
 const locationLabel = computed(() => {
   if (sessionType.value === 'virtual') return zoomEnabled.value ? 'Zoom · auto-link' : 'Virtual'
-  if (sessionType.value === 'inperson') return 'In-Person'
-  return 'Group Session'
+  if (sessionType.value === 'inperson') return 'In-person'
+  return 'Group session'
 })
 
 watch(() => props.open, async (val) => {
@@ -99,17 +86,16 @@ watch(() => props.open, async (val) => {
   saving.value = false
 
   if (props.session) {
-    // Edit mode — fetch the full session and prefill the form.
     loading.value = true
     try {
-      const s = await get(props.session.id)
-      sessionType.value = (s.session_type as SessionType) ?? 'virtual'
-      client.value = s.client_id ?? ''
-      focus.value = s.notes ?? ''
-      date.value = formatDateInput(s.starts_at)
-      startTime.value = formatStartTimeSlot(s.starts_at)
-      duration.value = durationLabel(s.duration_mins)
-      zoomEnabled.value = !!s.zoom_link
+      const session = await get(props.session.id)
+      sessionType.value = (session.session_type as SessionType) ?? 'virtual'
+      client.value = session.client_id ?? ''
+      focus.value = session.notes ?? ''
+      date.value = formatDateInput(session.starts_at)
+      startTime.value = formatStartTimeSlot(session.starts_at)
+      duration.value = durationLabel(session.duration_mins)
+      zoomEnabled.value = !!session.zoom_link
     } catch {
       toast.add({ title: 'Could not load session', color: 'error' })
       emit('update:open', false)
@@ -117,7 +103,6 @@ watch(() => props.open, async (val) => {
       loading.value = false
     }
   } else {
-    // Create mode — reset to defaults.
     sessionType.value = 'virtual'
     client.value = ''
     focus.value = ''
@@ -137,8 +122,6 @@ async function handleSubmit() {
   saving.value = true
   try {
     const body = {
-      // Fall back to the existing title on edit — clientName is empty when the
-      // session's client isn't in the loaded list, which would blank the title.
       title: clientName.value || props.session?.client,
       session_type: sessionType.value,
       starts_at: parseStartsAt(date.value, startTime.value),
@@ -146,7 +129,6 @@ async function handleSubmit() {
       notes: focus.value || undefined,
     }
     if (props.session) {
-      // client_id is immutable per the update API — title/time/type/notes only.
       await update(props.session.id, body)
       emit('updated')
     } else {
@@ -163,144 +145,127 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <UModal :open="open" @update:open="$emit('update:open', $event)">
-    <template #content>
-      <div class="flex flex-col max-h-[90vh]">
-        <!-- Header -->
-        <div class="flex items-start justify-between px-5 pt-5 pb-4 border-b border-(--border)">
-          <div>
-            <div class="text-[15px] font-bold text-(--text-primary) tracking-[-0.2px]">{{ isEdit ? 'Edit Session' : 'Schedule Session' }}</div>
-            <div class="text-[12px] text-(--text-muted) mt-0.5">{{ isEdit ? 'Update the details of this session' : 'Book a 1:1 or group session with a client' }}</div>
-          </div>
+  <UModal
+    :open="open"
+    :title="modalTitle"
+    :description="modalDescription"
+    :ui="{ content: 'sm:max-w-lg', body: 'p-5 space-y-4', footer: 'p-4' }"
+    @update:open="emit('update:open', $event)"
+  >
+    <template #body>
+      <fieldset>
+        <legend class="text-[12px] font-semibold text-(--text-secondary) mb-1.5">Session type</legend>
+        <div class="grid grid-cols-3 gap-2.5">
           <button
+            v-for="type in SESSION_TYPES"
+            :key="type.value"
             type="button"
-            class="w-7 h-7 flex items-center justify-center rounded-lg text-(--text-muted) hover:text-(--text-primary) hover:bg-(--bg-hover) transition-colors"
-            @click="$emit('update:open', false)"
+            class="flex flex-col items-center gap-2 py-3 px-2 rounded-md border-[1.5px] transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-(--green-brand)"
+            :class="sessionType === type.value
+              ? 'border-(--green-brand) bg-(--green-pale)'
+              : 'border-(--border) bg-(--bg-surface) hover:bg-(--bg-subtle)'"
+            :aria-pressed="sessionType === type.value"
+            @click="sessionType = type.value"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
+            <span
+              class="inline-flex items-center justify-center size-8 rounded-md"
+              :class="sessionType === type.value ? 'bg-(--green-brand) text-white' : 'bg-(--bg-subtle) text-(--text-secondary)'"
+            >
+              <UIcon :name="type.icon" class="size-4" />
+            </span>
+            <span
+              class="text-[12px] font-semibold"
+              :class="sessionType === type.value ? 'text-(--green-brand)' : 'text-(--text-secondary)'"
+            >
+              {{ type.label }}
+            </span>
           </button>
         </div>
+      </fieldset>
 
-        <!-- Body -->
-        <div class="overflow-y-auto flex-1 px-5 py-4 flex flex-col gap-4">
-          <!-- Session Type picker (custom — no NUI equivalent) -->
-          <div>
-            <div class="text-[12px] font-bold text-[#3D5A45] dark:text-(--text-secondary) mb-[5px]">Session Type</div>
-            <div class="grid grid-cols-3 gap-2.5">
-              <button
-                v-for="st in SESSION_TYPES"
-                :key="st.value"
-                type="button"
-                class="flex flex-col items-center gap-2 py-3 px-2 border-[1.5px] rounded-xl transition-colors"
-                :class="sessionType === st.value
-                  ? 'border-primary bg-[#F0F9F4]'
-                  : 'border-[#D1E0D5] dark:border-(--border) bg-white dark:bg-(--bg-surface) hover:border-primary/50'"
-                @click="sessionType = st.value"
-              >
-                <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="st.iconBg">
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" v-html="st.svgPath" :class="st.iconColor" />
-                </div>
-                <span
-                  class="text-[12px] font-semibold transition-colors"
-                  :class="sessionType === st.value ? 'text-primary' : 'text-(--text-secondary)'"
-                >{{ st.label }}</span>
-              </button>
-            </div>
-          </div>
+      <UFormField
+        name="client"
+        label="Client"
+        required
+        :error="clientError ? 'Please select a client' : undefined"
+      >
+        <USelect
+          v-model="client"
+          :items="clientOptions"
+          value-key="id"
+          label-key="label"
+          :disabled="isEdit"
+          placeholder="Select a client…"
+          size="md"
+          class="w-full"
+          @update:model-value="clientError = false"
+        />
+      </UFormField>
 
-          <!-- Client -->
-          <UFormField
-            name="client"
-            label="Client"
-            :error="clientError ? 'Please select a client' : undefined"
-          >
-            <USelect
-              v-model="client"
-              :items="clientOptions"
-              value-key="id"
-              label-key="label"
-              :disabled="isEdit"
-              placeholder="Select a client…"
-              class="rounded-[10px] w-full"
-              @update:model-value="clientError = false"
-            />
-          </UFormField>
+      <UFormField name="focus" label="Session focus" hint="optional">
+        <UInputMenu
+          v-model="focus"
+          :items="FOCUSES"
+          placeholder="e.g. Strength & Conditioning"
+          size="md"
+          class="w-full"
+        />
+      </UFormField>
 
-          <!-- Session Focus — free text + suggestions via UInputMenu -->
-          <UFormField name="focus" label="Session Focus">
-            <UInputMenu
-              v-model="focus"
-              :items="FOCUSES"
-              placeholder="e.g. Strength & Conditioning"
-              class="rounded-[10px] w-full"
-            />
-          </UFormField>
+      <div class="grid grid-cols-2 gap-3">
+        <UFormField name="date" label="Date" required>
+          <UInput v-model="date" type="date" size="md" class="w-full tabular-nums" />
+        </UFormField>
+        <UFormField name="startTime" label="Start time" required>
+          <USelect v-model="startTime" :items="TIME_SLOTS" size="md" class="w-full tabular-nums" />
+        </UFormField>
+      </div>
 
-          <!-- Date + Start Time -->
-          <div class="grid grid-cols-2 gap-3">
-            <UFormField name="date" label="Date">
-              <UInput v-model="date" type="date" class="rounded-[10px] w-full" />
-            </UFormField>
-            <UFormField name="startTime" label="Start Time">
-              <USelect v-model="startTime" :items="TIME_SLOTS" class="rounded-[10px] w-full" />
-            </UFormField>
-          </div>
+      <div class="grid grid-cols-2 gap-3">
+        <UFormField name="duration" label="Duration" required>
+          <USelect v-model="duration" :items="DURATIONS" size="md" class="w-full" />
+        </UFormField>
+        <UFormField name="sendInvite" label="Send invite">
+          <USelect v-model="sendInvite" :items="INVITE_OPTIONS" size="md" class="w-full" />
+        </UFormField>
+      </div>
 
-          <!-- Duration + Send Invite -->
-          <div class="grid grid-cols-2 gap-3">
-            <UFormField name="duration" label="Duration">
-              <USelect v-model="duration" :items="DURATIONS" class="rounded-[10px] w-full" />
-            </UFormField>
-            <UFormField name="sendInvite" label="Send Invite">
-              <USelect v-model="sendInvite" :items="INVITE_OPTIONS" class="rounded-[10px] w-full" />
-            </UFormField>
-          </div>
-
-          <!-- Zoom toggle row (virtual only) -->
-          <div
-            v-if="sessionType === 'virtual'"
-            class="flex items-center justify-between bg-[#EFF6FF] border border-[#BFDBFE] rounded-xl px-3.5 py-2.5"
-          >
-            <div class="flex items-center gap-2.5">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect x="1" y="2.5" width="9" height="8" rx="1.5" fill="#2563EB"/>
-                <path d="M10 6l4-2v7l-4-2V6z" fill="#2563EB"/>
-              </svg>
-              <span class="text-[#1D4ED8] font-semibold text-sm">Auto-generate Zoom link</span>
-            </div>
-            <UToggle v-model="zoomEnabled" color="primary" />
-          </div>
-
-          <!-- Preview strip -->
-          <div class="mt-0.5 bg-[#F7FAF8] dark:bg-(--bg-surface-raised) border-[1.5px] border-(--border) rounded-xl p-3 flex items-center gap-3">
-            <template v-if="client">
-              <div
-                class="w-[10px] h-[10px] rounded-[3px] flex-shrink-0"
-                :style="{ background: dotColor }"
-              />
-              <div class="flex-1 min-w-0">
-                <div class="text-[13px] font-bold text-(--text-primary) truncate">{{ clientName }}</div>
-                <div class="text-[11px] text-(--text-muted) truncate">{{ focus || 'No focus set' }} · {{ locationLabel }}</div>
-              </div>
-              <div class="text-xs font-bold text-primary whitespace-nowrap">{{ startTime }} · {{ duration }}</div>
-            </template>
-            <template v-else>
-              <div class="text-[12px] text-(--text-muted) italic">Select a client to preview</div>
-            </template>
-          </div>
+      <div
+        v-if="sessionType === 'virtual'"
+        class="flex items-center justify-between gap-3 rounded-md border border-(--border) bg-(--info-soft)/60 px-3.5 py-2.5"
+      >
+        <div class="flex items-center gap-2.5">
+          <UIcon name="i-hugeicons-video-02" class="size-4 text-(--info)" />
+          <label for="zoom-toggle" class="text-[12.5px] font-semibold text-(--text-primary) cursor-pointer">
+            Auto-generate Zoom link
+          </label>
         </div>
+        <UToggle id="zoom-toggle" v-model="zoomEnabled" color="primary" aria-label="Auto-generate Zoom link" />
+      </div>
 
-        <!-- Footer -->
-        <div class="flex items-center justify-end gap-2.5 px-5 py-4 border-t border-(--border)">
-          <UButton variant="ghost" color="neutral" size="lg" :disabled="saving" @click="$emit('update:open', false)">
-            Cancel
-          </UButton>
-          <UButton color="primary" size="lg" :loading="saving" :disabled="loading" @click="handleSubmit">
-            {{ isEdit ? 'Save Changes' : 'Schedule' }}
-          </UButton>
-        </div>
+      <div class="rounded-md border border-(--border) bg-(--bg-subtle)/40 p-3 flex items-center gap-3">
+        <template v-if="client">
+          <span aria-hidden="true" class="size-2.5 rounded-sm shrink-0" :class="sessionTypeColor[sessionType]" />
+          <div class="flex-1 min-w-0">
+            <div class="text-[12.5px] font-semibold text-(--text-primary) truncate">{{ clientName }}</div>
+            <div class="text-[11px] text-(--text-secondary) truncate">{{ focus || 'No focus set' }} · {{ locationLabel }}</div>
+          </div>
+          <div class="text-[11.5px] font-semibold text-(--green-brand) whitespace-nowrap tabular-nums">{{ startTime }} · {{ duration }}</div>
+        </template>
+        <template v-else>
+          <div class="text-[12px] text-(--text-muted) italic">Select a client to preview</div>
+        </template>
+      </div>
+    </template>
+
+    <template #footer>
+      <div class="flex justify-end gap-2 w-full">
+        <UButton variant="ghost" color="neutral" :disabled="saving" @click="emit('update:open', false)">
+          Cancel
+        </UButton>
+        <UButton color="primary" :loading="saving" :disabled="loading" @click="handleSubmit">
+          {{ isEdit ? 'Save changes' : 'Schedule' }}
+        </UButton>
       </div>
     </template>
   </UModal>

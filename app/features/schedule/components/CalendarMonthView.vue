@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { format, isSameDay, isSameMonth, parseISO } from 'date-fns'
 import type { ModelsCoachSession } from '~/services/types.gen'
 import { buildMonthGrid } from '~/features/schedule/utils/calendar'

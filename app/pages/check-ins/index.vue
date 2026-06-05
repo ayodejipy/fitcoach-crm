@@ -90,11 +90,23 @@ const subtitle = computed(() => {
   return `Week of ${fmtWeekOf(weekStart)} · ${nResp} need response · ${responded} responded`
 })
 
-const remindClients = computed(() =>
-  groups.value.needsResponse
-    .map(ci => ci.client_id ? clientMap.value.get(ci.client_id) : undefined)
-    .filter((c): c is ModelsClient => !!c),
-)
+const remindClients = computed(() => {
+  const seen = new Set<string>()
+  const out: Array<{ id: string, name: string, initials: string, variant: ReturnType<typeof hashVariant>, lastCheckIn?: string }> = []
+  for (const ci of groups.value.needsResponse) {
+    const client = ci.client_id ? clientMap.value.get(ci.client_id) : undefined
+    if (!client?.id || seen.has(client.id)) continue
+    seen.add(client.id)
+    out.push({
+      id:        client.id,
+      name:      clientName(client),
+      initials:  clientInitials(client),
+      variant:   hashVariant(client.id),
+      lastCheckIn: ci.submitted_at ? `Submitted ${fmtRelative(ci.submitted_at)}` : 'No check-in this week',
+    })
+  }
+  return out
+})
 
 function getClient(checkIn: { client_id?: string }) {
   return checkIn.client_id ? clientMap.value.get(checkIn.client_id) : undefined

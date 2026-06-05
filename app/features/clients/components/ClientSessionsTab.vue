@@ -40,7 +40,7 @@ function sessionLocation(session: ModelsCoachSession): { icon: string, label: st
 
 function statusTone(session: ModelsCoachSession): { color: 'success' | 'warning' | 'neutral', label: string } {
   if (session.confirmed) return { color: 'success', label: 'Confirmed' }
-  return { color: 'warning', label: 'Pending' }
+  return { color: 'warning', label: 'Awaiting client' }
 }
 </script>
 

@@ -137,7 +137,8 @@ const atAGlance = computed(() => {
 })
 
 const moreActions = computed(() => [
-  { label: 'Edit details', icon: 'i-lucide-pencil', onSelect: () => editModalOpen.value = true },
+  { label: 'Edit details', icon: 'i-hugeicons-pencil-edit-02', onSelect: () => editModalOpen.value = true },
+  { label: 'Resend portal invite', icon: 'i-hugeicons-sent', onSelect: () => resendInvite() },
   ...(status.value === 'active'
     ? [{ label: 'Pause client', icon: 'i-lucide-pause-circle', onSelect: () => updateStatus('paused') }]
     : status.value === 'paused'
@@ -146,6 +147,20 @@ const moreActions = computed(() => [
   { type: 'separator' as const },
   { label: 'Delete client', icon: 'i-lucide-trash-2', color: 'error' as const, onSelect: () => confirmDelete() },
 ])
+
+async function resendInvite() {
+  if (!client.value?.id) return
+  try {
+    await clientsApi.invite(client.value.id)
+    toast.add({
+      title: 'Portal invite sent',
+      description: `${displayName.value} will get a fresh link by email. Expires in 7 days.`,
+      color: 'success',
+    })
+  } catch {
+    toast.add({ title: 'Could not send invite', color: 'error' })
+  }
+}
 
 async function updateStatus(next: 'active' | 'paused' | 'new' | 'ended') {
   if (!client.value?.id) return

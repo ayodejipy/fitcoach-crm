@@ -21,7 +21,6 @@ defineProps<{
 }>()
 
 defineEmits<{
-  confirm: [id: string]
   schedule: []
 }>()
 
@@ -80,14 +79,6 @@ const statusBadge = (status: SessionStatus): { color: 'success' | 'warning' | 'i
           </div>
           <div class="mt-0.5 text-[12px] font-medium text-(--text-secondary) truncate">{{ session.meta }}</div>
         </div>
-        <UButton
-          v-if="session.status === 'pending'"
-          color="primary"
-          size="sm"
-          @click="$emit('confirm', session.id ?? '')"
-        >
-          Confirm
-        </UButton>
       </div>
     </div>
 

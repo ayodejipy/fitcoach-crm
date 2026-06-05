@@ -150,8 +150,25 @@ const invoiceRows = computed<InvoiceRowData[]>(() => {
 
 const monthLabel = format(new Date(), 'MMMM yyyy')
 
+const lastInvoiceByClient = computed(() => {
+  const map = new Map<string, number>()
+  for (const payment of payments.value) {
+    if (!payment.client_id || !payment.amount_cents) continue
+    if (!map.has(payment.client_id)) map.set(payment.client_id, payment.amount_cents)
+  }
+  return map
+})
+
 const clientOptions = computed<InvoiceClientOption[]>(() =>
-  clients.value.map(c => ({ id: c.id ?? '', name: clientName(c) })),
+  clients.value.map(c => ({
+    id:       c.id ?? '',
+    name:     clientName(c),
+    initials: clientInitials(c),
+    variant:  hashVariant(c.id ?? ''),
+    email:    c.email,
+    plan:     c.plan_name || undefined,
+    lastInvoiceCents: c.id ? lastInvoiceByClient.value.get(c.id) : undefined,
+  })),
 )
 
 const defaultDueDate = computed(() => {
@@ -168,12 +185,20 @@ async function onSubmitInvoice(payload: InvoicePayload) {
       description: payload.description || undefined,
       due_date: payload.dueDate || undefined,
     })
-    toast.add({ title: 'Invoice created', color: 'success' })
+    toast.add({
+      title: payload.saveAsDraft ? 'Invoice saved as draft' : 'Invoice created',
+      color: 'success',
+    })
     drawerOpen.value = false
     refresh()
   } catch {
     toast.add({ title: 'Failed to create invoice', color: 'error' })
   }
+}
+
+function onCreateClient() {
+  drawerOpen.value = false
+  router.push('/clients?new=1')
 }
 
 function onSendReminder(_id: string) {
@@ -282,5 +307,6 @@ function onExport() {
     :clients="clientOptions"
     :default-due-date="defaultDueDate"
     @submit="onSubmitInvoice"
+    @create-client="onCreateClient"
   />
 </template>

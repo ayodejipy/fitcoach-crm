@@ -141,7 +141,7 @@ const todaySessions = computed(() =>
         s.title,
       ].filter(Boolean).join(' · '),
       status: (s.zoom_link ? 'virtual' : s.confirmed ? 'confirmed' : 'pending') as 'virtual' | 'confirmed' | 'pending',
-      statusLabel: s.zoom_link ? 'Virtual' : s.confirmed ? 'Confirmed' : 'Unconfirmed',
+      statusLabel: s.zoom_link ? 'Virtual' : s.confirmed ? 'Confirmed' : 'Awaiting client',
     }
   })
 )
@@ -195,12 +195,6 @@ const clientRows = computed(() =>
   })
 )
 
-async function onConfirmSession(id: string) {
-  if (!id) return
-  await scheduleApi.update(id, { confirmed: true })
-  await refreshNuxtData('dashboard')
-}
-
 function onSchedule() { navigateTo('/schedule') }
 function onRespond(id: string) { navigateTo(id ? `/check-ins?focus=${id}` : '/check-ins') }
 </script>
@@ -251,7 +245,6 @@ function onRespond(id: string) { navigateTo(id ? `/check-ins?focus=${id}` : '/ch
         <DashboardTodayPanel
           :sessions="todaySessions"
           :completed-count="0"
-          @confirm="onConfirmSession"
           @schedule="onSchedule"
         />
         <DashboardCheckInsPanel
