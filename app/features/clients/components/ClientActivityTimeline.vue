@@ -57,7 +57,7 @@ function formatEventDateTime(date: Date): string {
         <article v-for="event in group.events" :key="event.id" class="relative">
           <span
             aria-hidden="true"
-            class="absolute left-[-32px] top-3 inline-flex h-9 w-9 items-center justify-center rounded-full ring-4 ring-(--bg-page)"
+            class="absolute left-[-46px] top-3 inline-flex h-9 w-9 items-center justify-center rounded-full ring-4 ring-(--bg-page)"
             :class="eventDotClass(event)"
           >
             <UIcon :name="eventIcon(event)" class="size-3.5" />
