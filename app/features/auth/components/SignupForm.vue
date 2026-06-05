@@ -45,7 +45,6 @@ async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {
       first_name: event.data.first_name,
       last_name: event.data.last_name,
       password: event.data.password,
-      specialty: 'personal-training',
     })
     await navigateTo('/onboarding')
   } catch (err) {

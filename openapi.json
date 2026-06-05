@@ -3161,6 +3161,82 @@
                         }
                     }
                 }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "portal-sessions"
+                ],
+                "summary": "Confirm a booked session (portal)",
+                "operationId": "PortalConfirmSession",
+                "parameters": [
+                    {
+                        "description": "session UUID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/handlers.ConfirmPortalSessionRequest"
+                            }
+                        }
+                    },
+                    "description": "{ confirmed: true }",
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.Session"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/v1/portal/uploads/photo": {
@@ -3873,6 +3949,17 @@
                     }
                 }
             },
+            "handlers.ConfirmPortalSessionRequest": {
+                "type": "object",
+                "required": [
+                    "confirmed"
+                ],
+                "properties": {
+                    "confirmed": {
+                        "type": "boolean"
+                    }
+                }
+            },
             "handlers.CreateCheckInRequest": {
                 "type": "object",
                 "required": [
@@ -4465,8 +4552,7 @@
                     "email",
                     "first_name",
                     "last_name",
-                    "password",
-                    "specialty"
+                    "password"
                 ],
                 "properties": {
                     "email": {
@@ -4489,6 +4575,7 @@
                         "minLength": 8
                     },
                     "specialty": {
+                        "description": "Specialty is optional at signup. Locked CRM design moved this question\nto onboarding Step 1, so the signup form doesn't collect it. We default\nto \"personal-training\" server-side to satisfy the NOT NULL + CHECK\nconstraint on coaches.specialty; the user picks the real value during\nonboarding and PATCH /api/v1/me overwrites it before launch.",
                         "type": "string",
                         "enum": [
                             "personal-training",

@@ -6,9 +6,9 @@ export const loginSchema = z.object({
 })
 export type LoginSchema = z.output<typeof loginSchema>
 
-// Specialty is collected during onboarding Step 1 (not at signup) — locked
-// design decision. Backend currently requires specialty at signup, so the
-// signup form sends a default value and the user picks the real one later.
+// Specialty is collected during onboarding Step 1, not at signup — locked
+// design decision. Backend treats specialty as optional and defaults to
+// "personal-training" until onboarding overwrites it.
 export const signupSchema = z.object({
   first_name: z.string().min(1, 'Required'),
   last_name: z.string().min(1, 'Required'),
