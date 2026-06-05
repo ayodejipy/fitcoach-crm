@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteApiV1ClientsByIdData, DeleteApiV1ClientsByIdErrors, DeleteApiV1ClientsByIdResponses, DeleteApiV1NotificationsByIdData, DeleteApiV1NotificationsByIdErrors, DeleteApiV1NotificationsByIdResponses, DeleteApiV1PortalNotificationsByIdData, DeleteApiV1PortalNotificationsByIdErrors, DeleteApiV1PortalNotificationsByIdResponses, DeleteApiV1SessionsByIdData, DeleteApiV1SessionsByIdErrors, DeleteApiV1SessionsByIdResponses, GetApiV1AuthGoogleCallbackData, GetApiV1AuthGoogleCallbackErrors, GetApiV1AuthGoogleData, GetApiV1AuthGoogleErrors, GetApiV1CheckInsByIdData, GetApiV1CheckInsByIdErrors, GetApiV1CheckInsByIdResponses, GetApiV1CheckInsData, GetApiV1CheckInsErrors, GetApiV1CheckInsResponses, GetApiV1ClientsByIdData, GetApiV1ClientsByIdErrors, GetApiV1ClientsByIdResponses, GetApiV1ClientsData, GetApiV1ClientsErrors, GetApiV1ClientsResponses, GetApiV1MeAvailabilityData, GetApiV1MeAvailabilityErrors, GetApiV1MeAvailabilityResponses, GetApiV1MeDashboardData, GetApiV1MeDashboardErrors, GetApiV1MeDashboardResponses, GetApiV1MeData, GetApiV1MeErrors, GetApiV1MeResponses, GetApiV1MeSettingsData, GetApiV1MeSettingsErrors, GetApiV1MeSettingsResponses, GetApiV1MeSlugCheckData, GetApiV1MeSlugCheckErrors, GetApiV1MeSlugCheckResponses, GetApiV1NotificationsData, GetApiV1NotificationsErrors, GetApiV1NotificationsResponses, GetApiV1NotificationsUnreadCountData, GetApiV1NotificationsUnreadCountErrors, GetApiV1NotificationsUnreadCountResponses, GetApiV1PaymentsByIdData, GetApiV1PaymentsByIdErrors, GetApiV1PaymentsByIdResponses, GetApiV1PaymentsData, GetApiV1PaymentsErrors, GetApiV1PaymentsResponses, GetApiV1PortalCheckInsByIdData, GetApiV1PortalCheckInsByIdErrors, GetApiV1PortalCheckInsByIdResponses, GetApiV1PortalCheckInsData, GetApiV1PortalCheckInsErrors, GetApiV1PortalCheckInsResponses, GetApiV1PortalMeData, GetApiV1PortalMeErrors, GetApiV1PortalMeResponses, GetApiV1PortalNotificationsData, GetApiV1PortalNotificationsErrors, GetApiV1PortalNotificationsResponses, GetApiV1PortalNotificationsUnreadCountData, GetApiV1PortalNotificationsUnreadCountErrors, GetApiV1PortalNotificationsUnreadCountResponses, GetApiV1PortalPaymentsByIdData, GetApiV1PortalPaymentsByIdErrors, GetApiV1PortalPaymentsByIdResponses, GetApiV1PortalPaymentsData, GetApiV1PortalPaymentsErrors, GetApiV1PortalPaymentsResponses, GetApiV1PortalSessionsByIdData, GetApiV1PortalSessionsByIdErrors, GetApiV1PortalSessionsByIdResponses, GetApiV1PortalSessionsData, GetApiV1PortalSessionsErrors, GetApiV1PortalSessionsResponses, GetApiV1PortalWsData, GetApiV1PortalWsErrors, GetApiV1SessionsByIdData, GetApiV1SessionsByIdErrors, GetApiV1SessionsByIdResponses, GetApiV1SessionsData, GetApiV1SessionsErrors, GetApiV1SessionsResponses, GetApiV1WsData, GetApiV1WsErrors, GetHealthzData, GetHealthzResponses, GetReadyzData, GetReadyzErrors, GetReadyzResponses, PatchApiV1CheckInsByIdDraftData, PatchApiV1CheckInsByIdDraftErrors, PatchApiV1CheckInsByIdDraftResponses, PatchApiV1ClientsByIdData, PatchApiV1ClientsByIdErrors, PatchApiV1ClientsByIdResponses, PatchApiV1MeData, PatchApiV1MeErrors, PatchApiV1MeOnboardingData, PatchApiV1MeOnboardingErrors, PatchApiV1MeOnboardingResponses, PatchApiV1MeResponses, PatchApiV1MeSettingsData, PatchApiV1MeSettingsErrors, PatchApiV1MeSettingsResponses, PatchApiV1PaymentsByIdData, PatchApiV1PaymentsByIdErrors, PatchApiV1PaymentsByIdResponses, PatchApiV1PortalMeData, PatchApiV1PortalMeErrors, PatchApiV1PortalMeResponses, PatchApiV1SessionsByIdData, PatchApiV1SessionsByIdErrors, PatchApiV1SessionsByIdResponses, PostApiV1AuthLoginData, PostApiV1AuthLoginErrors, PostApiV1AuthLoginResponses, PostApiV1AuthLogoutData, PostApiV1AuthLogoutErrors, PostApiV1AuthLogoutResponses, PostApiV1AuthRefreshData, PostApiV1AuthRefreshErrors, PostApiV1AuthRefreshResponses, PostApiV1AuthSignupData, PostApiV1AuthSignupErrors, PostApiV1AuthSignupResponses, PostApiV1CheckInsByIdReadData, PostApiV1CheckInsByIdReadErrors, PostApiV1CheckInsByIdReadResponses, PostApiV1CheckInsByIdRespondData, PostApiV1CheckInsByIdRespondErrors, PostApiV1CheckInsByIdRespondResponses, PostApiV1ClientsByIdInvitePortalData, PostApiV1ClientsByIdInvitePortalErrors, PostApiV1ClientsByIdInvitePortalResponses, PostApiV1ClientsData, PostApiV1ClientsErrors, PostApiV1ClientsResponses, PostApiV1MeAvatarData, PostApiV1MeAvatarErrors, PostApiV1MeAvatarResponses, PostApiV1NotificationsByIdReadData, PostApiV1NotificationsByIdReadErrors, PostApiV1NotificationsByIdReadResponses, PostApiV1NotificationsMarkAllReadData, PostApiV1NotificationsMarkAllReadErrors, PostApiV1NotificationsMarkAllReadResponses, PostApiV1PaymentsByIdMarkPaidData, PostApiV1PaymentsByIdMarkPaidErrors, PostApiV1PaymentsByIdMarkPaidResponses, PostApiV1PaymentsData, PostApiV1PaymentsErrors, PostApiV1PaymentsResponses, PostApiV1PortalAcceptInviteData, PostApiV1PortalAcceptInviteErrors, PostApiV1PortalAcceptInviteResponses, PostApiV1PortalAuthLoginData, PostApiV1PortalAuthLoginErrors, PostApiV1PortalAuthLoginResponses, PostApiV1PortalAuthLogoutData, PostApiV1PortalAuthLogoutErrors, PostApiV1PortalAuthLogoutResponses, PostApiV1PortalAuthRefreshData, PostApiV1PortalAuthRefreshErrors, PostApiV1PortalAuthRefreshResponses, PostApiV1PortalCheckInsData, PostApiV1PortalCheckInsErrors, PostApiV1PortalCheckInsResponses, PostApiV1PortalNotificationsByIdReadData, PostApiV1PortalNotificationsByIdReadErrors, PostApiV1PortalNotificationsByIdReadResponses, PostApiV1PortalNotificationsMarkAllReadData, PostApiV1PortalNotificationsMarkAllReadErrors, PostApiV1PortalNotificationsMarkAllReadResponses, PostApiV1PortalUploadsPhotoData, PostApiV1PortalUploadsPhotoErrors, PostApiV1PortalUploadsPhotoResponses, PostApiV1PortalWsTicketData, PostApiV1PortalWsTicketErrors, PostApiV1PortalWsTicketResponses, PostApiV1SessionsData, PostApiV1SessionsErrors, PostApiV1SessionsResponses, PostApiV1WebhooksStripeData, PostApiV1WebhooksStripeErrors, PostApiV1WebhooksStripeResponses, PostApiV1WsTicketData, PostApiV1WsTicketErrors, PostApiV1WsTicketResponses, PutApiV1MeAvailabilityData, PutApiV1MeAvailabilityErrors, PutApiV1MeAvailabilityResponses, PutApiV1MeSettingsCustomQuestionsData, PutApiV1MeSettingsCustomQuestionsErrors, PutApiV1MeSettingsCustomQuestionsResponses } from './types.gen';
+import type { DeleteApiV1ClientsByIdData, DeleteApiV1ClientsByIdErrors, DeleteApiV1ClientsByIdResponses, DeleteApiV1NotificationsByIdData, DeleteApiV1NotificationsByIdErrors, DeleteApiV1NotificationsByIdResponses, DeleteApiV1SessionsByIdData, DeleteApiV1SessionsByIdErrors, DeleteApiV1SessionsByIdResponses, GetApiV1AuthGoogleCallbackData, GetApiV1AuthGoogleCallbackErrors, GetApiV1AuthGoogleData, GetApiV1AuthGoogleErrors, GetApiV1CheckInsByIdData, GetApiV1CheckInsByIdErrors, GetApiV1CheckInsByIdResponses, GetApiV1CheckInsData, GetApiV1CheckInsErrors, GetApiV1CheckInsResponses, GetApiV1ClientsByIdData, GetApiV1ClientsByIdErrors, GetApiV1ClientsByIdResponses, GetApiV1ClientsData, GetApiV1ClientsErrors, GetApiV1ClientsResponses, GetApiV1MeAvailabilityData, GetApiV1MeAvailabilityErrors, GetApiV1MeAvailabilityResponses, GetApiV1MeDashboardData, GetApiV1MeDashboardErrors, GetApiV1MeDashboardResponses, GetApiV1MeData, GetApiV1MeErrors, GetApiV1MeResponses, GetApiV1MeSettingsData, GetApiV1MeSettingsErrors, GetApiV1MeSettingsResponses, GetApiV1MeSlugCheckData, GetApiV1MeSlugCheckErrors, GetApiV1MeSlugCheckResponses, GetApiV1NotificationsData, GetApiV1NotificationsErrors, GetApiV1NotificationsResponses, GetApiV1NotificationsUnreadCountData, GetApiV1NotificationsUnreadCountErrors, GetApiV1NotificationsUnreadCountResponses, GetApiV1PaymentsByIdData, GetApiV1PaymentsByIdErrors, GetApiV1PaymentsByIdResponses, GetApiV1PaymentsData, GetApiV1PaymentsErrors, GetApiV1PaymentsResponses, GetApiV1PortalWsData, GetApiV1PortalWsErrors, GetApiV1SessionsByIdData, GetApiV1SessionsByIdErrors, GetApiV1SessionsByIdResponses, GetApiV1SessionsData, GetApiV1SessionsErrors, GetApiV1SessionsResponses, GetApiV1WsData, GetApiV1WsErrors, GetHealthzData, GetHealthzResponses, GetReadyzData, GetReadyzErrors, GetReadyzResponses, PatchApiV1CheckInsByIdDraftData, PatchApiV1CheckInsByIdDraftErrors, PatchApiV1CheckInsByIdDraftResponses, PatchApiV1ClientsByIdData, PatchApiV1ClientsByIdErrors, PatchApiV1ClientsByIdResponses, PatchApiV1MeData, PatchApiV1MeErrors, PatchApiV1MeOnboardingData, PatchApiV1MeOnboardingErrors, PatchApiV1MeOnboardingResponses, PatchApiV1MeResponses, PatchApiV1MeSettingsData, PatchApiV1MeSettingsErrors, PatchApiV1MeSettingsResponses, PatchApiV1PaymentsByIdData, PatchApiV1PaymentsByIdErrors, PatchApiV1PaymentsByIdResponses, PatchApiV1SessionsByIdData, PatchApiV1SessionsByIdErrors, PatchApiV1SessionsByIdResponses, PortalAcceptInviteData, PortalAcceptInviteErrors, PortalAcceptInviteResponses, PortalDeleteNotificationData, PortalDeleteNotificationErrors, PortalDeleteNotificationResponses, PortalGetCheckInData, PortalGetCheckInErrors, PortalGetCheckInResponses, PortalGetMeData, PortalGetMeErrors, PortalGetMeResponses, PortalGetPaymentData, PortalGetPaymentErrors, PortalGetPaymentResponses, PortalGetSessionData, PortalGetSessionErrors, PortalGetSessionResponses, PortalIssueWsTicketData, PortalIssueWsTicketErrors, PortalIssueWsTicketResponses, PortalListCheckInsData, PortalListCheckInsErrors, PortalListCheckInsResponses, PortalListNotificationsData, PortalListNotificationsErrors, PortalListNotificationsResponses, PortalListPaymentsData, PortalListPaymentsErrors, PortalListPaymentsResponses, PortalListSessionsData, PortalListSessionsErrors, PortalListSessionsResponses, PortalLoginData, PortalLoginErrors, PortalLoginResponses, PortalLogoutData, PortalLogoutErrors, PortalLogoutResponses, PortalMarkAllNotificationsReadData, PortalMarkAllNotificationsReadErrors, PortalMarkAllNotificationsReadResponses, PortalMarkNotificationReadData, PortalMarkNotificationReadErrors, PortalMarkNotificationReadResponses, PortalRefreshData, PortalRefreshErrors, PortalRefreshResponses, PortalSubmitCheckInData, PortalSubmitCheckInErrors, PortalSubmitCheckInResponses, PortalUnreadNotificationCountData, PortalUnreadNotificationCountErrors, PortalUnreadNotificationCountResponses, PortalUpdateMeData, PortalUpdateMeErrors, PortalUpdateMeResponses, PortalUploadPhotoData, PortalUploadPhotoErrors, PortalUploadPhotoResponses, PostApiV1AuthLoginData, PostApiV1AuthLoginErrors, PostApiV1AuthLoginResponses, PostApiV1AuthLogoutData, PostApiV1AuthLogoutErrors, PostApiV1AuthLogoutResponses, PostApiV1AuthRefreshData, PostApiV1AuthRefreshErrors, PostApiV1AuthRefreshResponses, PostApiV1AuthSignupData, PostApiV1AuthSignupErrors, PostApiV1AuthSignupResponses, PostApiV1CheckInsByIdReadData, PostApiV1CheckInsByIdReadErrors, PostApiV1CheckInsByIdReadResponses, PostApiV1CheckInsByIdRespondData, PostApiV1CheckInsByIdRespondErrors, PostApiV1CheckInsByIdRespondResponses, PostApiV1ClientsByIdInvitePortalData, PostApiV1ClientsByIdInvitePortalErrors, PostApiV1ClientsByIdInvitePortalResponses, PostApiV1ClientsData, PostApiV1ClientsErrors, PostApiV1ClientsResponses, PostApiV1MeAvatarData, PostApiV1MeAvatarErrors, PostApiV1MeAvatarResponses, PostApiV1NotificationsByIdReadData, PostApiV1NotificationsByIdReadErrors, PostApiV1NotificationsByIdReadResponses, PostApiV1NotificationsMarkAllReadData, PostApiV1NotificationsMarkAllReadErrors, PostApiV1NotificationsMarkAllReadResponses, PostApiV1PaymentsByIdMarkPaidData, PostApiV1PaymentsByIdMarkPaidErrors, PostApiV1PaymentsByIdMarkPaidResponses, PostApiV1PaymentsData, PostApiV1PaymentsErrors, PostApiV1PaymentsResponses, PostApiV1SessionsData, PostApiV1SessionsErrors, PostApiV1SessionsResponses, PostApiV1WebhooksStripeData, PostApiV1WebhooksStripeErrors, PostApiV1WebhooksStripeResponses, PostApiV1WsTicketData, PostApiV1WsTicketErrors, PostApiV1WsTicketResponses, PutApiV1MeAvailabilityData, PutApiV1MeAvailabilityErrors, PutApiV1MeAvailabilityResponses, PutApiV1MeSettingsCustomQuestionsData, PutApiV1MeSettingsCustomQuestionsErrors, PutApiV1MeSettingsCustomQuestionsResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -504,7 +504,7 @@ export const postApiV1PaymentsByIdMarkPaid = <ThrowOnError extends boolean = tru
  *
  * Sets the client's portal password using a one-time invite token. Token is consumed on success.
  */
-export const postApiV1PortalAcceptInvite = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAcceptInviteData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAcceptInviteResponses, PostApiV1PortalAcceptInviteErrors, ThrowOnError, 'data'>({
+export const portalAcceptInvite = <ThrowOnError extends boolean = true>(options: Options<PortalAcceptInviteData, ThrowOnError>) => (options.client ?? client).post<PortalAcceptInviteResponses, PortalAcceptInviteErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     url: '/api/v1/portal/accept-invite',
     ...options,
@@ -519,7 +519,7 @@ export const postApiV1PortalAcceptInvite = <ThrowOnError extends boolean = true>
  *
  * Email/password login for clients. Returns access + refresh tokens.
  */
-export const postApiV1PortalAuthLogin = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthLoginData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLoginResponses, PostApiV1PortalAuthLoginErrors, ThrowOnError, 'data'>({
+export const portalLogin = <ThrowOnError extends boolean = true>(options: Options<PortalLoginData, ThrowOnError>) => (options.client ?? client).post<PortalLoginResponses, PortalLoginErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     url: '/api/v1/portal/auth/login',
     ...options,
@@ -532,7 +532,7 @@ export const postApiV1PortalAuthLogin = <ThrowOnError extends boolean = true>(op
 /**
  * Log out of the client portal
  */
-export const postApiV1PortalAuthLogout = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthLogoutData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthLogoutResponses, PostApiV1PortalAuthLogoutErrors, ThrowOnError, 'data'>({
+export const portalLogout = <ThrowOnError extends boolean = true>(options: Options<PortalLogoutData, ThrowOnError>) => (options.client ?? client).post<PortalLogoutResponses, PortalLogoutErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     url: '/api/v1/portal/auth/logout',
     ...options,
@@ -545,7 +545,7 @@ export const postApiV1PortalAuthLogout = <ThrowOnError extends boolean = true>(o
 /**
  * Refresh a portal access token
  */
-export const postApiV1PortalAuthRefresh = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalAuthRefreshData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalAuthRefreshResponses, PostApiV1PortalAuthRefreshErrors, ThrowOnError, 'data'>({
+export const portalRefresh = <ThrowOnError extends boolean = true>(options: Options<PortalRefreshData, ThrowOnError>) => (options.client ?? client).post<PortalRefreshResponses, PortalRefreshErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     url: '/api/v1/portal/auth/refresh',
     ...options,
@@ -558,7 +558,7 @@ export const postApiV1PortalAuthRefresh = <ThrowOnError extends boolean = true>(
 /**
  * List own check-ins
  */
-export const getApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalCheckInsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalCheckInsResponses, GetApiV1PortalCheckInsErrors, ThrowOnError, 'data'>({
+export const portalListCheckIns = <ThrowOnError extends boolean = true>(options?: Options<PortalListCheckInsData, ThrowOnError>) => (options?.client ?? client).get<PortalListCheckInsResponses, PortalListCheckInsErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins',
@@ -570,7 +570,7 @@ export const getApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(opti
  *
  * Client portal: create a new weekly check-in. Returns 409 if a check-in already exists for this week (any date in the week resolves to the same Monday).
  */
-export const postApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalCheckInsData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalCheckInsResponses, PostApiV1PortalCheckInsErrors, ThrowOnError, 'data'>({
+export const portalSubmitCheckIn = <ThrowOnError extends boolean = true>(options: Options<PortalSubmitCheckInData, ThrowOnError>) => (options.client ?? client).post<PortalSubmitCheckInResponses, PortalSubmitCheckInErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins',
@@ -584,7 +584,7 @@ export const postApiV1PortalCheckIns = <ThrowOnError extends boolean = true>(opt
 /**
  * Get one own check-in
  */
-export const getApiV1PortalCheckInsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalCheckInsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalCheckInsByIdResponses, GetApiV1PortalCheckInsByIdErrors, ThrowOnError, 'data'>({
+export const portalGetCheckIn = <ThrowOnError extends boolean = true>(options: Options<PortalGetCheckInData, ThrowOnError>) => (options.client ?? client).get<PortalGetCheckInResponses, PortalGetCheckInErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/check-ins/{id}',
@@ -594,7 +594,7 @@ export const getApiV1PortalCheckInsById = <ThrowOnError extends boolean = true>(
 /**
  * Portal "who am I"
  */
-export const getApiV1PortalMe = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalMeData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalMeResponses, GetApiV1PortalMeErrors, ThrowOnError, 'data'>({
+export const portalGetMe = <ThrowOnError extends boolean = true>(options?: Options<PortalGetMeData, ThrowOnError>) => (options?.client ?? client).get<PortalGetMeResponses, PortalGetMeErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/me',
@@ -606,7 +606,7 @@ export const getApiV1PortalMe = <ThrowOnError extends boolean = true>(options?: 
  *
  * Client self-service partial update. Currently only phone is editable; goal, plan, and program fields are coach-managed.
  */
-export const patchApiV1PortalMe = <ThrowOnError extends boolean = true>(options: Options<PatchApiV1PortalMeData, ThrowOnError>) => (options.client ?? client).patch<PatchApiV1PortalMeResponses, PatchApiV1PortalMeErrors, ThrowOnError, 'data'>({
+export const portalUpdateMe = <ThrowOnError extends boolean = true>(options: Options<PortalUpdateMeData, ThrowOnError>) => (options.client ?? client).patch<PortalUpdateMeResponses, PortalUpdateMeErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/me',
@@ -620,7 +620,7 @@ export const patchApiV1PortalMe = <ThrowOnError extends boolean = true>(options:
 /**
  * List my notifications (client)
  */
-export const getApiV1PortalNotifications = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalNotificationsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsResponses, GetApiV1PortalNotificationsErrors, ThrowOnError, 'data'>({
+export const portalListNotifications = <ThrowOnError extends boolean = true>(options?: Options<PortalListNotificationsData, ThrowOnError>) => (options?.client ?? client).get<PortalListNotificationsResponses, PortalListNotificationsErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications',
@@ -630,7 +630,7 @@ export const getApiV1PortalNotifications = <ThrowOnError extends boolean = true>
 /**
  * Mark all my notifications as read (client)
  */
-export const postApiV1PortalNotificationsMarkAllRead = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1PortalNotificationsMarkAllReadData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalNotificationsMarkAllReadResponses, PostApiV1PortalNotificationsMarkAllReadErrors, ThrowOnError, 'data'>({
+export const portalMarkAllNotificationsRead = <ThrowOnError extends boolean = true>(options?: Options<PortalMarkAllNotificationsReadData, ThrowOnError>) => (options?.client ?? client).post<PortalMarkAllNotificationsReadResponses, PortalMarkAllNotificationsReadErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/mark-all-read',
@@ -640,7 +640,7 @@ export const postApiV1PortalNotificationsMarkAllRead = <ThrowOnError extends boo
 /**
  * My unread notification count (client)
  */
-export const getApiV1PortalNotificationsUnreadCount = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalNotificationsUnreadCountData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalNotificationsUnreadCountResponses, GetApiV1PortalNotificationsUnreadCountErrors, ThrowOnError, 'data'>({
+export const portalUnreadNotificationCount = <ThrowOnError extends boolean = true>(options?: Options<PortalUnreadNotificationCountData, ThrowOnError>) => (options?.client ?? client).get<PortalUnreadNotificationCountResponses, PortalUnreadNotificationCountErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/unread-count',
@@ -650,7 +650,7 @@ export const getApiV1PortalNotificationsUnreadCount = <ThrowOnError extends bool
 /**
  * Delete a notification (client)
  */
-export const deleteApiV1PortalNotificationsById = <ThrowOnError extends boolean = true>(options: Options<DeleteApiV1PortalNotificationsByIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteApiV1PortalNotificationsByIdResponses, DeleteApiV1PortalNotificationsByIdErrors, ThrowOnError, 'data'>({
+export const portalDeleteNotification = <ThrowOnError extends boolean = true>(options: Options<PortalDeleteNotificationData, ThrowOnError>) => (options.client ?? client).delete<PortalDeleteNotificationResponses, PortalDeleteNotificationErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/{id}',
@@ -660,7 +660,7 @@ export const deleteApiV1PortalNotificationsById = <ThrowOnError extends boolean 
 /**
  * Mark a notification as read (client)
  */
-export const postApiV1PortalNotificationsByIdRead = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalNotificationsByIdReadData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalNotificationsByIdReadResponses, PostApiV1PortalNotificationsByIdReadErrors, ThrowOnError, 'data'>({
+export const portalMarkNotificationRead = <ThrowOnError extends boolean = true>(options: Options<PortalMarkNotificationReadData, ThrowOnError>) => (options.client ?? client).post<PortalMarkNotificationReadResponses, PortalMarkNotificationReadErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/notifications/{id}/read',
@@ -670,7 +670,7 @@ export const postApiV1PortalNotificationsByIdRead = <ThrowOnError extends boolea
 /**
  * List own payments
  */
-export const getApiV1PortalPayments = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalPaymentsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalPaymentsResponses, GetApiV1PortalPaymentsErrors, ThrowOnError, 'data'>({
+export const portalListPayments = <ThrowOnError extends boolean = true>(options?: Options<PortalListPaymentsData, ThrowOnError>) => (options?.client ?? client).get<PortalListPaymentsResponses, PortalListPaymentsErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/payments',
@@ -680,7 +680,7 @@ export const getApiV1PortalPayments = <ThrowOnError extends boolean = true>(opti
 /**
  * Get one own payment
  */
-export const getApiV1PortalPaymentsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalPaymentsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalPaymentsByIdResponses, GetApiV1PortalPaymentsByIdErrors, ThrowOnError, 'data'>({
+export const portalGetPayment = <ThrowOnError extends boolean = true>(options: Options<PortalGetPaymentData, ThrowOnError>) => (options.client ?? client).get<PortalGetPaymentResponses, PortalGetPaymentErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/payments/{id}',
@@ -690,7 +690,7 @@ export const getApiV1PortalPaymentsById = <ThrowOnError extends boolean = true>(
 /**
  * List own sessions
  */
-export const getApiV1PortalSessions = <ThrowOnError extends boolean = true>(options?: Options<GetApiV1PortalSessionsData, ThrowOnError>) => (options?.client ?? client).get<GetApiV1PortalSessionsResponses, GetApiV1PortalSessionsErrors, ThrowOnError, 'data'>({
+export const portalListSessions = <ThrowOnError extends boolean = true>(options?: Options<PortalListSessionsData, ThrowOnError>) => (options?.client ?? client).get<PortalListSessionsResponses, PortalListSessionsErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/sessions',
@@ -700,7 +700,7 @@ export const getApiV1PortalSessions = <ThrowOnError extends boolean = true>(opti
 /**
  * Get one own session
  */
-export const getApiV1PortalSessionsById = <ThrowOnError extends boolean = true>(options: Options<GetApiV1PortalSessionsByIdData, ThrowOnError>) => (options.client ?? client).get<GetApiV1PortalSessionsByIdResponses, GetApiV1PortalSessionsByIdErrors, ThrowOnError, 'data'>({
+export const portalGetSession = <ThrowOnError extends boolean = true>(options: Options<PortalGetSessionData, ThrowOnError>) => (options.client ?? client).get<PortalGetSessionResponses, PortalGetSessionErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/sessions/{id}',
@@ -710,7 +710,7 @@ export const getApiV1PortalSessionsById = <ThrowOnError extends boolean = true>(
 /**
  * Upload a progress photo
  */
-export const postApiV1PortalUploadsPhoto = <ThrowOnError extends boolean = true>(options: Options<PostApiV1PortalUploadsPhotoData, ThrowOnError>) => (options.client ?? client).post<PostApiV1PortalUploadsPhotoResponses, PostApiV1PortalUploadsPhotoErrors, ThrowOnError, 'data'>({
+export const portalUploadPhoto = <ThrowOnError extends boolean = true>(options: Options<PortalUploadPhotoData, ThrowOnError>) => (options.client ?? client).post<PortalUploadPhotoResponses, PortalUploadPhotoErrors, ThrowOnError, 'data'>({
     ...formDataBodySerializer,
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
@@ -738,7 +738,7 @@ export const getApiV1PortalWs = <ThrowOnError extends boolean = true>(options: O
  *
  * Returns a single-use, 30-second ticket. Open the WS at /api/v1/portal/ws?ticket={ticket} before expires_at.
  */
-export const postApiV1PortalWsTicket = <ThrowOnError extends boolean = true>(options?: Options<PostApiV1PortalWsTicketData, ThrowOnError>) => (options?.client ?? client).post<PostApiV1PortalWsTicketResponses, PostApiV1PortalWsTicketErrors, ThrowOnError, 'data'>({
+export const portalIssueWsTicket = <ThrowOnError extends boolean = true>(options?: Options<PortalIssueWsTicketData, ThrowOnError>) => (options?.client ?? client).post<PortalIssueWsTicketResponses, PortalIssueWsTicketErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',
     security: [{ name: 'Authorization', type: 'apiKey' }],
     url: '/api/v1/portal/ws/ticket',

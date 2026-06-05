@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import NotificationsPopover from '~/features/notifications/components/NotificationsPopover.vue'
+
 defineProps<{
   title?: string
   subtitle?: string
@@ -25,17 +27,7 @@ defineProps<{
 
       <div v-if="$slots.actions" class="mx-1 h-5 w-px bg-(--border)" />
 
-      <button
-        type="button"
-        class="relative inline-flex h-7 w-7 items-center justify-center rounded-md text-(--text-muted) hover:bg-(--bg-subtle) hover:text-(--text-primary)"
-        aria-label="Notifications"
-      >
-        <UIcon name="i-lucide-bell" class="size-3.5" />
-        <span
-          v-if="false"
-          class="absolute -top-0.5 -right-0.5 inline-flex h-3.5 w-3.5 items-center justify-center rounded-full bg-(--green-brand) text-[8.5px] font-bold tabular-nums text-white"
-        >3</span>
-      </button>
+      <NotificationsPopover />
     </div>
   </header>
 </template>
