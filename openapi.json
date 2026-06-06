@@ -4997,6 +4997,15 @@
                     "checkin_deadline": {
                         "type": "string"
                     },
+                    "currency": {
+                        "description": "Currency is the coach's preferred display currency for money on\ndashboards/invoices. ISO 4217. CHECK constraint on the column\ncovers the starter set; we re-validate here with oneof so a bad\nvalue 400s before we make the round-trip.",
+                        "type": "string",
+                        "enum": [
+                            "USD",
+                            "EUR",
+                            "NGN"
+                        ]
+                    },
                     "max_sessions_per_day": {
                         "type": "integer",
                         "maximum": 100,
@@ -5526,6 +5535,10 @@
                         "type": "string"
                     },
                     "coach_id": {
+                        "type": "string"
+                    },
+                    "currency": {
+                        "description": "ISO 4217: USD | EUR | NGN",
                         "type": "string"
                     },
                     "custom_questions": {

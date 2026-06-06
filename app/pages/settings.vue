@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import AppTopbar from '~/components/AppTopbar.vue'
 import SettingsProfileSection from '~/features/settings/components/SettingsProfileSection.vue'
+import SettingsWorkspaceSection from '~/features/settings/components/SettingsWorkspaceSection.vue'
 import SettingsSecuritySection from '~/features/settings/components/SettingsSecuritySection.vue'
 import SettingsPaymentMethodsSection from '~/features/settings/components/SettingsPaymentMethodsSection.vue'
 import SettingsClientPortalSection from '~/features/settings/components/SettingsClientPortalSection.vue'
@@ -14,6 +15,7 @@ useSeoMeta({ title: 'Settings | FitCoach CRM' })
 
 const SECTIONS = [
   { id: 'profile',          label: 'Profile' },
+  { id: 'workspace',        label: 'Workspace' },
   { id: 'security',         label: 'Login & security' },
   { id: 'payment-methods',  label: 'Payment methods' },
   { id: 'client-portal',    label: 'Client portal' },
@@ -49,6 +51,7 @@ onMounted(() => {
   <main id="main-content" class="flex-1 px-8 py-8 grid grid-cols-[1fr_200px] gap-10 max-lg:grid-cols-1 max-md:px-5 max-md:py-5">
     <div class="min-w-0 max-w-[820px]">
       <SettingsProfileSection />
+      <SettingsWorkspaceSection />
       <SettingsSecuritySection />
       <SettingsPaymentMethodsSection />
       <SettingsClientPortalSection />

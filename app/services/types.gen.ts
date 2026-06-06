@@ -320,6 +320,13 @@ export type HandlersUpdateMySettingsRequest = {
     buffer_mins?: number;
     checkin_days?: Array<number>;
     checkin_deadline?: string;
+    /**
+     * Currency is the coach's preferred display currency for money on
+     * dashboards/invoices. ISO 4217. CHECK constraint on the column
+     * covers the starter set; we re-validate here with oneof so a bad
+     * value 400s before we make the round-trip.
+     */
+    currency?: 'USD' | 'EUR' | 'NGN';
     max_sessions_per_day?: number;
     min_notice_hrs?: number;
     notif_checkin_new?: boolean;
@@ -532,6 +539,10 @@ export type ModelsCoachSettings = {
      */
     checkin_deadline?: string;
     coach_id?: string;
+    /**
+     * ISO 4217: USD | EUR | NGN
+     */
+    currency?: string;
     custom_questions?: Array<ModelsCustomQuestion>;
     max_sessions_per_day?: number;
     min_notice_hrs?: number;
