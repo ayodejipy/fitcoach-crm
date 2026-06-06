@@ -27,8 +27,8 @@ function switchTab(tab: Tab) {
       </NuxtLink>
     </div>
 
-    <div class="flex-1 flex items-center justify-center px-6 py-10 max-md:py-6">
-      <div class="w-full max-w-[400px]">
+    <div class="flex-1 flex items-center justify-center px-6 pt-[10vh] pb-10 max-md:pt-6 max-md:pb-6">
+      <div class="w-full max-w-[420px]">
         <div
           role="tablist"
           aria-label="Sign in or create account"

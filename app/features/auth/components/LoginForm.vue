@@ -133,7 +133,7 @@ function onForgotPassword() {
         block
         size="lg"
         :loading="submitting"
-        class="mt-2"
+        class="mt-3"
       >
         {{ submitting ? 'Signing in…' : 'Sign in' }}
       </UButton>

@@ -18,7 +18,7 @@ const VALUE_PROPS = [
       <span class="text-[15px] font-semibold text-white tracking-[-0.01em]">FitCoach</span>
     </NuxtLink>
 
-    <div class="relative mt-auto">
+    <div class="relative mt-14">
       <div class="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-white/70">
         <span aria-hidden="true" class="inline-flex h-1.5 w-1.5 rounded-full bg-[#34D399]" />
         Built for coaches
@@ -47,18 +47,18 @@ const VALUE_PROPS = [
           <span><strong class="font-semibold text-white">{{ prop.label }}</strong> {{ prop.text }}</span>
         </li>
       </ul>
+    </div>
 
-      <div class="mt-9 flex items-center gap-3 border-t border-white/10 pt-5">
-        <div class="flex -space-x-2" aria-hidden="true">
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white bg-(--green-brand)">JR</span>
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #C2410C;">KN</span>
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #2563EB;">TS</span>
-          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #9333EA;">AL</span>
-        </div>
-        <div class="text-[11.5px] text-white/65">
-          <div class="text-[#FBBF24] tracking-[2px]" aria-label="5 out of 5 stars">★★★★★</div>
-          <div class="mt-0.5">In trial with <strong class="text-white">5 coaches</strong> · Lagos, Ibadan, Abuja</div>
-        </div>
+    <div class="relative mt-auto pt-10 flex items-center gap-3 border-t border-white/10">
+      <div class="flex -space-x-2" aria-hidden="true">
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white bg-(--green-brand)">JR</span>
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #C2410C;">KN</span>
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #2563EB;">TS</span>
+        <span class="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-(--green-deep) text-[9.5px] font-semibold text-white" style="background: #9333EA;">AL</span>
+      </div>
+      <div class="text-[11.5px] text-white/65">
+        <div class="text-[#FBBF24] tracking-[2px]" aria-label="5 out of 5 stars">★★★★★</div>
+        <div class="mt-0.5">In trial with <strong class="text-white">5 coaches</strong> · Lagos, Ibadan, Abuja</div>
       </div>
     </div>
   </aside>

@@ -27,7 +27,8 @@ const coachEmail = computed(() => authStore.coach?.email ?? '')
 const planBadge = computed(() => {
   const plan = authStore.coach?.plan
   const clients = authStore.appStats?.active_clients
-  const parts = [plan ? `${plan} Plan` : null, clients != null ? `${clients} clients` : null]
+  const planLabel = plan ? `${plan.charAt(0).toUpperCase()}${plan.slice(1).toLowerCase()} Plan` : null
+  const parts = [planLabel, clients != null ? `${clients} clients` : null]
   return parts.filter(Boolean).join(' · ') || null
 })
 
@@ -48,6 +49,8 @@ const menuItems = [
   <UPopover v-model:open="open" placement="top" :content="{ side: 'top', align: 'start', sideOffset: 8 }">
     <button
       type="button"
+      :aria-label="`Account menu for ${coachName}`"
+      :aria-expanded="open"
       class="w-full flex items-center gap-2 border-t border-(--border) p-2 hover:bg-(--bg-subtle) transition-colors"
     >
       <Avatar :initials="coachInitials" variant="a" :size="28" />
@@ -65,18 +68,21 @@ const menuItems = [
     </button>
 
     <template #content>
-      <div class="w-56 py-1">
-        <div class="px-4 py-3">
-          <div class="text-[13px] font-semibold text-(--text-primary)">{{ coachName }}</div>
-          <div class="text-[11.5px] text-(--text-muted) mt-0.5 truncate">{{ coachEmail }}</div>
-          <UBadge
-            v-if="planBadge"
-            :label="planBadge"
-            color="success"
-            variant="subtle"
-            size="sm"
-            class="mt-2"
-          />
+      <div class="w-64 py-1">
+        <div class="flex items-start gap-3 px-3.5 py-3">
+          <Avatar :initials="coachInitials" variant="a" :size="36" />
+          <div class="flex-1 min-w-0">
+            <div class="text-[13px] font-semibold text-(--text-primary) truncate">{{ coachName }}</div>
+            <div class="text-[11.5px] text-(--text-muted) mt-0.5 truncate">{{ coachEmail }}</div>
+            <UBadge
+              v-if="planBadge"
+              :label="planBadge"
+              color="neutral"
+              variant="soft"
+              size="sm"
+              class="mt-2"
+            />
+          </div>
         </div>
 
         <USeparator />
@@ -86,10 +92,10 @@ const menuItems = [
             v-for="item in menuItems"
             :key="item.to"
             :to="item.to"
-            class="flex items-center gap-2.5 px-4 py-2 text-[13px] text-(--text-secondary) hover:bg-(--bg-subtle) no-underline"
+            class="flex items-center gap-2.5 px-3.5 py-2 text-[13px] text-(--text-primary) hover:bg-(--bg-subtle) no-underline"
             @click="open = false"
           >
-            <UIcon :name="item.icon" class="size-3.5 text-(--text-muted) shrink-0" />
+            <UIcon :name="item.icon" class="size-4 text-(--text-secondary) shrink-0" />
             {{ item.label }}
           </NuxtLink>
         </div>
@@ -100,10 +106,10 @@ const menuItems = [
           <button
             type="button"
             :disabled="isLoggingOut"
-            class="w-full flex items-center gap-2.5 px-4 py-2 text-[13px] text-(--red) hover:bg-(--bg-subtle) disabled:opacity-50"
+            class="w-full flex items-center gap-2.5 px-3.5 py-2 text-[13px] font-medium text-(--red) hover:bg-(--bg-subtle) disabled:opacity-50"
             @click="handleLogout"
           >
-            <UIcon name="i-lucide-log-out" class="size-3.5 shrink-0" />
+            <UIcon name="i-lucide-log-out" class="size-4 shrink-0" />
             {{ isLoggingOut ? 'Logging out…' : 'Log out' }}
           </button>
         </div>

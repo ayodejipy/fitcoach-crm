@@ -185,7 +185,7 @@ async function handleSubmit(event: FormSubmitEvent<SignupSchema>) {
         size="lg"
         :loading="submitting"
         trailing-icon="i-lucide-arrow-right"
-        class="mt-1"
+        class="mt-3"
       >
         {{ submitting ? 'Creating your account…' : 'Create my account' }}
       </UButton>
