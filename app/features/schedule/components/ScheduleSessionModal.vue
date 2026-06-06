@@ -75,7 +75,7 @@ const sessionTypeColor: Record<SessionType, string> = {
 }
 
 const locationLabel = computed(() => {
-  if (sessionType.value === 'virtual') return zoomEnabled.value ? 'Zoom · auto-link' : 'Virtual'
+  if (sessionType.value === 'virtual') return zoomEnabled.value ? 'Virtual · auto-link' : 'Virtual'
   if (sessionType.value === 'inperson') return 'In-person'
   return 'Group session'
 })
@@ -232,15 +232,22 @@ async function handleSubmit() {
 
       <div
         v-if="sessionType === 'virtual'"
-        class="flex items-center justify-between gap-3 rounded-md border border-(--border) bg-(--info-soft)/60 px-3.5 py-2.5"
+        class="flex items-start justify-between gap-3 rounded-md border border-(--border) bg-(--info-soft)/60 px-3.5 py-2.5"
       >
-        <div class="flex items-center gap-2.5">
-          <UIcon name="i-hugeicons-video-02" class="size-4 text-(--info)" />
-          <label for="zoom-toggle" class="text-[12.5px] font-semibold text-(--text-primary) cursor-pointer">
-            Auto-generate Zoom link
-          </label>
+        <div class="flex items-start gap-2.5 min-w-0">
+          <UIcon name="i-hugeicons-video-02" class="size-4 text-(--info) shrink-0 mt-0.5" />
+          <div class="min-w-0">
+            <label for="zoom-toggle" class="text-[12.5px] font-semibold text-(--text-primary) cursor-pointer">
+              Auto-generate meeting link
+            </label>
+            <p class="text-[11px] text-(--text-secondary) mt-0.5">
+              Uses Google Meet via your connected Calendar. Connect in
+              <NuxtLink to="/settings#integrations" class="underline">Settings</NuxtLink>
+              if you haven't yet.
+            </p>
+          </div>
         </div>
-        <UToggle id="zoom-toggle" v-model="zoomEnabled" color="primary" aria-label="Auto-generate Zoom link" />
+        <UToggle id="zoom-toggle" v-model="zoomEnabled" color="primary" aria-label="Auto-generate meeting link" class="shrink-0 mt-0.5" />
       </div>
 
       <div class="rounded-md border border-(--border) bg-(--bg-subtle)/40 p-3 flex items-center gap-3">
