@@ -607,7 +607,7 @@ export const portalListCheckIns = <ThrowOnError extends boolean = true>(options?
 /**
  * Submit a weekly check-in
  *
- * Client portal: create a new weekly check-in. Returns 409 if a check-in already exists for this week (any date in the week resolves to the same Monday).
+ * Client portal: create a new weekly check-in. Returns 409 when the client has already used their weekly allowance (one submission per scheduled checkin_day on the coach's settings).
  */
 export const portalSubmitCheckIn = <ThrowOnError extends boolean = true>(options: Options<PortalSubmitCheckInData, ThrowOnError>) => (options.client ?? client).post<PortalSubmitCheckInResponses, PortalSubmitCheckInErrors, ThrowOnError, 'data'>({
     responseStyle: 'data',

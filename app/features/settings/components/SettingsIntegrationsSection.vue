@@ -151,7 +151,7 @@ async function onDisconnect(card: typeof STATIC_CARDS[number]) {
     <div
       v-for="card in STATIC_CARDS"
       :key="card.id"
-      class="rounded-[10px] border border-(--border) bg-(--bg-surface) p-3 flex items-center gap-3"
+      class="rounded-md border border-(--border) bg-(--bg-surface) p-3 flex items-center gap-3"
       :class="card.available || connected[card.provider] ? '' : 'opacity-70'"
     >
       <div

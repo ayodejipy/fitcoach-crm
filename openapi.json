@@ -2649,7 +2649,7 @@
                         "BearerAuth": []
                     }
                 ],
-                "description": "Client portal: create a new weekly check-in. Returns 409 if a check-in already exists for this week (any date in the week resolves to the same Monday).",
+                "description": "Client portal: create a new weekly check-in. Returns 409 when the client has already used their weekly allowance (one submission per scheduled checkin_day on the coach's settings).",
                 "tags": [
                     "portal-checkins"
                 ],
@@ -2698,7 +2698,7 @@
                         }
                     },
                     "409": {
-                        "description": "check-in for this week already exists",
+                        "description": "weekly check-in allowance reached",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -5028,10 +5028,9 @@
                     "notif_schedule_digest": {
                         "type": "boolean"
                     },
-                    "reminder_hours": {
-                        "type": "integer",
-                        "maximum": 168,
-                        "minimum": 1
+                    "reminder_time": {
+                        "description": "ReminderTime is the wall-clock \"HH:MM\" 24h time the reminder fires\non each scheduled check-in day. We validate the shape in-handler\nvia models.ParseHHMM (same path as CheckinDeadline) rather than\nthe struct tag.",
+                        "type": "string"
                     },
                     "timezone": {
                         "type": "string",
@@ -5562,8 +5561,9 @@
                     "notif_schedule_digest": {
                         "type": "boolean"
                     },
-                    "reminder_hours": {
-                        "type": "integer"
+                    "reminder_time": {
+                        "description": "\"HH:MM\" 24h — clock time the reminder fires",
+                        "type": "string"
                     },
                     "timezone": {
                         "type": "string"

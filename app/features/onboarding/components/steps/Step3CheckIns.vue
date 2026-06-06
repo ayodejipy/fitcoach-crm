@@ -19,7 +19,10 @@ const props = defineProps<{
 
 const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] as const
 const DEADLINE_OPTIONS = ['8:00 AM', '9:00 AM', '10:00 AM', '11:00 AM', '12:00 PM', '2:00 PM', '5:00 PM', '8:00 PM']
-const REMINDER_OPTIONS = ['1 hour before', '2 hours before', 'Morning of', 'Night before', 'None']
+const REMINDER_OPTIONS = [
+  '6:00 AM', '7:00 AM', '8:00 AM', '9:00 AM', '10:00 AM',
+  '12:00 PM', '2:00 PM', '4:00 PM', '6:00 PM', '8:00 PM',
+]
 
 const CUSTOM_PROMPTS = [
   'How was your nutrition adherence this week? (1–10)',
@@ -60,7 +63,7 @@ const previewTitle = computed(() =>
 
 const previewSub = computed(() => {
   const n = props.form.questions.length
-  return `Reminder ${props.form.reminder} · ${n} question${n !== 1 ? 's' : ''}`
+  return `Reminder at ${props.form.reminder} · ${n} question${n !== 1 ? 's' : ''}`
 })
 </script>
 

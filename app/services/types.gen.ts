@@ -329,7 +329,13 @@ export type HandlersUpdateMySettingsRequest = {
     notif_payment_received?: boolean;
     notif_schedule_change?: boolean;
     notif_schedule_digest?: boolean;
-    reminder_hours?: number;
+    /**
+     * ReminderTime is the wall-clock "HH:MM" 24h time the reminder fires
+     * on each scheduled check-in day. We validate the shape in-handler
+     * via models.ParseHHMM (same path as CheckinDeadline) rather than
+     * the struct tag.
+     */
+    reminder_time?: string;
     timezone?: string;
 };
 
@@ -536,7 +542,10 @@ export type ModelsCoachSettings = {
     notif_payment_received?: boolean;
     notif_schedule_change?: boolean;
     notif_schedule_digest?: boolean;
-    reminder_hours?: number;
+    /**
+     * "HH:MM" 24h — clock time the reminder fires
+     */
+    reminder_time?: string;
     timezone?: string;
     updated_at?: string;
 };
@@ -2217,7 +2226,7 @@ export type PortalSubmitCheckInErrors = {
      */
     401: ModelsAppError;
     /**
-     * check-in for this week already exists
+     * weekly check-in allowance reached
      */
     409: ModelsAppError;
 };

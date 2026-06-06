@@ -8,6 +8,7 @@ import Step4Connect from './steps/Step4Connect.vue'
 import SuccessOverlay from './SuccessOverlay.vue'
 import { useAuthStore } from '~/features/auth/stores/useAuthStore'
 import { useOnboardingApi } from '~/features/onboarding/composables/useOnboardingApi'
+import { useSettingsApi } from '~/features/settings/composables/useSettingsApi'
 
 const authStore = useAuthStore()
 const onboardingApi = useOnboardingApi()
@@ -42,7 +43,7 @@ const form = reactive({
   clientGoal: null as string | null,
   selectedDays: ['Tue'] as string[],
   deadline: '10:00 AM',
-  reminder: '2 hours before',
+  reminder: '8:00 AM',
   questions: [
     { id: 1, text: 'How would you rate your week overall? (1–10)', required: true, removable: false },
     { id: 2, text: 'How many workouts did you complete this week?', required: true, removable: false },
@@ -100,8 +101,46 @@ const continueLabel = computed(() => {
   return 'Launch my dashboard'
 })
 
+const DAY_NAME_TO_INT: Record<string, number> = {
+  Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+}
+
+function deadlineToHHMM(label: string): string | undefined {
+  const match = label.match(/^(\d{1,2}):(\d{2})\s?(AM|PM)$/i)
+  if (!match) return undefined
+  let h = parseInt(match[1]!, 10)
+  const m = match[2]!
+  const meridiem = match[3]!.toUpperCase()
+  if (meridiem === 'PM' && h !== 12) h += 12
+  if (meridiem === 'AM' && h === 12) h = 0
+  return `${String(h).padStart(2, '0')}:${m}`
+}
+
+async function saveStep3Schedule() {
+  const checkin_days = form.selectedDays
+    .map(name => DAY_NAME_TO_INT[name])
+    .filter((d): d is number => typeof d === 'number')
+    .sort((a, b) => a - b)
+  if (checkin_days.length === 0) return
+
+  const checkin_deadline = deadlineToHHMM(form.deadline)
+  const reminder_time = deadlineToHHMM(form.reminder)
+
+  const settingsApi = useSettingsApi()
+  try {
+    await settingsApi.updateSettings({
+      checkin_days,
+      ...(checkin_deadline ? { checkin_deadline } : {}),
+      ...(reminder_time ? { reminder_time } : {}),
+    })
+  } catch {
+    toast.add({ title: 'Could not save check-in schedule', color: 'error' })
+  }
+}
+
 async function goNext() {
   if (currentStep.value >= 4) return finish()
+  if (currentStep.value === 3) await saveStep3Schedule()
   currentStep.value++
   try {
     const updated = await onboardingApi.advance({ step: currentStep.value })
