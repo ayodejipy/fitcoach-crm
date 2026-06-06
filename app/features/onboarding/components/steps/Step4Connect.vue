@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import StepHeader from '../StepHeader.vue'
+import { useIntegrationsApi } from '~/composables/useIntegrationsApi'
 
 const props = defineProps<{
   form: {
@@ -60,7 +61,41 @@ function isConnected(id: string): boolean {
   return props.form.connectedItems.includes(id)
 }
 
-function toggleConnect(id: string, name: string) {
+const integrationsApi = useIntegrationsApi()
+const startingGoogle = ref(false)
+
+async function toggleConnect(id: string, name: string) {
+  // Google Calendar is the only real OAuth flow today (Stage 1 of GCal
+  // integration). Everything else stays the local-mock UX the onboarding
+  // step originally shipped with — backend wiring lands per-provider.
+  if (id === 'gcal') {
+    if (isConnected(id)) {
+      try {
+        await integrationsApi.disconnectGoogle()
+        props.form.connectedItems = props.form.connectedItems.filter(x => x !== id)
+        toast.add({ title: 'Google Calendar disconnected', color: 'neutral' })
+      } catch {
+        toast.add({ title: 'Could not disconnect — try again', color: 'error' })
+      }
+      return
+    }
+    startingGoogle.value = true
+    try {
+      const res = await integrationsApi.startGoogle()
+      if (res?.authorize_url) {
+        window.location.href = res.authorize_url
+        return
+      }
+      toast.add({ title: 'Google Calendar not configured on this deployment', color: 'warning' })
+    } catch {
+      toast.add({ title: 'Could not start Google sign-in', color: 'error' })
+    } finally {
+      startingGoogle.value = false
+    }
+    return
+  }
+
+  // Non-Google providers stay on the mock UX for now.
   if (isConnected(id)) {
     props.form.connectedItems = props.form.connectedItems.filter(x => x !== id)
     toast.add({ title: `${name} disconnected`, color: 'neutral' })

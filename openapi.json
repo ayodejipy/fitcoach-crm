@@ -1077,6 +1077,187 @@
                 }
             }
         },
+        "/api/v1/integrations": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "summary": "List my integrations",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/handlers.ListIntegrationsResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/google": {
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "summary": "Disconnect Google Calendar",
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "no connection to disconnect",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/google/callback": {
+            "get": {
+                "tags": [
+                    "integrations"
+                ],
+                "summary": "Google Calendar OAuth callback",
+                "parameters": [
+                    {
+                        "description": "OAuth state echoed back by Google",
+                        "name": "state",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "OAuth authorization code",
+                        "name": "code",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect to /settings on the CRM"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/integrations/google/start": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "tags": [
+                    "integrations"
+                ],
+                "summary": "Start Google Calendar OAuth (returns the consent URL)",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/handlers.StartGoogleIntegrationResponse"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    },
+                    "503": {
+                        "description": "integration secrets not configured on this deployment",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/models.AppError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/me": {
             "get": {
                 "security": [
@@ -2710,6 +2891,14 @@
                         }
                     },
                     {
+                        "description": "filter to a single event type (e.g. 'checkin.responded' for coach replies only)",
+                        "name": "type",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "description": "1-indexed page (default 1)",
                         "name": "page",
                         "in": "query",
@@ -4155,6 +4344,29 @@
                     }
                 }
             },
+            "handlers.IntegrationStatus": {
+                "type": "object",
+                "properties": {
+                    "account_email": {
+                        "type": "string"
+                    },
+                    "connected_at": {
+                        "type": "string"
+                    },
+                    "last_used_at": {
+                        "type": "string"
+                    },
+                    "provider": {
+                        "type": "string"
+                    },
+                    "scopes": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
             "handlers.InviteClientPortalResponse": {
                 "type": "object",
                 "properties": {
@@ -4216,6 +4428,17 @@
                     },
                     "total_pages": {
                         "type": "integer"
+                    }
+                }
+            },
+            "handlers.ListIntegrationsResponse": {
+                "type": "object",
+                "properties": {
+                    "integrations": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/handlers.IntegrationStatus"
+                        }
                     }
                 }
             },
@@ -4593,6 +4816,14 @@
                         "type": "boolean"
                     },
                     "slug": {
+                        "type": "string"
+                    }
+                }
+            },
+            "handlers.StartGoogleIntegrationResponse": {
+                "type": "object",
+                "properties": {
+                    "authorize_url": {
                         "type": "string"
                     }
                 }

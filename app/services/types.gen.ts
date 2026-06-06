@@ -78,6 +78,14 @@ export type HandlersCreateSessionRequest = {
     zoom_link?: string;
 };
 
+export type HandlersIntegrationStatus = {
+    account_email?: string;
+    connected_at?: string;
+    last_used_at?: string;
+    provider?: string;
+    scopes?: Array<string>;
+};
+
 export type HandlersInviteClientPortalResponse = {
     expires_at?: string;
     /**
@@ -110,6 +118,10 @@ export type HandlersListClientsResponse = {
      */
     total?: number;
     total_pages?: number;
+};
+
+export type HandlersListIntegrationsResponse = {
+    integrations?: Array<HandlersIntegrationStatus>;
 };
 
 export type HandlersListNotificationsResponse = {
@@ -256,6 +268,10 @@ export type HandlersSignupRequest = {
 export type HandlersSlugCheckResponse = {
     available?: boolean;
     slug?: string;
+};
+
+export type HandlersStartGoogleIntegrationResponse = {
+    authorize_url?: string;
 };
 
 export type HandlersUnreadCountResponse = {
@@ -1211,6 +1227,122 @@ export type PostApiV1ClientsByIdInvitePortalResponses = {
 };
 
 export type PostApiV1ClientsByIdInvitePortalResponse = PostApiV1ClientsByIdInvitePortalResponses[keyof PostApiV1ClientsByIdInvitePortalResponses];
+
+export type GetApiV1IntegrationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/integrations';
+};
+
+export type GetApiV1IntegrationsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+};
+
+export type GetApiV1IntegrationsError = GetApiV1IntegrationsErrors[keyof GetApiV1IntegrationsErrors];
+
+export type GetApiV1IntegrationsResponses = {
+    /**
+     * OK
+     */
+    200: HandlersListIntegrationsResponse;
+};
+
+export type GetApiV1IntegrationsResponse = GetApiV1IntegrationsResponses[keyof GetApiV1IntegrationsResponses];
+
+export type DeleteApiV1IntegrationsGoogleData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/integrations/google';
+};
+
+export type DeleteApiV1IntegrationsGoogleErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+    /**
+     * no connection to disconnect
+     */
+    404: ModelsAppError;
+};
+
+export type DeleteApiV1IntegrationsGoogleError = DeleteApiV1IntegrationsGoogleErrors[keyof DeleteApiV1IntegrationsGoogleErrors];
+
+export type DeleteApiV1IntegrationsGoogleResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type DeleteApiV1IntegrationsGoogleResponse = DeleteApiV1IntegrationsGoogleResponses[keyof DeleteApiV1IntegrationsGoogleResponses];
+
+export type GetApiV1IntegrationsGoogleCallbackData = {
+    body?: never;
+    path?: never;
+    query: {
+        /**
+         * OAuth state echoed back by Google
+         */
+        state: string;
+        /**
+         * OAuth authorization code
+         */
+        code: string;
+    };
+    url: '/api/v1/integrations/google/callback';
+};
+
+export type GetApiV1IntegrationsGoogleCallbackErrors = {
+    /**
+     * Bad Request
+     */
+    400: ModelsAppError;
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+    /**
+     * Service Unavailable
+     */
+    503: ModelsAppError;
+};
+
+export type GetApiV1IntegrationsGoogleCallbackError = GetApiV1IntegrationsGoogleCallbackErrors[keyof GetApiV1IntegrationsGoogleCallbackErrors];
+
+export type PostApiV1IntegrationsGoogleStartData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/v1/integrations/google/start';
+};
+
+export type PostApiV1IntegrationsGoogleStartErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ModelsAppError;
+    /**
+     * integration secrets not configured on this deployment
+     */
+    503: ModelsAppError;
+};
+
+export type PostApiV1IntegrationsGoogleStartError = PostApiV1IntegrationsGoogleStartErrors[keyof PostApiV1IntegrationsGoogleStartErrors];
+
+export type PostApiV1IntegrationsGoogleStartResponses = {
+    /**
+     * OK
+     */
+    200: HandlersStartGoogleIntegrationResponse;
+};
+
+export type PostApiV1IntegrationsGoogleStartResponse = PostApiV1IntegrationsGoogleStartResponses[keyof PostApiV1IntegrationsGoogleStartResponses];
 
 export type GetApiV1MeData = {
     body?: never;
@@ -2204,6 +2336,10 @@ export type PortalListNotificationsData = {
          * filter to unread only
          */
         unread?: boolean;
+        /**
+         * filter to a single event type (e.g. 'checkin.responded' for coach replies only)
+         */
+        type?: string;
         /**
          * 1-indexed page (default 1)
          */
