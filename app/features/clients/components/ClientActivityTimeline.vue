@@ -16,6 +16,8 @@ defineEmits<{
   markRead: [id: string]
 }>()
 
+const { unit: weightUnit } = useWeightUnit()
+
 function eventIcon(event: TimelineEvent): string {
   if (event.kind === 'checkin') return 'i-lucide-check-square'
   if (event.kind === 'session') return 'i-lucide-calendar'
@@ -90,7 +92,7 @@ function formatEventDateTime(date: Date): string {
               <div class="rounded-md py-2 bg-(--bg-subtle)">
                 <div class="text-[10px] text-(--text-muted) uppercase tracking-wide">Weight</div>
                 <div class="mt-0.5 text-[13px] font-semibold tabular-nums">
-                  {{ event.checkIn.weight_lbs ?? '—' }}<span v-if="event.checkIn.weight_lbs" class="text-(--text-muted) font-normal"> lbs</span>
+                  {{ event.checkIn.weight ?? '—' }}<span v-if="event.checkIn.weight" class="text-(--text-muted) font-normal"> {{ weightUnit }}</span>
                 </div>
               </div>
               <div class="rounded-md py-2 bg-(--bg-subtle)">
@@ -125,7 +127,7 @@ function formatEventDateTime(date: Date): string {
             <div class="flex items-center gap-4 mb-2 text-[11.5px] tabular-nums text-(--text-secondary) flex-wrap">
               <span v-if="event.checkIn.energy_score != null"><span class="text-(--text-muted)">Energy:</span> {{ event.checkIn.energy_score }}/10</span>
               <span v-if="event.checkIn.sleep_hrs != null"><span class="text-(--text-muted)">Sleep:</span> {{ event.checkIn.sleep_hrs }} hrs</span>
-              <span v-if="event.checkIn.weight_lbs != null"><span class="text-(--text-muted)">Weight:</span> {{ event.checkIn.weight_lbs }} lbs</span>
+              <span v-if="event.checkIn.weight != null"><span class="text-(--text-muted)">Weight:</span> {{ event.checkIn.weight }} {{ weightUnit }}</span>
             </div>
             <blockquote v-if="event.checkIn.notes" class="border-l-2 border-(--border-strong) pl-3 italic text-[12.5px] text-(--text-secondary)">
               "{{ event.checkIn.notes }}"

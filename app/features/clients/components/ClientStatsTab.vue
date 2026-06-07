@@ -24,8 +24,8 @@ function avg(field: 'energy_score' | 'mood_score' | 'sleep_hrs'): number | null 
 
 const weightSeries = computed(() =>
   submitted.value
-    .filter(ci => ci.weight_lbs != null)
-    .map(ci => ({ date: parseISO(ci.submitted_at!), weight: ci.weight_lbs! })),
+    .filter(ci => ci.weight != null)
+    .map(ci => ({ date: parseISO(ci.submitted_at!), weight: ci.weight! })),
 )
 
 const firstWeight = computed(() => weightSeries.value[0]?.weight ?? null)
@@ -35,10 +35,12 @@ const weightDelta = computed(() => {
   return +(latestWeight.value - firstWeight.value).toFixed(1)
 })
 
+const { unit: weightUnit } = useWeightUnit()
+
 const stats = computed(() => [
   {
     label: 'Latest weight',
-    value: latestWeight.value != null ? `${latestWeight.value} lbs` : '—',
+    value: latestWeight.value != null ? `${latestWeight.value} ${weightUnit.value}` : '—',
     sub: weightDelta.value != null
       ? `${weightDelta.value > 0 ? '+' : ''}${weightDelta.value} since week 1`
       : 'No weight logged',

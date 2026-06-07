@@ -12,7 +12,7 @@ defineProps<{
     weekLabel?: string
     quote?: string
     energy?: number | null
-    weightLbs?: number | null
+    weight?: number | null
     sleepHours?: number | null
     unread: boolean
   }>
@@ -22,6 +22,8 @@ defineProps<{
 defineEmits<{
   respond: [id: string]
 }>()
+
+const { unit: weightUnit } = useWeightUnit()
 </script>
 
 <template>
@@ -70,7 +72,7 @@ defineEmits<{
             <span v-if="entry.energy != null" class="text-(--green-brand) font-medium">
               Energy {{ entry.energy }}/10
             </span>
-            <span v-if="entry.weightLbs != null">· {{ entry.weightLbs }} lbs</span>
+            <span v-if="entry.weight != null">· {{ entry.weight }} {{ weightUnit }}</span>
             <span v-if="entry.sleepHours != null">· Sleep {{ entry.sleepHours }}h</span>
           </div>
         </div>

@@ -44,8 +44,48 @@ const settingsApi = useSettingsApi()
 const toast = useToast()
 
 const slug = ref(authStore.coach?.slug ?? '')
+const savedSlug = ref(authStore.coach?.slug ?? '')
+const savingSlug = ref(false)
 const portalBase = 'portal.fitcoachcrm.com/'
-const portalUrl = computed(() => `https://${portalBase}${slug.value}`)
+const portalUrl = computed(() => `https://${portalBase}${savedSlug.value}`)
+
+function normalizeSlug(raw: string): string {
+  return raw
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+async function saveSlug() {
+  const next = normalizeSlug(slug.value)
+  if (next === savedSlug.value) {
+    slug.value = next
+    return
+  }
+  if (next.length < 3) {
+    slug.value = savedSlug.value
+    toast.add({ title: 'Slug must be at least 3 characters', color: 'warning' })
+    return
+  }
+  slug.value = next
+  savingSlug.value = true
+  try {
+    await settingsApi.updateCoach({ slug: next })
+    savedSlug.value = next
+    toast.add({ title: 'Portal URL updated', color: 'success' })
+  } catch (err: unknown) {
+    slug.value = savedSlug.value
+    const message = err instanceof Error && 'data' in err && (err.data as { error?: string })?.error
+      ? (err.data as { error: string }).error
+      : 'Could not update portal URL'
+    toast.add({ title: message, color: 'error' })
+  } finally {
+    savingSlug.value = false
+  }
+}
 
 const selectedDays = ref<number[]>([1])
 const deadline = ref<string>('10:00')
@@ -154,8 +194,12 @@ function onCopy() {
         <input
           v-model="slug"
           type="text"
-          class="flex-1 px-3 py-2 text-[12.5px] font-mono text-(--text-primary) bg-transparent focus:outline-none"
+          :disabled="savingSlug"
+          placeholder="your-slug"
+          class="flex-1 px-3 py-2 text-[12.5px] font-mono text-(--text-primary) bg-transparent focus:outline-none disabled:opacity-60"
           :aria-label="`Portal slug · ${portalBase}<slug>`"
+          @blur="saveSlug"
+          @keydown.enter.prevent="saveSlug"
         />
         <button
           type="button"
@@ -167,7 +211,7 @@ function onCopy() {
       </div>
       <template #help>
         <p class="text-[10.5px] text-(--text-muted) mt-1">
-          Clients receive this link in their invite email · changing the slug will break old links.
+          Clients receive this link in their invite email · changing the slug will break old links · saves on blur or Enter.
         </p>
       </template>
     </UFormField>

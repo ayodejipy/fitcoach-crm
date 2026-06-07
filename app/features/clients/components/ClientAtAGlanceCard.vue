@@ -11,6 +11,8 @@ defineProps<{
 defineEmits<{
   seeFullStats: []
 }>()
+
+const { unit: weightUnit } = useWeightUnit()
 </script>
 
 <template>
@@ -27,7 +29,7 @@ defineEmits<{
           <div class="text-[10.5px] text-(--text-muted) uppercase tracking-wide">Current weight</div>
           <div class="mt-0.5 flex items-baseline gap-1.5">
             <span class="text-[18px] font-semibold tabular-nums">{{ weight }}</span>
-            <span class="text-[11px] text-(--text-muted)">lbs</span>
+            <span class="text-[11px] text-(--text-muted)">{{ weightUnit }}</span>
             <span
               v-if="weightDelta != null"
               class="text-[10.5px] tabular-nums"

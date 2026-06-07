@@ -20,6 +20,8 @@ definePageMeta({ layout: 'app' })
 
 useSeoMeta({ title: 'Check-ins | FitCoach CRM' })
 
+const { unit: weightUnit } = useWeightUnit()
+
 type Filter = 'needs-response' | 'all' | 'week'
 const FILTER_TABS = [
   { id: 'needs-response', label: 'Needs response' },
@@ -204,7 +206,7 @@ function onReminderSent() {
           :relative-label="ci.submitted_at ? fmtRelative(ci.submitted_at) : ''"
           :preview="ci.notes ? `\&quot;${ci.notes}\&quot;` : null"
           :unread="!ci.is_read"
-          :chips="metricChipsFor(ci)"
+          :chips="metricChipsFor(ci, weightUnit)"
           @mark-read="onMarkRead"
           @respond="onRespond"
         />

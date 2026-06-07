@@ -117,9 +117,9 @@ const upcomingSession = computed(() => {
 
 const atAGlance = computed(() => {
   const list = checkIns.value
-  const withWeight = list.filter(ci => ci.weight_lbs != null)
-  const latestWeight = withWeight.at(0)?.weight_lbs ?? null
-  const firstWeight = withWeight.at(-1)?.weight_lbs ?? null
+  const withWeight = list.filter(ci => ci.weight != null)
+  const latestWeight = withWeight.at(0)?.weight ?? null
+  const firstWeight = withWeight.at(-1)?.weight ?? null
   const delta = latestWeight != null && firstWeight != null ? latestWeight - firstWeight : null
 
   const energyScores = list.map(ci => ci.energy_score).filter((s): s is number => s != null)

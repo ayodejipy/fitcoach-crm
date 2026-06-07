@@ -11,7 +11,9 @@ export interface MetricChip {
 // Decides which tone each metric chip should render with based on whether the
 // number reads as positive/neutral/concerning. Thresholds are intentionally
 // generous for a "first version" — coach feedback will sharpen them.
-export function metricChipsFor(checkIn: ModelsCoachCheckIn): MetricChip[] {
+// weightUnit is passed in (rather than read here) so the util stays
+// component-free — callers thread the coach's preference through.
+export function metricChipsFor(checkIn: ModelsCoachCheckIn, weightUnit: 'kg' | 'lbs' = 'lbs'): MetricChip[] {
   const chips: MetricChip[] = []
 
   if (checkIn.energy_score != null) {
@@ -30,8 +32,8 @@ export function metricChipsFor(checkIn: ModelsCoachCheckIn): MetricChip[] {
     })
   }
 
-  if (checkIn.weight_lbs != null) {
-    chips.push({ label: `${checkIn.weight_lbs} lbs`, tone: 'neutral' })
+  if (checkIn.weight != null) {
+    chips.push({ label: `${checkIn.weight} ${weightUnit}`, tone: 'neutral' })
   }
 
   if (checkIn.mood_score != null) {

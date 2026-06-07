@@ -17,6 +17,8 @@ const sorted = computed(() =>
     .sort((a, b) => parseISO(b.submitted_at!).getTime() - parseISO(a.submitted_at!).getTime()),
 )
 
+const { unit: weightUnit } = useWeightUnit()
+
 function weekNumber(ci: ModelsCoachCheckIn): number {
   if (!props.startDate || !ci.submitted_at) return 0
   return Math.max(1, Math.floor(differenceInDays(parseISO(ci.submitted_at), parseISO(props.startDate)) / 7) + 1)
@@ -84,7 +86,7 @@ const unreadCount = computed(() => sorted.value.filter(ci => !ci.is_read).length
               <span v-if="ci.energy_score != null"><span class="text-(--text-muted)">E</span> {{ ci.energy_score }}/10</span>
               <span v-if="ci.mood_score != null"><span class="text-(--text-muted)">M</span> {{ ci.mood_score }}/10</span>
               <span v-if="ci.sleep_hrs != null"><span class="text-(--text-muted)">S</span> {{ ci.sleep_hrs }}h</span>
-              <span v-if="ci.weight_lbs != null"><span class="text-(--text-muted)">W</span> {{ ci.weight_lbs }} lbs</span>
+              <span v-if="ci.weight != null"><span class="text-(--text-muted)">W</span> {{ ci.weight }} {{ weightUnit }}</span>
             </div>
             <p v-if="ci.notes" class="mt-1 text-[11.5px] italic text-(--text-secondary) truncate">"{{ ci.notes }}"</p>
           </div>

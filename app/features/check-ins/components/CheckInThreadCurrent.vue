@@ -17,6 +17,8 @@ defineEmits<{
   saveDraft: [text: string]
 }>()
 
+const { unit: weightUnit } = useWeightUnit()
+
 function formatSubmittedAt(iso: string): string {
   return format(parseISO(iso), 'EEE, MMM d · h:mm a')
 }
@@ -56,8 +58,8 @@ function formatSubmittedAt(iso: string): string {
       <div class="px-2 border-r border-(--border-muted) max-md:border-r-0 max-md:border-b max-md:pb-3 max-md:pt-3 max-md:border-t">
         <div class="text-[10px] text-(--text-muted) uppercase tracking-wide">Weight</div>
         <div class="mt-1 flex items-baseline gap-1">
-          <span class="text-[18px] font-semibold tabular-nums">{{ checkIn.weight_lbs ?? '—' }}</span>
-          <span v-if="checkIn.weight_lbs != null" class="text-[10.5px] text-(--text-muted)">lbs</span>
+          <span class="text-[18px] font-semibold tabular-nums">{{ checkIn.weight ?? '—' }}</span>
+          <span v-if="checkIn.weight != null" class="text-[10.5px] text-(--text-muted)">{{ weightUnit }}</span>
         </div>
       </div>
       <div class="px-2 max-md:pt-3 max-md:border-t max-md:border-(--border-muted)">

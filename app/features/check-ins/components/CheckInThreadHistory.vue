@@ -7,6 +7,8 @@ defineProps<{
   checkIn: ModelsCoachCheckIn
   weekNumber: number
 }>()
+
+const { unit: weightUnit } = useWeightUnit()
 </script>
 
 <template>
@@ -22,7 +24,7 @@ defineProps<{
         <span class="text-[10.5px] tabular-nums text-(--text-secondary)">
           <span v-if="checkIn.energy_score != null"><span class="text-(--text-muted)">E</span> {{ checkIn.energy_score }}</span>
           <span v-if="checkIn.sleep_hrs != null"> · <span class="text-(--text-muted)">S</span> {{ checkIn.sleep_hrs }}h</span>
-          <span v-if="checkIn.weight_lbs != null"> · <span class="text-(--text-muted)">W</span> {{ checkIn.weight_lbs }} lbs</span>
+          <span v-if="checkIn.weight != null"> · <span class="text-(--text-muted)">W</span> {{ checkIn.weight }} {{ weightUnit }}</span>
         </span>
       </div>
       <span class="text-[11px] text-(--text-muted)">

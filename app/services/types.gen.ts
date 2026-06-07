@@ -32,7 +32,7 @@ export type HandlersCreateCheckInRequest = {
     sleep_hrs?: number;
     waist_inches?: number;
     week_start_date: string;
-    weight_lbs?: number;
+    weight?: number;
 };
 
 export type HandlersCreateClientRequest = {
@@ -50,7 +50,7 @@ export type HandlersCreateClientRequest = {
     send_invite?: boolean;
     start_date: string;
     status?: 'active' | 'paused' | 'new' | 'ended' | 'trial';
-    target_weight_lbs?: number;
+    target_weight?: number;
 };
 
 export type HandlersCreateInvoiceRequest = {
@@ -299,7 +299,7 @@ export type HandlersUpdateClientRequest = {
     program_week?: number;
     start_date?: string;
     status?: 'active' | 'paused' | 'new' | 'ended' | 'trial';
-    target_weight_lbs?: number;
+    target_weight?: number;
 };
 
 export type HandlersUpdateMeRequest = {
@@ -344,6 +344,13 @@ export type HandlersUpdateMySettingsRequest = {
      */
     reminder_time?: string;
     timezone?: string;
+    /**
+     * WeightUnit is the coach's preferred display unit for client weight
+     * across the dashboard, charts, invoices, and the portal check-in
+     * form. CHECK constraint on the column covers the set; we re-validate
+     * here so a bad value 400s before the round-trip.
+     */
+    weight_unit?: 'kg' | 'lbs';
 };
 
 export type HandlersUpdatePaymentRequest = {
@@ -399,7 +406,7 @@ export type ModelsCheckIn = {
      * YYYY-MM-DD (Monday)
      */
     week_start_date?: string;
-    weight_lbs?: number;
+    weight?: number;
 };
 
 export type ModelsClient = {
@@ -425,7 +432,7 @@ export type ModelsClient = {
     start_date?: string;
     status?: string;
     streak_weeks?: number;
-    target_weight_lbs?: number;
+    target_weight?: number;
     updated_at?: string;
 };
 
@@ -483,7 +490,7 @@ export type ModelsCoachCheckIn = {
      * YYYY-MM-DD (Monday)
      */
     week_start_date?: string;
-    weight_lbs?: number;
+    weight?: number;
 };
 
 export type ModelsCoachPayment = {
@@ -559,6 +566,10 @@ export type ModelsCoachSettings = {
     reminder_time?: string;
     timezone?: string;
     updated_at?: string;
+    /**
+     * kg | lbs
+     */
+    weight_unit?: string;
 };
 
 export type ModelsCustomQuestion = {

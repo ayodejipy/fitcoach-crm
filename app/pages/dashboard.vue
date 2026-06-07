@@ -157,7 +157,7 @@ const pendingCheckIns = computed(() =>
       weekLabel: ci.week_start_date ? `· Week of ${fmtDate(ci.week_start_date)}` : undefined,
       quote: ci.notes || undefined,
       energy: ci.energy_score ?? null,
-      weightLbs: ci.weight_lbs ?? null,
+      weight: ci.weight ?? null,
       sleepHours: ci.sleep_hrs ?? null,
       unread: !ci.is_read,
     }
